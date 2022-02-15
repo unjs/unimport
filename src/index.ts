@@ -1,45 +1,68 @@
 import { detectSyntax } from 'mlly'
-import { toImports } from './utils'
-import type { AutoImportContext } from './context'
+import escapeRE from 'escape-string-regexp'
+import type { Import, UnimportOptions } from './types'
+import { excludeRE, stripCommentsAndStrings, toImports, separatorRE, importAsRE } from './utils'
+import { resolvePreset } from './preset'
+export * from './types'
 
-const excludeRE = [
-  // imported from other module
-  /\bimport\s*([\s\S]+?)\s*from\b/g,
-  // defined as function
-  /\bfunction\s*([\w_$]+?)\s*\(/g,
-  // defined as local variable
-  /\b(?:const|let|var)\s+?(\[[\s\S]*?\]|\{[\s\S]*?\}|[\s\S]+?)\s*?[=;\n]/g
-]
-
-const importAsRE = /^.*\sas\s+/
-const separatorRE = /[,[\]{}\n]/g
-const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm
-const singlelineCommentsRE = /\/\/\s.*$/gm
-const templateLiteralRE = /\$\{(.*)\}/g
-const quotesRE = [
-  /(["'])((?:\\\1|(?!\1)|.|\r)*?)\1/gm,
-  /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm
-]
-
-function stripCommentsAndStrings (code: string) {
-  return code
-    .replace(multilineCommentsRE, '')
-    .replace(singlelineCommentsRE, '')
-    .replace(templateLiteralRE, '` + $1 + `')
-    .replace(quotesRE[0], '""')
-    .replace(quotesRE[1], '``')
+interface Context {
+  imports: Import[]
+  matchRE: RegExp
+  map: Map<string, Import>
 }
 
-export function addAutoImports (code: string, ctx: AutoImportContext) {
-  // strip comments so we don't match on them
+export interface Unimport {
+  addImports: (code: string) => { code: string }
+}
+
+export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
+  const ctx: Context = {
+    imports: [].concat(opts.imports).filter(Boolean),
+    map: new Map(),
+    matchRE: /__never__/g
+  }
+
+  // Resolve presets
+  for (const preset of opts.presets || []) {
+    ctx.imports.push(...resolvePreset(preset))
+  }
+
+  // Normalize imports
+  for (const _import of ctx.imports) {
+    _import.as = _import.as || _import.name
+  }
+
+  // Detect duplicates
+  const usedNames = new Set()
+  for (const autoImport of ctx.imports) {
+    if (!usedNames.has(autoImport.as)) {
+      usedNames.add(autoImport.as)
+    }
+  }
+
+  // Create regex
+  ctx.matchRE = new RegExp(`\\b(${ctx.imports.map(i => escapeRE(i.as)).join('|')})\\b`, 'g')
+
+  // Create map
+  for (const _import of ctx.imports) {
+    ctx.map.set(_import.as, _import)
+  }
+
+  return {
+    addImports: (code: string) => addImports(code, ctx)
+  }
+}
+
+function addImports (code: string, ctx: Context) {
+  // Strip comments so we don't match on them
   const stripped = stripCommentsAndStrings(code)
 
-  // find all possible injection
+  // Find all possible injection
   const matched = new Set(
     Array.from(stripped.matchAll(ctx.matchRE)).map(i => i[1])
   )
 
-  // remove those already defined
+  // Remove those already defined
   for (const regex of excludeRE) {
     Array.from(stripped.matchAll(regex))
       .flatMap(i => [
@@ -51,16 +74,15 @@ export function addAutoImports (code: string, ctx: AutoImportContext) {
   }
 
   if (!matched.size) {
-    return null
+    return { code }
   }
-
-  // For CJS support
-  const isCJSContext = detectSyntax(stripped).hasCJS
 
   const matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
     .filter(Boolean)
+
+  const isCJSContext = detectSyntax(stripped).hasCJS
   const imports = toImports(matchedImports, isCJSContext)
 
-  return imports + code
+  return { code: imports + code }
 }

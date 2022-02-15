@@ -1,15 +1,15 @@
-import { expect, it, describe } from 'vitest'
-import { testFunction } from '../src'
+import { expect, describe, test } from 'vitest'
+import { createUnimport } from '../src'
 
-describe('unimports', () => {
-  const tests = [
-    { input: 'foo', output: 'Hello foo' },
-    { input: 'bar', output: 'Hello bar' }
-  ]
-
-  for (const test of tests) {
-    it(test.input, () => {
-      expect(testFunction(test.input)).eq(test.output)
+describe('unimport', () => {
+  test('Adds basic import', () => {
+    const { addImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }]
     })
-  }
+    expect(addImports('console.log(fooBar())')).toMatchInlineSnapshot(`
+      {
+        "code": "import { fooBar } from 'test-id';console.log(fooBar())",
+      }
+    `)
+  })
 })

@@ -1,8 +1,8 @@
 {
-  "name": "unimports",
+  "name": "unimport",
   "version": "0.0.0",
   "description": "",
-  "repository": "unjs/unimports",
+  "repository": "unjs/unimport",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "escape-string-regexp": "^5.0.0",
-    "knitwork": "^0.1.0",
     "mlly": "^0.4.1"
   },
   "devDependencies": {
