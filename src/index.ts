@@ -1,0 +1,66 @@
+import { detectSyntax } from 'mlly'
+import { toImports } from './utils'
+import type { AutoImportContext } from './context'
+
+const excludeRE = [
+  // imported from other module
+  /\bimport\s*([\s\S]+?)\s*from\b/g,
+  // defined as function
+  /\bfunction\s*([\w_$]+?)\s*\(/g,
+  // defined as local variable
+  /\b(?:const|let|var)\s+?(\[[\s\S]*?\]|\{[\s\S]*?\}|[\s\S]+?)\s*?[=;\n]/g
+]
+
+const importAsRE = /^.*\sas\s+/
+const separatorRE = /[,[\]{}\n]/g
+const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm
+const singlelineCommentsRE = /\/\/\s.*$/gm
+const templateLiteralRE = /\$\{(.*)\}/g
+const quotesRE = [
+  /(["'])((?:\\\1|(?!\1)|.|\r)*?)\1/gm,
+  /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm
+]
+
+function stripCommentsAndStrings (code: string) {
+  return code
+    .replace(multilineCommentsRE, '')
+    .replace(singlelineCommentsRE, '')
+    .replace(templateLiteralRE, '` + $1 + `')
+    .replace(quotesRE[0], '""')
+    .replace(quotesRE[1], '``')
+}
+
+export function addAutoImports (code: string, ctx: AutoImportContext) {
+  // strip comments so we don't match on them
+  const stripped = stripCommentsAndStrings(code)
+
+  // find all possible injection
+  const matched = new Set(
+    Array.from(stripped.matchAll(ctx.matchRE)).map(i => i[1])
+  )
+
+  // remove those already defined
+  for (const regex of excludeRE) {
+    Array.from(stripped.matchAll(regex))
+      .flatMap(i => [
+        ...(i[1]?.split(separatorRE) || []),
+        ...(i[2]?.split(separatorRE) || [])
+      ])
+      .map(i => i.replace(importAsRE, '').trim())
+      .forEach(i => matched.delete(i))
+  }
+
+  if (!matched.size) {
+    return null
+  }
+
+  // For CJS support
+  const isCJSContext = detectSyntax(stripped).hasCJS
+
+  const matchedImports = Array.from(matched)
+    .map(name => ctx.map.get(name))
+    .filter(Boolean)
+  const imports = toImports(matchedImports, isCJSContext)
+
+  return imports + code
+}
