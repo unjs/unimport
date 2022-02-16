@@ -16,7 +16,7 @@ describe('toImports', () => {
     expect(toImports(imports))
       .toMatchInlineSnapshot('"import { foo as bar } from \'test-id\';"')
     expect(toImports(imports, true))
-      .toMatchInlineSnapshot('"const { foo : bar } = require(\'test-id\');"')
+      .toMatchInlineSnapshot('"const { foo: bar } = require(\'test-id\');"')
   })
 
   it('multiple', () => {
@@ -42,9 +42,9 @@ describe('toImports', () => {
       { from: 'test1', name: 'default', as: 'foo' }
     ]
     expect(toImports(imports))
-      .toMatchInlineSnapshot('"import { default as foo } from \'test1\';"')
+      .toMatchInlineSnapshot('"import foo from \'test1\';"')
     expect(toImports(imports, true))
-      .toMatchInlineSnapshot('"const { default : foo } = require(\'test1\');"')
+      .toMatchInlineSnapshot('"const { default: foo } = require(\'test1\');"')
   })
 
   it('import all as', () => {
@@ -52,8 +52,35 @@ describe('toImports', () => {
       { from: 'test1', name: '*', as: 'foo' }
     ]
     expect(toImports(imports))
-      .toMatchInlineSnapshot('"import { * as foo } from \'test1\';"')
+      .toMatchInlineSnapshot('"import * as foo from \'test1\';"')
     expect(toImports(imports, true))
-      .toMatchInlineSnapshot('"const { * : foo } = require(\'test1\');"')
+      .toMatchInlineSnapshot('"const foo = require(\'test1\');"')
+  })
+
+  it('mixed', () => {
+    const imports: Import[] = [
+      { from: 'test1', name: '*', as: 'foo' },
+      { from: 'test1', name: '*', as: 'bar' },
+      { from: 'test1', name: 'foo', as: 'foo' },
+      { from: 'test1', name: 'bar', as: 'bar' },
+      { from: 'test2', name: 'foobar', as: 'foobar' },
+      { from: 'test2', name: 'default', as: 'defaultAlias' }
+    ]
+    expect(toImports(imports))
+      .toMatchInlineSnapshot(`
+        "import * as foo from 'test1';
+        import * as bar from 'test1';
+        import { foo, bar } from 'test1';
+        import defaultAlias from 'test2';
+        import { foobar } from 'test2';"
+      `)
+    expect(toImports(imports, true))
+      .toMatchInlineSnapshot(`
+        "const foo = require('test1');
+        const bar = require('test1');
+        const { foo, bar } = require('test1');
+        const { default: defaultAlias } = require('test2');
+        const { foobar } = require('test2');"
+      `)
   })
 })
