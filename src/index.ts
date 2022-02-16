@@ -1,12 +1,13 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
-import type { Import, UnimportOptions } from './types'
+import type { Import, UnimportOptions, Resolver } from './types'
 import { excludeRE, stripCommentsAndStrings, toImports, separatorRE, importAsRE } from './utils'
 import { resolvePreset } from './preset'
 export * from './types'
 
 interface Context {
   imports: Import[]
+  resolvers: Resolver[]
   matchRE: RegExp
   map: Map<string, Import>
 }
@@ -18,13 +19,16 @@ export interface Unimport {
 export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
   const ctx: Context = {
     imports: [].concat(opts.imports).filter(Boolean),
+    resolvers: [].concat(opts.resolvers).filter(Boolean),
     map: new Map(),
     matchRE: /__never__/g
   }
 
   // Resolve presets
   for (const preset of opts.presets || []) {
-    ctx.imports.push(...resolvePreset(preset))
+    const resolved = resolvePreset(preset)
+    ctx.imports.push(...resolved.imports)
+    ctx.resolvers.push(...resolved.resolvers)
   }
 
   // Normalize imports

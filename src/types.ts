@@ -12,11 +12,20 @@ export interface Import {
   peerImports?: ModuleId[]
 }
 
+export type Awaitable<T> = T | PromiseLike<T>
+export type Resolver = (name: ImportName) => Awaitable<ImportName | Import | (ImportName | Import)[] | null | undefined>
+
 export type PresetImport = ImportName | [name: ImportName, as?: ImportName, from?: ModuleId] | Exclude<Import, 'from'>
 
 export interface Preset {
   from: ModuleId
-  imports: (PresetImport | Preset)[]
+  imports?: (PresetImport | Preset)[]
+  resolvers?: Resolver[]
+}
+
+export interface ResolvedPreset {
+  imports: Import[]
+  resolvers: Resolver[]
 }
 
 export interface UnimportOptions {
@@ -26,4 +35,5 @@ export interface UnimportOptions {
   exclude: RegExp[]
   imports: Import[]
   presets: Preset[]
+  resolvers: Resolver[]
 }
