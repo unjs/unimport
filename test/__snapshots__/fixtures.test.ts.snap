@@ -19,7 +19,7 @@ const b = { class: \\"text-sm opacity-75\\" };
 `;
 
 exports[`fixtures > custom.js 1`] = `
-"import { default as customDefault } from 'default';const a = customDefault(customNamed())
+"import customDefault from 'default';const a = customDefault(customNamed())
 const a = customDefaultAlias()
 "
 `;
@@ -41,7 +41,7 @@ const msg = ref(\\"Global Imports\\");
 `;
 
 exports[`fixtures > import-all.ts 1`] = `
-"import { * as THREE } from 'three';const scene = new THREE.Scene()
+"import * as THREE from 'three';const scene = new THREE.Scene()
 "
 `;
 
