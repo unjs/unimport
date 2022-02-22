@@ -10,6 +10,10 @@
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./unplugin": {
+      "import": "./dist/unplugin.mjs",
+      "require": "./dist/unplugin.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -29,7 +33,8 @@
   "dependencies": {
     "escape-string-regexp": "^5.0.0",
     "magic-string": "^0.25.7",
-    "mlly": "^0.4.3"
+    "mlly": "^0.4.3",
+    "unplugin": "^0.3.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
