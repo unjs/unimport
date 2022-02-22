@@ -12,7 +12,8 @@ interface Context {
 }
 
 export interface Unimport {
-  addImports: (code: string) => { code: string }
+  addImports: (code: string) => ReturnType<typeof addImports>
+  detectImports: (code: string) => ReturnType<typeof detectImports>
 }
 
 export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
@@ -49,22 +50,24 @@ export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
   }
 
   return {
+    detectImports: (code: string) => detectImports(code, ctx),
     addImports: (code: string) => addImports(code, ctx)
   }
 }
 
-function addImports (code: string, ctx: Context) {
+function detectImports (code: string, ctx: Context) {
   // Strip comments so we don't match on them
-  const stripped = stripCommentsAndStrings(code)
+  const strippedCode = stripCommentsAndStrings(code)
+  const isCJSContext = detectSyntax(strippedCode).hasCJS
 
   // Find all possible injection
   const matched = new Set(
-    Array.from(stripped.matchAll(ctx.matchRE)).map(i => i[1])
+    Array.from(strippedCode.matchAll(ctx.matchRE)).map(i => i[1])
   )
 
   // Remove those already defined
   for (const regex of excludeRE) {
-    Array.from(stripped.matchAll(regex))
+    Array.from(strippedCode.matchAll(regex))
       .flatMap(i => [
         ...(i[1]?.split(separatorRE) || []),
         ...(i[2]?.split(separatorRE) || [])
@@ -73,16 +76,22 @@ function addImports (code: string, ctx: Context) {
       .forEach(i => matched.delete(i))
   }
 
-  if (!matched.size) {
-    return { code }
-  }
-
   const matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
     .filter(Boolean)
 
-  const isCJSContext = detectSyntax(stripped).hasCJS
-  const imports = toImports(matchedImports, isCJSContext)
+  return {
+    strippedCode,
+    isCJSContext,
+    matchedImports
+  }
+}
 
+function addImports (code: string, ctx: Context) {
+  const { isCJSContext, matchedImports } = detectImports(code, ctx)
+  if (!matchedImports.length) {
+    return { code }
+  }
+  const imports = toImports(matchedImports, isCJSContext)
   return { code: imports + code }
 }
