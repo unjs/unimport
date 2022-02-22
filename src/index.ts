@@ -1,7 +1,7 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import type { Import, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, toImports, separatorRE, importAsRE } from './utils'
+import { excludeRE, stripCommentsAndStrings, toImports, separatorRE, importAsRE, toTypeDeclrationFile } from './utils'
 import { resolvePreset } from './preset'
 export * from './types'
 
@@ -14,6 +14,7 @@ interface Context {
 export interface Unimport {
   addImports: (code: string) => ReturnType<typeof addImports>
   detectImports: (code: string) => ReturnType<typeof detectImports>
+  generateTypeDecarations: () => string
 }
 
 export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
@@ -51,7 +52,8 @@ export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
 
   return {
     detectImports: (code: string) => detectImports(code, ctx),
-    addImports: (code: string) => addImports(code, ctx)
+    addImports: (code: string) => addImports(code, ctx),
+    generateTypeDecarations: () => toTypeDeclrationFile(ctx.imports)
   }
 }
 

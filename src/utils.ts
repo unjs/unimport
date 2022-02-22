@@ -75,6 +75,16 @@ export function toExports (imports: Import[]) {
     .join('\n')
 }
 
+export function toTypeDeclrationItems (imports: Import[]) {
+  return imports
+    .map(i => `  const ${i.as}: typeof import('${i.from}')${i.name !== '*' ? `['${i.name}']` : ''}`)
+}
+
+export function toTypeDeclrationFile (imports: Import[]) {
+  const items = toTypeDeclrationItems(imports)
+  return 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}\nexport default {}'
+}
+
 function stringifyImportAlias (item: Import, isCJS = false) {
   return item.name === item.as
     ? item.name
