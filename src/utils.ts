@@ -1,3 +1,6 @@
+
+import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
+import MagicString from 'magic-string'
 import type { Import } from './types'
 
 export const excludeRE = [
@@ -86,7 +89,7 @@ export function toTypeDeclrationFile (imports: Import[]) {
 }
 
 function stringifyImportAlias (item: Import, isCJS = false) {
-  return item.name === item.as
+  return (item.as === undefined || item.name === item.as)
     ? item.name
     : isCJS
       ? `${item.name}: ${item.as}`
@@ -102,4 +105,42 @@ function toImportModuleMap (imports: Import[]) {
     map[_import.from].add(_import)
   }
   return map
+}
+
+export function addImportToCode (code: string, imports: Import[], isCJS = false, mergeExisting = false) {
+  let newImports: Import[] = []
+  const s = new MagicString(code)
+
+  if (mergeExisting && !isCJS) {
+    const existing = findStaticImports(code).map(i => parseStaticImport(i))
+    const map = new Map<StaticImport, Import[]>()
+
+    imports.forEach((i) => {
+      const target = existing.find(e => e.specifier === i.from && e.imports.startsWith('{'))
+      if (!target) {
+        return newImports.push(i)
+      }
+      if (!map.has(target)) {
+        map.set(target, [])
+      }
+      map.get(target).push(i)
+    })
+
+    for (const [target, items] of map.entries()) {
+      const strings = items.map(i => stringifyImportAlias(i) + ', ')
+      s.appendLeft(target.start + target.code.match(/^\s*import\s*{/)[0].length, ' ' + strings.join('').trim())
+    }
+  } else {
+    newImports = imports
+  }
+
+  const newEntries = toImports(newImports, isCJS)
+  if (newEntries) {
+    s.prepend(newEntries)
+  }
+
+  return {
+    s,
+    code: s.toString()
+  }
 }

@@ -1,7 +1,7 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import type { Import, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, toImports, separatorRE, importAsRE, toTypeDeclrationFile } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode } from './utils'
 import { resolvePreset } from './preset'
 export * from './types'
 
@@ -52,7 +52,7 @@ export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
 
   return {
     detectImports: (code: string) => detectImports(code, ctx),
-    addImports: (code: string) => addImports(code, ctx),
+    addImports: (code: string, mergeExisting?: boolean) => addImports(code, ctx, mergeExisting),
     generateTypeDecarations: () => toTypeDeclrationFile(ctx.imports)
   }
 }
@@ -89,11 +89,8 @@ function detectImports (code: string, ctx: Context) {
   }
 }
 
-function addImports (code: string, ctx: Context) {
+function addImports (code: string, ctx: Context, mergeExisting?: boolean) {
   const { isCJSContext, matchedImports } = detectImports(code, ctx)
-  if (!matchedImports.length) {
-    return { code }
-  }
-  const imports = toImports(matchedImports, isCJSContext)
-  return { code: imports + code }
+
+  return addImportToCode(code, matchedImports, isCJSContext, mergeExisting)
 }

@@ -6,10 +6,7 @@ describe('unimport', () => {
     const { addImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }]
     })
-    expect(addImports('console.log(fooBar())')).toMatchInlineSnapshot(`
-      {
-        "code": "import { fooBar } from 'test-id';console.log(fooBar())",
-      }
-    `)
+    expect(addImports('console.log(fooBar())').code)
+      .toMatchInlineSnapshot('"import { fooBar } from \'test-id\';console.log(fooBar())"')
   })
 })
