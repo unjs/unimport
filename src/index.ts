@@ -58,6 +58,7 @@ export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
 function detectImports (code: string, ctx: Context) {
   // Strip comments so we don't match on them
   const strippedCode = stripCommentsAndStrings(code)
+  const isCJSContext = detectSyntax(strippedCode).hasCJS
 
   // Find all possible injection
   const matched = new Set(
@@ -75,15 +76,9 @@ function detectImports (code: string, ctx: Context) {
       .forEach(i => matched.delete(i))
   }
 
-  if (!matched.size) {
-    return { code }
-  }
-
   const matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
     .filter(Boolean)
-
-  const isCJSContext = detectSyntax(strippedCode).hasCJS
 
   return {
     strippedCode,
@@ -94,6 +89,9 @@ function detectImports (code: string, ctx: Context) {
 
 function addImports (code: string, ctx: Context) {
   const { isCJSContext, matchedImports } = detectImports(code, ctx)
+  if (!matchedImports.length) {
+    return { code }
+  }
   const imports = toImports(matchedImports, isCJSContext)
   return { code: imports + code }
 }
