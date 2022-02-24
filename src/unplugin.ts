@@ -18,10 +18,10 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
   return {
     name: 'unimport',
     enforce: 'post',
-    transform (_code, id) {
-      if (!filter(id)) {
-        return
-      }
+    transformInclude (id) {
+      return filter(id)
+    },
+    transform (_code) {
       const { code, s } = ctx.addImports(_code)
       if (code === _code) {
         return
