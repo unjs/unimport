@@ -11,13 +11,9 @@ interface Context {
   map: Map<string, Import>
 }
 
-export interface Unimport {
-  addImports: (code: string) => ReturnType<typeof addImports>
-  detectImports: (code: string) => ReturnType<typeof detectImports>
-  generateTypeDecarations: () => string
-}
+export type Unimport = ReturnType<typeof createUnimport>
 
-export function createUnimport (opts: Partial<UnimportOptions>): Unimport {
+export function createUnimport (opts: Partial<UnimportOptions>) {
   const ctx: Context = {
     imports: [].concat(opts.imports).filter(Boolean),
     map: new Map(),
