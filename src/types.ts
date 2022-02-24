@@ -20,10 +20,6 @@ export interface Preset {
 }
 
 export interface UnimportOptions {
-  /**
-   * @default [/node_modules/]
-   */
-  exclude: RegExp[]
   imports: Import[]
   presets: Preset[]
 }

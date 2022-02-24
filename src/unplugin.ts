@@ -1,17 +1,24 @@
 import { createUnplugin } from 'unplugin'
+import type { FilterPattern } from '@rollup/pluginutils'
+import { createFilter } from '@rollup/pluginutils'
 import { UnimportOptions } from './types'
 import { createUnimport } from './index'
 
 export interface UnimportPluginOptions extends UnimportOptions {
-  // TODO: add configurable include/exclude transform target
+  include: FilterPattern,
+  exclude: FilterPattern,
 }
 
 export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
   const ctx = createUnimport(options)
+  const filter = createFilter(
+    options.include || [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/],
+    options.exclude || [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]
+  )
   return {
     name: 'unimport',
     transform (_code, id) {
-      if (id.match(/\/node_modules\//)) {
+      if (!filter(id)) {
         return
       }
       const { code, s } = ctx.addImports(_code)
