@@ -17,6 +17,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
   )
   return {
     name: 'unimport',
+    enforce: 'post',
     transform (_code, id) {
       if (!filter(id)) {
         return
