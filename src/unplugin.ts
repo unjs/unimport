@@ -1,3 +1,4 @@
+import { promises as fs } from 'fs'
 import { createUnplugin } from 'unplugin'
 import type { FilterPattern } from '@rollup/pluginutils'
 import { createFilter } from '@rollup/pluginutils'
@@ -5,8 +6,9 @@ import { UnimportOptions } from './types'
 import { createUnimport } from './index'
 
 export interface UnimportPluginOptions extends UnimportOptions {
-  include: FilterPattern,
-  exclude: FilterPattern,
+  include: FilterPattern
+  exclude: FilterPattern
+  dts: boolean | string
 }
 
 export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
@@ -15,6 +17,9 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
     options.include || [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/],
     options.exclude || [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]
   )
+  const dts = options.dts === true
+    ? 'unimport.d.ts'
+    : options.dts
   return {
     name: 'unimport',
     enforce: 'post',
@@ -32,7 +37,9 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
       }
     },
     buildStart () {
-      // TODO: ctx.generateTypeDecarations()
+      if (dts) {
+        return fs.writeFile(dts, ctx.generateTypeDecarations(), 'utf-8')
+      }
     }
   }
 })
