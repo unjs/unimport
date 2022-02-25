@@ -1,8 +1,5 @@
+import { BuiltinPresetName, builtinPresets } from './presets'
 import type { Preset, Import } from './types'
-
-export function defineUnimportPreset (preset: Preset): Preset {
-  return preset
-}
 
 export function resolvePreset (preset: Preset): Import[] {
   const imports: Import[] = []
@@ -18,4 +15,14 @@ export function resolvePreset (preset: Preset): Import[] {
     }
   }
   return imports
+}
+
+export function resolveBuiltinPresets (presets: (BuiltinPresetName | Preset)[]): Import[] {
+  return presets.flatMap((p) => {
+    let preset = typeof p === 'string' ? builtinPresets[p] : p
+    if (typeof preset === 'function') {
+      preset = preset()
+    }
+    return resolvePreset(preset)
+  })
 }

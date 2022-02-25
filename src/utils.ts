@@ -1,7 +1,7 @@
 
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import type { Import } from './types'
+import type { Import, Preset } from './types'
 
 export const excludeRE = [
   // imported from other module
@@ -21,6 +21,10 @@ const quotesRE = [
   /(["'])((?:\\\1|(?!\1)|.|\r)*?)\1/gm,
   /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm
 ]
+
+export function defineUnimportPreset (preset: Preset): Preset {
+  return preset
+}
 
 export function stripCommentsAndStrings (code: string) {
   return code

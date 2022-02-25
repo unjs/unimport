@@ -1,3 +1,5 @@
+import type { BuiltinPresetName } from './presets'
+
 export type ModuleId = string
 export type ImportName = string
 
@@ -24,5 +26,5 @@ export interface Preset {
 
 export interface UnimportOptions {
   imports: Import[]
-  presets: Preset[]
+  presets: (Preset | BuiltinPresetName)[]
 }

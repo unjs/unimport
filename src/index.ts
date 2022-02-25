@@ -2,7 +2,7 @@ import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import type { Import, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports } from './utils'
-import { resolvePreset } from './preset'
+import { resolveBuiltinPresets } from './preset'
 export * from './types'
 
 interface Context {
@@ -21,9 +21,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   // Resolve presets
-  for (const preset of opts.presets || []) {
-    ctx.imports.push(...resolvePreset(preset))
-  }
+  ctx.imports.push(...resolveBuiltinPresets(opts.presets || []))
 
   // Normalize imports
   for (const _import of ctx.imports) {

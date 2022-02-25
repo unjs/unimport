@@ -1,8 +1,9 @@
-import { expect, describe, test } from 'vitest'
-import { defineUnimportPreset, resolvePreset } from '../src/preset'
+import { expect, describe, it } from 'vitest'
+import { resolvePreset, resolveBuiltinPresets } from '../src/preset'
+import { defineUnimportPreset } from '../src/utils'
 
 describe('preset', () => {
-  test('resolve', () => {
+  it('resolve', () => {
     expect(
       resolvePreset(defineUnimportPreset({
         from: 'vue',
@@ -56,6 +57,27 @@ describe('preset', () => {
           "as": "toRef",
           "from": "vue-nested",
           "name": "toRef",
+        },
+      ]
+    `)
+  })
+
+  it('built-in presets', () => {
+    expect(
+      resolveBuiltinPresets([
+        'vue-router'
+      ])
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "as": "useRouter",
+          "from": "vue-router",
+          "name": "useRouter",
+        },
+        {
+          "as": "useRoute",
+          "from": "vue-router",
+          "name": "useRoute",
         },
       ]
     `)
