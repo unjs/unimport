@@ -42,6 +42,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
 
     // Create map
+    ctx.map.clear()
     for (const _import of imports) {
       ctx.map.set(_import.as, _import)
     }
