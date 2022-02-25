@@ -105,7 +105,20 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
 export function toExports (imports: Import[]) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
-    .map(([name, imports]) => `export { ${Array.from(imports).map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
+    .flatMap(([name, imports]) => {
+      const entries: string[] = []
+      const filtered = Array.from(imports).filter((i) => {
+        if (i.name === '*') {
+          entries.push(`export * as ${i.as} from '${name}';`)
+          return false
+        }
+        return true
+      })
+      if (filtered.length) {
+        entries.push(`export { ${filtered.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
+      }
+      return entries
+    })
     .join('\n')
 }
 
@@ -174,4 +187,11 @@ export function addImportToCode (code: string, imports: Import[], isCJS = false,
     s,
     code: s.toString()
   }
+}
+
+export function normalizeImports (imports: Import[]): Import[] {
+  for (const _import of imports) {
+    _import.as = _import.as || _import.name
+  }
+  return imports
 }

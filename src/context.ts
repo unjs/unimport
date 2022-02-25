@@ -1,8 +1,9 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import type { Import, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports } from './utils'
 import { resolveBuiltinPresets } from './preset'
+import { normalizeImports } from '.'
 
 interface Context {
   readonly imports: Import[]
@@ -15,11 +16,17 @@ interface Context {
 export type Unimport = ReturnType<typeof createUnimport>
 
 export function createUnimport (opts: Partial<UnimportOptions>) {
+  // Cache for combine imports
+  let _combinedImports: Import[] | undefined
+
   const ctx: Context = {
     staticImports: [].concat(opts.imports).filter(Boolean),
     dynamicImports: [],
     get imports () {
-      return [...this.staticImports, ...this.dynamicImports]
+      if (!_combinedImports) {
+        _combinedImports = reload()
+      }
+      return _combinedImports
     },
     map: new Map(),
     matchRE: /__never__/g
@@ -28,16 +35,13 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   // Resolve presets
   ctx.staticImports.push(...resolveBuiltinPresets(opts.presets || []))
 
-  // Normalize imports
-  for (const _import of ctx.imports) {
-    _import.as = _import.as || _import.name
-  }
-
   // Detect duplicates
   ctx.staticImports = dedupeImports(ctx.staticImports, console.warn)
 
   function reload () {
-    const imports = dedupeImports(ctx.imports, console.warn)
+    // Combine static and dynamic imports
+    const imports = normalizeImports(dedupeImports(ctx.imports, console.warn))
+
     // Create regex
     ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
 
@@ -45,14 +49,18 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     for (const _import of imports) {
       ctx.map.set(_import.as, _import)
     }
+
+    return imports
   }
 
   function appendDynamicImports (imports: Import[]) {
     ctx.dynamicImports.push(...imports)
+    _combinedImports = undefined
   }
 
   function clearDynamicImports () {
     ctx.dynamicImports = []
+    _combinedImports = undefined
   }
 
   reload()
@@ -63,6 +71,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     clearDynamicImports,
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
+    toExports: () => toExports(ctx.imports),
     generateTypeDecarations: () => toTypeDeclrationFile(ctx.imports)
   }
 }
