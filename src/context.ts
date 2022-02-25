@@ -36,7 +36,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   function reload () {
     // Combine static and dynamic imports
-    const imports = normalizeImports(dedupeImports(ctx.imports, opts.warn || console.warn))
+    const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
 
     // Create regex
     ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
