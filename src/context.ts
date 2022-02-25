@@ -1,9 +1,8 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import type { Import, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports } from './utils'
 import { resolveBuiltinPresets } from './preset'
-import { normalizeImports } from '.'
 
 interface Context {
   readonly imports: Import[]
@@ -35,12 +34,9 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   // Resolve presets
   ctx.staticImports.push(...resolveBuiltinPresets(opts.presets || []))
 
-  // Detect duplicates
-  ctx.staticImports = dedupeImports(ctx.staticImports, console.warn)
-
   function reload () {
     // Combine static and dynamic imports
-    const imports = normalizeImports(dedupeImports(ctx.imports, console.warn))
+    const imports = normalizeImports(dedupeImports(ctx.imports, opts.warn || console.warn))
 
     // Create regex
     ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
@@ -53,22 +49,15 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return imports
   }
 
-  function appendDynamicImports (imports: Import[]) {
-    ctx.dynamicImports.push(...imports)
-    _combinedImports = undefined
-  }
-
-  function clearDynamicImports () {
-    ctx.dynamicImports = []
+  async function modifyDynamicImports (fn: (imports: Import[]) => Promise<void> | void) {
+    await fn(ctx.dynamicImports)
     _combinedImports = undefined
   }
 
   reload()
 
   return {
-    reload,
-    appendDynamicImports,
-    clearDynamicImports,
+    modifyDynamicImports,
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
     toExports: () => toExports(ctx.imports),

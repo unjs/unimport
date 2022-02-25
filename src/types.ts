@@ -27,4 +27,5 @@ export interface Preset {
 export interface UnimportOptions {
   imports: Import[]
   presets: (Preset | BuiltinPresetName)[]
+  warn: (msg: string) => void
 }
