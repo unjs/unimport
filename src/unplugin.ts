@@ -26,8 +26,8 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
     transformInclude (id) {
       return filter(id)
     },
-    transform (_code) {
-      const { code, s } = ctx.injectImports(_code)
+    async transform (_code) {
+      const { code, s } = await ctx.injectImports(_code)
       if (code === _code) {
         return
       }
