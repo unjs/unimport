@@ -27,7 +27,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
       return filter(id)
     },
     transform (_code) {
-      const { code, s } = ctx.addImports(_code)
+      const { code, s } = ctx.injectImports(_code)
       if (code === _code) {
         return
       }

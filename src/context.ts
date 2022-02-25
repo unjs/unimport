@@ -5,7 +5,9 @@ import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDecl
 import { resolveBuiltinPresets } from './preset'
 
 interface Context {
-  imports: Import[]
+  readonly imports: Import[]
+  staticImports: Import[]
+  dynamicImports: Import[]
   matchRE: RegExp
   map: Map<string, Import>
 }
@@ -14,13 +16,17 @@ export type Unimport = ReturnType<typeof createUnimport>
 
 export function createUnimport (opts: Partial<UnimportOptions>) {
   const ctx: Context = {
-    imports: [].concat(opts.imports).filter(Boolean),
+    staticImports: [].concat(opts.imports).filter(Boolean),
+    dynamicImports: [],
+    get imports () {
+      return [...this.staticImports, ...this.dynamicImports]
+    },
     map: new Map(),
     matchRE: /__never__/g
   }
 
   // Resolve presets
-  ctx.imports.push(...resolveBuiltinPresets(opts.presets || []))
+  ctx.staticImports.push(...resolveBuiltinPresets(opts.presets || []))
 
   // Normalize imports
   for (const _import of ctx.imports) {
@@ -28,19 +34,35 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   // Detect duplicates
-  ctx.imports = dedupeImports(ctx.imports, console.warn)
+  ctx.staticImports = dedupeImports(ctx.staticImports, console.warn)
 
-  // Create regex
-  ctx.matchRE = new RegExp(`(?:\\b|^)(${ctx.imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
+  function reload () {
+    const imports = dedupeImports(ctx.imports, console.warn)
+    // Create regex
+    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
 
-  // Create map
-  for (const _import of ctx.imports) {
-    ctx.map.set(_import.as, _import)
+    // Create map
+    for (const _import of imports) {
+      ctx.map.set(_import.as, _import)
+    }
   }
 
+  function appendDynamicImports (imports: Import[]) {
+    ctx.dynamicImports.push(...imports)
+  }
+
+  function clearDynamicImports () {
+    ctx.dynamicImports = []
+  }
+
+  reload()
+
   return {
+    reload,
+    appendDynamicImports,
+    clearDynamicImports,
     detectImports: (code: string) => detectImports(code, ctx),
-    addImports: (code: string, mergeExisting?: boolean) => addImports(code, ctx, mergeExisting),
+    injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
     generateTypeDecarations: () => toTypeDeclrationFile(ctx.imports)
   }
 }
@@ -77,7 +99,7 @@ function detectImports (code: string, ctx: Context) {
   }
 }
 
-function addImports (code: string, ctx: Context, mergeExisting?: boolean) {
+function injectImports (code: string, ctx: Context, mergeExisting?: boolean) {
   const { isCJSContext, matchedImports } = detectImports(code, ctx)
 
   return addImportToCode(code, matchedImports, isCJSContext, mergeExisting)
