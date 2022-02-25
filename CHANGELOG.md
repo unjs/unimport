@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/unjs/unimport/compare/v0.0.3...v0.0.4) (2022-02-25)
+
+
+### Features
+
+* path resolver for dts generation ([14598a5](https://github.com/unjs/unimport/commit/14598a523cd3aba0044986b68d3e166ca0565d5e))
+
 ### [0.0.3](https://github.com/unjs/unimport/compare/v0.0.2...v0.0.3) (2022-02-25)
 
 
