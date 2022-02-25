@@ -3,7 +3,7 @@ import { createUnplugin } from 'unplugin'
 import type { FilterPattern } from '@rollup/pluginutils'
 import { createFilter } from '@rollup/pluginutils'
 import { UnimportOptions } from './types'
-import { createUnimport } from './index'
+import { createUnimport } from './context'
 
 export interface UnimportPluginOptions extends UnimportOptions {
   include: FilterPattern

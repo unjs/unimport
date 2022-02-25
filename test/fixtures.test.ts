@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { promises as fs } from 'fs'
 import fg from 'fast-glob'
 import { describe, it, expect } from 'vitest'
-import { createUnimport } from '../src'
+import { createUnimport } from '../src/context'
 
 const UNMODIFIED_MARK = '@test-unmodified'
 
