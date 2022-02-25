@@ -65,7 +65,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 }
 
-function detectImports (code: string, ctx: Context) {
+// eslint-disable-next-line require-await
+async function detectImports (code: string, ctx: Context) {
   // Strip comments so we don't match on them
   const strippedCode = stripCommentsAndStrings(code)
   const isCJSContext = detectSyntax(strippedCode).hasCJS
@@ -97,8 +98,8 @@ function detectImports (code: string, ctx: Context) {
   }
 }
 
-function injectImports (code: string, ctx: Context, mergeExisting?: boolean) {
-  const { isCJSContext, matchedImports } = detectImports(code, ctx)
+async function injectImports (code: string, ctx: Context, mergeExisting?: boolean) {
+  const { isCJSContext, matchedImports } = await detectImports(code, ctx)
 
   return addImportToCode(code, matchedImports, isCJSContext, mergeExisting)
 }
