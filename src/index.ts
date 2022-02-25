@@ -1,7 +1,7 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import type { Import, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports } from './utils'
 import { resolvePreset } from './preset'
 export * from './types'
 
@@ -31,12 +31,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   // Detect duplicates
-  const usedNames = new Set()
-  for (const autoImport of ctx.imports) {
-    if (!usedNames.has(autoImport.as)) {
-      usedNames.add(autoImport.as)
-    }
-  }
+  ctx.imports = dedupeImports(ctx.imports, console.warn)
 
   // Create regex
   ctx.matchRE = new RegExp(`(?:\\b|^)(${ctx.imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')

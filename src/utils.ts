@@ -71,6 +71,33 @@ export function toImports (imports: Import[], isCJS = false) {
     .join('\n')
 }
 
+export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
+  const map = new Map<string, number>()
+  const indexToRemove = new Set<number>()
+
+  imports.forEach((i, idx) => {
+    const name = i.as || i.name
+    if (!map.has(name)) {
+      map.set(name, idx)
+      return
+    }
+
+    const other = imports[map.get(name)!]
+    const diff = (other.priority || 1) - (i.priority || 1)
+    if (diff === 0) {
+      warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored`)
+    }
+    if (diff <= 0) {
+      indexToRemove.add(map.get(name)!)
+      map.set(name, idx)
+    } else {
+      indexToRemove.add(idx)
+    }
+  })
+
+  return imports.filter((_, idx) => !indexToRemove.has(idx))
+}
+
 export function toExports (imports: Import[]) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)

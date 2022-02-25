@@ -8,8 +8,11 @@ export interface Import {
   as?: ImportName
   /** Module specifier to import from */
   from: ModuleId
-  /** Other imports required */
-  peerImports?: ModuleId[]
+  /**
+   * Priority of the import, if multiple imports have the same name, the one with the highest priority will be used
+   * @default 1
+   */
+  priority?: number
 }
 
 export type PresetImport = ImportName | [name: ImportName, as?: ImportName, from?: ModuleId] | Exclude<Import, 'from'>
