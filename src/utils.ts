@@ -1,7 +1,7 @@
 
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import type { Import, Preset } from './types'
+import type { Import, PathFromResolver, Preset } from './types'
 
 export const excludeRE = [
   // imported from other module
@@ -122,13 +122,16 @@ export function toExports (imports: Import[]) {
     .join('\n')
 }
 
-export function toTypeDeclrationItems (imports: Import[]) {
+export function toTypeDeclrationItems (imports: Import[], resolvePath?: PathFromResolver) {
   return imports
-    .map(i => `  const ${i.as}: typeof import('${i.from}')${i.name !== '*' ? `['${i.name}']` : ''}`)
+    .map((i) => {
+      const from = resolvePath?.(i) || i.from
+      return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
+    })
 }
 
-export function toTypeDeclrationFile (imports: Import[]) {
-  const items = toTypeDeclrationItems(imports)
+export function toTypeDeclrationFile (imports: Import[], resolvePath?: PathFromResolver) {
+  const items = toTypeDeclrationItems(imports, resolvePath)
   return 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}\nexport default {}'
 }
 

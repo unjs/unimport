@@ -29,3 +29,5 @@ export interface UnimportOptions {
   presets: (Preset | BuiltinPresetName)[]
   warn: (msg: string) => void
 }
+
+export type PathFromResolver = (_import: Import) => string | undefined
