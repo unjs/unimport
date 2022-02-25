@@ -59,6 +59,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   return {
     modifyDynamicImports,
+    getImports: () => ctx.imports,
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
     toExports: () => toExports(ctx.imports),
