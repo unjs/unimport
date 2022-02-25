@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/unjs/unimport/compare/v0.0.2...v0.0.3) (2022-02-25)
+
+
+### Features
+
+* `getImports` function ([84e6564](https://github.com/unjs/unimport/commit/84e6564a20e577b62ebd38609bbda98e2d49ffa9))
+* `modifyDynamicImports` function ([8a15b6a](https://github.com/unjs/unimport/commit/8a15b6abebddd4b6f74e280b7960dddaa803f1fb))
+* dynamic imports ([4964f9b](https://github.com/unjs/unimport/commit/4964f9b52c8a3c5a10f266c3b9740b02d6427ada))
+* toExports ([b2baa8a](https://github.com/unjs/unimport/commit/b2baa8ac201c1210bc3ee17225955d96ae3b4f19))
+
+
+### Bug Fixes
+
+* clear internal map ([8232a44](https://github.com/unjs/unimport/commit/8232a44a97b0d05f7ea1c63c2f1c8008efabe3c0))
+* **unplugin:** async transform support ([efc2a66](https://github.com/unjs/unimport/commit/efc2a6633590b27f1018146868cd8bffcb2da3ae))
+
 ### [0.0.2](https://github.com/unjs/unimport/compare/v0.0.1...v0.0.2) (2022-02-25)
 
 
