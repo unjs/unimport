@@ -34,17 +34,17 @@
     "@rollup/pluginutils": "^4.1.2",
     "escape-string-regexp": "^5.0.0",
     "local-pkg": "^0.4.1",
-    "magic-string": "^0.25.7",
+    "magic-string": "^0.26.0",
     "mlly": "^0.4.3",
-    "unplugin": "^0.3.2"
+    "unplugin": "^0.3.3"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "c8": "latest",
-    "eslint": "^8.9.0",
+    "eslint": "^8.10.0",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "^0.5.3"
+    "vitest": "^0.5.9"
   }
 }
