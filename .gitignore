@@ -1,13 +1,13 @@
-!.yarn/cache
+.yarn/*
 !.yarn/patches
-!.yarn/plugins
 !.yarn/releases
+!.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+.pnp.*
 .conf*
 .DS_Store
 .vscode
-.yarn/*
 *.log*
 coverage
 dist
