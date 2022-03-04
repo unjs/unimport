@@ -5,11 +5,9 @@
 [![Github Actions][github-actions-src]][github-actions-href]
 [![Codecov][codecov-src]][codecov-href]
 
-> Package description
+> Unified utils for auto importing APIs in modules
 
-## Usage
-
-Install package:
+## Install
 
 ```sh
 # npm
@@ -22,7 +20,39 @@ yarn install unimport
 pnpm install unimport
 ```
 
-Import:
+## Usage
+
+### Plugin Usage
+
+Powered by [unplugin](https://github.com/unjs/unplugin), `unimport` provides a plugin interface for bundlers.
+
+#### Vite / Rollup
+
+```ts
+// vite.config.js / rollup.config.js
+import Unimport from 'unimport/unplugin'
+
+export default {
+  plugins: [
+    Unimport.vite({ /* plugin options */ })
+  ]
+}
+```
+
+#### Webpack
+
+```ts
+// webpack.config.js
+import Unimport from 'unimport/unplugin'
+
+module.exports = {
+  plugins: [
+    Unimport.webpack({ /* plugin options */ })
+  ]
+}
+```
+
+### Programmatic Usage
 
 ```js
 // ESM
