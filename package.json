@@ -16,7 +16,8 @@
       "import": "./dist/unplugin.mjs",
       "require": "./dist/unplugin.cjs",
       "types": "./dist/unplugin.d.ts"
-    }
+    },
+    "./*": "./*"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -49,12 +50,5 @@
     "unbuild": "latest",
     "vitest": "^0.5.9"
   },
-  "packageManager": "yarn@3.2.0",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*"
-      ]
-    }
-  }
+  "packageManager": "yarn@3.2.0"
 }
