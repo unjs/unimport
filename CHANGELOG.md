@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/unjs/unimport/compare/v0.0.7...v0.0.8) (2022-03-09)
+
+
+### Bug Fixes
+
+* ship dts files ([7fe9a32](https://github.com/unjs/unimport/commit/7fe9a32c8063d922ad8cf6aa4d82ab4b85974e14))
+
 ### [0.0.7](https://github.com/unjs/unimport/compare/v0.0.6...v0.0.7) (2022-03-09)
 
 
