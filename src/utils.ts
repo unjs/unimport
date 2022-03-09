@@ -132,7 +132,7 @@ export function toTypeDeclrationItems (imports: Import[], resolvePath?: PathFrom
 
 export function toTypeDeclrationFile (imports: Import[], resolvePath?: PathFromResolver) {
   const items = toTypeDeclrationItems(imports, resolvePath)
-  return 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}\nexport default {}'
+  return 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}\nexport {}'
 }
 
 function stringifyImportAlias (item: Import, isCJS = false) {

@@ -43,6 +43,6 @@ test('dts', () => {
         const useRef: typeof import('react')['useRef']
         const \$: typeof import('jquery')['\$']
       }
-      export default {}"
+      export {}"
     `)
 })
