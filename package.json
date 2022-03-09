@@ -9,11 +9,13 @@
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     },
     "./unplugin": {
       "import": "./dist/unplugin.mjs",
-      "require": "./dist/unplugin.cjs"
+      "require": "./dist/unplugin.cjs",
+      "types": "./dist/unplugin.d.ts"
     }
   },
   "main": "./dist/index.cjs",
@@ -47,5 +49,12 @@
     "unbuild": "latest",
     "vitest": "^0.5.9"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*"
+      ]
+    }
+  }
 }
