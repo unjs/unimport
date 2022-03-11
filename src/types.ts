@@ -22,6 +22,7 @@ export type PresetImport = ImportName | [name: ImportName, as?: ImportName, from
 export interface Preset {
   from: ModuleId
   imports: (PresetImport | Preset)[]
+  priority?: number
 }
 
 export interface UnimportOptions {

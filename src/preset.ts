@@ -3,15 +3,23 @@ import type { Preset, Import } from './types'
 
 export function resolvePreset (preset: Preset): Import[] {
   const imports: Import[] = []
+
+  const defaults: Omit<Import, 'name'> = {
+    from: preset.from
+  }
+  if (preset.priority != null) {
+    defaults.priority = preset.priority
+  }
+
   for (const _import of preset.imports) {
     if (typeof _import === 'string') {
-      imports.push({ name: _import, as: _import, from: preset.from })
+      imports.push({ ...defaults, name: _import, as: _import })
     } else if (Array.isArray(_import)) {
-      imports.push({ name: _import[0], as: _import[1] || _import[0], from: _import[2] || preset.from })
+      imports.push({ ...defaults, name: _import[0], as: _import[1] || _import[0], from: _import[2] || preset.from })
     } else if ((_import as Preset).imports) {
       imports.push(...resolvePreset(_import as Preset))
     } else {
-      imports.push({ from: preset.from, ..._import as Import })
+      imports.push({ ...defaults, ..._import as Import })
     }
   }
   return imports
