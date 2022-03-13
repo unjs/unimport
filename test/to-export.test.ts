@@ -61,4 +61,17 @@ describe('toExports', () => {
         export { foobar, default as defaultAlias } from 'test2';"
       `)
   })
+
+  it('strip extensions', () => {
+    const imports: Import[] = [
+      { from: 'test1.ts', name: 'foo', as: 'foo' },
+      { from: 'test2.mjs', name: 'foobar', as: 'foobar' }
+    ]
+
+    expect(toExports(imports))
+      .toMatchInlineSnapshot(`
+        "export { foo } from 'test1';
+        export { foobar } from 'test2';"
+      `)
+  })
 })
