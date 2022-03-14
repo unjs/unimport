@@ -51,6 +51,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   async function modifyDynamicImports (fn: (imports: Import[]) => Promise<void> | void) {
+    ctx.dynamicImports = []
     await fn(ctx.dynamicImports)
     _combinedImports = undefined
   }
