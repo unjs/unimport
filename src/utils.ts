@@ -106,6 +106,7 @@ export function toExports (imports: Import[]) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
+      name = name.replace(/\.[a-z]+$/, '')
       const entries: string[] = []
       const filtered = Array.from(imports).filter((i) => {
         if (i.name === '*') {
