@@ -137,11 +137,11 @@ export function toTypeDeclrationFile (imports: Import[], options?: TypeDeclratio
   const items = toTypeDeclrationItems(imports, options)
   const {
     exportHelper = true
-  } = options
+  } = options || {}
 
   let declration = 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
   if (exportHelper) {
-    declration += 'export {}'
+    declration += '\nexport {}'
   }
   return declration
 }
