@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/unjs/unimport/compare/v0.0.8...v0.1.0) (2022-03-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* use options for `generateTypeDecarations`
+
+### Features
+
+* `scanDirExports` utils, close [#9](https://github.com/unjs/unimport/issues/9) ([#10](https://github.com/unjs/unimport/issues/10)) ([e6f7c71](https://github.com/unjs/unimport/commit/e6f7c711c2f9f69f3390049b09637e7d28296be5))
+* resolve priority from presets ([2353807](https://github.com/unjs/unimport/commit/2353807f8187cda87c99ad3184e0f1a332a9f9fa))
+* use options for `generateTypeDecarations` ([4c9c4dc](https://github.com/unjs/unimport/commit/4c9c4dc5dff3e76546dfd57785278cb3bfa099e3))
+
+
+### Bug Fixes
+
+* dts export {} ([0c7adb6](https://github.com/unjs/unimport/commit/0c7adb6dccb21b0ba063f43b24b94a5f63510d58))
+* regexRE escaping ([61993e3](https://github.com/unjs/unimport/commit/61993e37f7223482b5a6c2159373a6f9c92a28e5))
+* strip file extensions for exports ([#11](https://github.com/unjs/unimport/issues/11)) ([5e183a8](https://github.com/unjs/unimport/commit/5e183a8ca41fe79995de39a77f485818916d5df4))
+* strip regex ([578d9b1](https://github.com/unjs/unimport/commit/578d9b138a1ef9ed0ecad95d5cb4e4bd0b71c119))
+
 ### [0.0.8](https://github.com/unjs/unimport/compare/v0.0.7...v0.0.8) (2022-03-09)
 
 
