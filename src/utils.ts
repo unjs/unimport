@@ -14,6 +14,7 @@ export const excludeRE = [
 
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
+const regexRE = /\/.*?\/[gimsuy]*/g
 const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm
 const singlelineCommentsRE = /\/\/\s.*$/gm
 const templateLiteralRE = /\$\{(.*)\}/g
@@ -33,6 +34,7 @@ export function stripCommentsAndStrings (code: string) {
     .replace(templateLiteralRE, '` + $1 + `')
     .replace(quotesRE[0], '""')
     .replace(quotesRE[1], '``')
+    .replace(regexRE, 'new RegExp("")')
 }
 
 export function toImports (imports: Import[], isCJS = false) {

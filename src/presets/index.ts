@@ -16,6 +16,7 @@ import {
 import veeValidate from './vee-validate'
 import vitepress from './vitepress'
 import vue from './vue'
+import vueMacros from './vue-macros'
 import vueDemi from './vue-demi'
 import vueI18n from './vue-i18n'
 import vueRouter from './vue-router'
@@ -50,6 +51,7 @@ export const builtinPresets = {
   'vue-i18n': vueI18n,
   'vue-router': vueRouter,
   vue: vue,
+  'vue/macros': vueMacros,
   vuex: vuex,
   vitest: vitest,
   'uni-app': uniApp,
