@@ -36,6 +36,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   function reload () {
     // Combine static and dynamic imports
+    // eslint-disable-next-line no-console
     const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
 
     // Create regex

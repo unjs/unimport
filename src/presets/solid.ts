@@ -1,6 +1,6 @@
 import { defineUnimportPreset } from '../utils'
 
-export const solid = defineUnimportPreset({
+export const solidCore = defineUnimportPreset({
   from: 'solid-js',
   imports: [
     'createSignal',
@@ -65,7 +65,7 @@ export const solidWeb = defineUnimportPreset({
 export default defineUnimportPreset({
   from: 'solid-js',
   imports: [
-    solid,
+    solidCore,
     solidStore,
     solidWeb
   ]

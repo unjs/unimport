@@ -1,7 +1,7 @@
 
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import type { Import, PathFromResolver, Preset, TypeDeclrationOptions } from './types'
+import type { Import, Preset, TypeDeclrationOptions } from './types'
 
 export const excludeRE = [
   // imported from other module

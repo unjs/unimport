@@ -22,6 +22,7 @@ export default (): Preset => {
           .filter((i: string) => i && i.length >= 4 && !excluded.includes(i))
       })
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error)
       throw new Error('[auto-import] failed to load @vueuse/core, have you installed it?')
     }
