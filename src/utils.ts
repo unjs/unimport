@@ -14,7 +14,7 @@ export const excludeRE = [
 
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
-const regexRE = /\/.*?\/[gimsuy]*/g
+const regexRE = /\/.*?(?<!\\)\/[gimsuy]*/g
 const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm
 const singlelineCommentsRE = /\/\/\s.*$/gm
 const templateLiteralRE = /\$\{(.*)\}/g
