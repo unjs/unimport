@@ -1,7 +1,7 @@
 
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import type { Import, PathFromResolver, Preset } from './types'
+import type { Import, PathFromResolver, Preset, TypeDeclrationOptions } from './types'
 
 export const excludeRE = [
   // imported from other module
@@ -125,17 +125,25 @@ export function toExports (imports: Import[]) {
     .join('\n')
 }
 
-export function toTypeDeclrationItems (imports: Import[], resolvePath?: PathFromResolver) {
+export function toTypeDeclrationItems (imports: Import[], options?: TypeDeclrationOptions) {
   return imports
     .map((i) => {
-      const from = resolvePath?.(i) || i.from
+      const from = options?.resolvePath?.(i) || i.from
       return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
     })
 }
 
-export function toTypeDeclrationFile (imports: Import[], resolvePath?: PathFromResolver) {
-  const items = toTypeDeclrationItems(imports, resolvePath)
-  return 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}\nexport {}'
+export function toTypeDeclrationFile (imports: Import[], options?: TypeDeclrationOptions) {
+  const items = toTypeDeclrationItems(imports, options)
+  const {
+    exportHelper = true
+  } = options
+
+  let declration = 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
+  if (exportHelper) {
+    declration += 'export {}'
+  }
+  return declration
 }
 
 function stringifyImportAlias (item: Import, isCJS = false) {

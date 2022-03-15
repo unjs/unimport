@@ -1,6 +1,6 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
-import type { Import, PathFromResolver, UnimportOptions } from './types'
+import type { Import, TypeDeclrationOptions, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports } from './utils'
 import { resolveBuiltinPresets } from './preset'
 
@@ -63,7 +63,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
     toExports: () => toExports(ctx.imports),
-    generateTypeDecarations: (pathResolver?: PathFromResolver) => toTypeDeclrationFile(ctx.imports, pathResolver)
+    generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, options)
   }
 }
 

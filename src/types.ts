@@ -36,3 +36,16 @@ export type PathFromResolver = (_import: Import) => string | undefined
 export interface ScanDirExportsOptions {
   fileFilter?: (file: string) => boolean
 }
+
+export interface TypeDeclrationOptions {
+  /**
+   * Custom resolver for path of the import
+   */
+  resolvePath?: PathFromResolver
+  /**
+   * Append `export {}` to the end of the file
+   *
+   * @default true
+   */
+  exportHelper?: boolean
+}
