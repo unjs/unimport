@@ -40,7 +40,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
 
     // Create regex
-    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:\\b|\\()`, 'g')
+    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:[.(\\)\\[\\]])`, 'g')
 
     // Create map
     ctx.map.clear()
