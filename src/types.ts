@@ -4,7 +4,7 @@ export type ModuleId = string
 export type ImportName = string
 
 export interface Import {
-  /** import name to be imported */
+  /** Import name to be detected */
   name: ImportName
   /** Import as this name */
   as?: ImportName
@@ -15,6 +15,8 @@ export interface Import {
    * @default 1
    */
   priority?: number
+  /** If this import is disabled */
+  disabled?: boolean
 }
 
 export type PresetImport = ImportName | [name: ImportName, as?: ImportName, from?: ModuleId] | Exclude<Import, 'from'>

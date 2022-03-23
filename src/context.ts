@@ -38,6 +38,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     // Combine static and dynamic imports
     // eslint-disable-next-line no-console
     const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
+      .filter(i => !i.disabled)
 
     // Create regex
     ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:[.(\\)\\[\\]])`, 'g')
@@ -92,7 +93,7 @@ async function detectImports (code: string, ctx: Context) {
 
   const matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
-    .filter(Boolean)
+    .filter(i => i && !i.disabled)
 
   return {
     strippedCode,
