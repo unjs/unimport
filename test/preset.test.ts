@@ -23,7 +23,8 @@ describe('preset', () => {
             from: 'vue-nested',
             imports: [
               'toRef'
-            ]
+            ],
+            disabled: true
           }
         ]
       }))
@@ -55,6 +56,7 @@ describe('preset', () => {
         },
         {
           "as": "toRef",
+          "disabled": true,
           "from": "vue-nested",
           "name": "toRef",
         },

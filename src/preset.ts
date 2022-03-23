@@ -1,25 +1,28 @@
 import { BuiltinPresetName, builtinPresets } from './presets'
-import type { Preset, Import } from './types'
+import type { Preset, Import, ImportCommon } from './types'
+
+const commonProps: (keyof ImportCommon)[] = ['from', 'priority', 'disabled']
 
 export function resolvePreset (preset: Preset): Import[] {
   const imports: Import[] = []
 
-  const defaults: Omit<Import, 'name'> = {
-    from: preset.from
-  }
-  if (preset.priority != null) {
-    defaults.priority = preset.priority
-  }
+  const common = {} as ImportCommon
+  commonProps.forEach((i) => {
+    if (i in preset) {
+      // @ts-expect-error
+      common[i] = preset[i]
+    }
+  })
 
   for (const _import of preset.imports) {
     if (typeof _import === 'string') {
-      imports.push({ ...defaults, name: _import, as: _import })
+      imports.push({ ...common, name: _import, as: _import })
     } else if (Array.isArray(_import)) {
-      imports.push({ ...defaults, name: _import[0], as: _import[1] || _import[0], from: _import[2] || preset.from })
+      imports.push({ ...common, name: _import[0], as: _import[1] || _import[0], from: _import[2] || preset.from })
     } else if ((_import as Preset).imports) {
       imports.push(...resolvePreset(_import as Preset))
     } else {
-      imports.push({ ...defaults, ..._import as Import })
+      imports.push({ ...common, ..._import as Import })
     }
   }
   return imports
