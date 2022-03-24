@@ -81,7 +81,7 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
   const map = new Map<string, number>()
   const indexToRemove = new Set<number>()
 
-  imports.forEach((i, idx) => {
+  imports.filter(i => !i.disabled).forEach((i, idx) => {
     const name = i.as || i.name
     if (!map.has(name)) {
       map.set(name, idx)
