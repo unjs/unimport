@@ -16,4 +16,13 @@ describe('able to disable', () => {
     expect((await injectImports('console.log(fooBar())')).code)
       .toMatchInlineSnapshot('"console.log(fooBar())"')
   })
+  test('multiple imports', async () => {
+    const item2 = { name: item.name, from: 'other-id', disabled: false }
+    const { injectImports } = createUnimport({
+      imports: [item, item2]
+    })
+    item.disabled = true
+    expect((await injectImports('console.log(fooBar())')).code)
+      .toMatchInlineSnapshot('"import { fooBar } from \'other-id\';console.log(fooBar())"')
+  })
 })

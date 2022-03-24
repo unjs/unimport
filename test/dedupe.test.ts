@@ -65,4 +65,35 @@ describe('dedupeImports', () => {
       ]
     `)
   })
+
+  it('should not warn about duplicates when one is disabled', () => {
+    expect(dedupeImports(
+      [
+        {
+          name: 'foo',
+          from: 'module1',
+          disabled: true
+        },
+        {
+          name: 'foo',
+          from: 'module2'
+        }
+      ],
+      warnFn
+    )).toMatchInlineSnapshot(`
+      [
+        {
+          "disabled": true,
+          "from": "module1",
+          "name": "foo",
+        },
+        {
+          "from": "module2",
+          "name": "foo",
+        },
+      ]
+    `)
+
+    expect(warnMsg).toMatchInlineSnapshot('""')
+  })
 })
