@@ -41,7 +41,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       .filter(i => !i.disabled)
 
     // Create regex
-    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:[.(\\)\\[\\]])`, 'g')
+    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:[.(\\)\\[\\];])`, 'g')
 
     // Create map
     ctx.map.clear()
@@ -65,7 +65,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
     toExports: () => toExports(ctx.imports),
-    generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, options)
+    generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, {
+      resolvePath: i => i.from.replace(/\.ts$/, ''),
+      ...options
+    })
   }
 }
 
