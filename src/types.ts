@@ -52,3 +52,15 @@ export interface TypeDeclrationOptions {
    */
   exportHelper?: boolean
 }
+
+export interface InjectImportsOptions {
+  /**
+   * @default false
+   */
+  mergeExisting?: boolean
+
+  /**
+   * @default false
+   */
+  vueTemplate?: boolean
+}

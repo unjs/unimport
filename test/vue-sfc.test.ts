@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { createUnimport } from '../src'
+import { UnimportContext } from '../src'
 import { vueTemplateAutoImport } from '../src/vue-sfc'
 
 const input = `
@@ -12,11 +12,11 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
 `
 
 test('vue-sfc', () => {
-  const ctx = createUnimport({
+  const ctx = {
     imports: [
       { name: 'multiplier', from: 'foo', as: 'multiplier' }
     ]
-  })
+  } as UnimportContext
 
   expect(vueTemplateAutoImport(input, ctx).toString()).toMatchInlineSnapshot(`
     "import { multiplier as __unimport_multiplier } from 'foo';

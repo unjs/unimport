@@ -1,11 +1,12 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
 import MagicString from 'magic-string'
-import type { Import, TypeDeclrationOptions, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, getString } from './utils'
+import type { Import, InjectImportsOptions, TypeDeclrationOptions, UnimportOptions } from './types'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, getString, getMagicString } from './utils'
 import { resolveBuiltinPresets } from './preset'
+import { vueTemplateAutoImport } from './vue-sfc'
 
-interface Context {
+export interface UnimportContext {
   readonly imports: Import[]
   staticImports: Import[]
   dynamicImports: Import[]
@@ -19,7 +20,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
 
-  const ctx: Context = {
+  const ctx: UnimportContext = {
     staticImports: [].concat(opts.imports).filter(Boolean),
     dynamicImports: [],
     get imports () {
@@ -64,7 +65,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     modifyDynamicImports,
     getImports: () => ctx.imports,
     detectImports: (code: string) => detectImports(code, ctx),
-    injectImports: (code: string | MagicString, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
+    injectImports: (code: string | MagicString, options?: InjectImportsOptions) => injectImports(code, ctx, options),
     toExports: () => toExports(ctx.imports),
     generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, {
       resolvePath: i => i.from.replace(/\.ts$/, ''),
@@ -74,7 +75,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 }
 
 // eslint-disable-next-line require-await
-async function detectImports (code: string | MagicString, ctx: Context) {
+async function detectImports (code: string | MagicString, ctx: UnimportContext) {
   // Strip comments so we don't match on them
   const strippedCode = stripCommentsAndStrings(getString(code))
   const isCJSContext = detectSyntax(strippedCode).hasCJS
@@ -106,8 +107,14 @@ async function detectImports (code: string | MagicString, ctx: Context) {
   }
 }
 
-async function injectImports (code: string | MagicString, ctx: Context, mergeExisting?: boolean) {
-  const { isCJSContext, matchedImports } = await detectImports(code, ctx)
+async function injectImports (code: string | MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
+  const s = getMagicString(code)
 
-  return addImportToCode(code, matchedImports, isCJSContext, mergeExisting)
+  if (options?.vueTemplate) {
+    vueTemplateAutoImport(s, ctx)
+  }
+
+  const { isCJSContext, matchedImports } = await detectImports(s, ctx)
+
+  return addImportToCode(s, matchedImports, isCJSContext, options?.mergeExisting)
 }

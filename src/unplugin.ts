@@ -6,16 +6,16 @@ import MagicString from 'magic-string'
 import { UnimportOptions } from './types'
 import { createUnimport } from './context'
 import { scanDirExports } from './scan'
-import { vueTemplateAutoImport } from './vue-sfc'
 
 export interface UnimportPluginOptions extends UnimportOptions {
   include: FilterPattern
   exclude: FilterPattern
   dts: boolean | string
   dirs: string[]
+  vueTemplate: boolean
 }
 
-export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
+export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => {
   const ctx = createUnimport(options)
   const filter = createFilter(
     options.include || [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/],
@@ -33,10 +33,10 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
     async transform (_code, id) {
       const s = new MagicString(_code)
 
-      if (id.endsWith('.vue')) {
-        vueTemplateAutoImport(s, ctx)
-      }
-      await ctx.injectImports(s)
+      await ctx.injectImports(s, {
+        vueTemplate: options.vueTemplate && id.endsWith('.vue')
+      })
+
       if (!s.hasChanged()) {
         return
       }
