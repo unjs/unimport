@@ -2,6 +2,7 @@ import { promises as fs } from 'fs'
 import { createUnplugin } from 'unplugin'
 import type { FilterPattern } from '@rollup/pluginutils'
 import { createFilter } from '@rollup/pluginutils'
+import MagicString from 'magic-string'
 import { UnimportOptions } from './types'
 import { createUnimport } from './context'
 import { scanDirExports } from './scan'
@@ -30,16 +31,17 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
       return filter(id)
     },
     async transform (_code, id) {
-      if (id.endsWith('.vue')) {
-        _code = vueTemplateAutoImport(_code, ctx)
-      }
+      const s = new MagicString(_code)
 
-      const { code, s } = await ctx.injectImports(_code)
-      if (code === _code) {
+      if (id.endsWith('.vue')) {
+        vueTemplateAutoImport(s, ctx)
+      }
+      await ctx.injectImports(s)
+      if (!s.hasChanged()) {
         return
       }
       return {
-        code,
+        code: s.toString(),
         map: s.generateMap()
       }
     },

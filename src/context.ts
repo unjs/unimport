@@ -1,7 +1,8 @@
 import { detectSyntax } from 'mlly'
 import escapeRE from 'escape-string-regexp'
+import MagicString from 'magic-string'
 import type { Import, TypeDeclrationOptions, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 
 interface Context {
@@ -63,7 +64,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     modifyDynamicImports,
     getImports: () => ctx.imports,
     detectImports: (code: string) => detectImports(code, ctx),
-    injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
+    injectImports: (code: string | MagicString, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
     toExports: () => toExports(ctx.imports),
     generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, {
       resolvePath: i => i.from.replace(/\.ts$/, ''),
@@ -73,9 +74,9 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 }
 
 // eslint-disable-next-line require-await
-async function detectImports (code: string, ctx: Context) {
+async function detectImports (code: string | MagicString, ctx: Context) {
   // Strip comments so we don't match on them
-  const strippedCode = stripCommentsAndStrings(code)
+  const strippedCode = stripCommentsAndStrings(getString(code))
   const isCJSContext = detectSyntax(strippedCode).hasCJS
 
   // Find all possible injection
@@ -105,7 +106,7 @@ async function detectImports (code: string, ctx: Context) {
   }
 }
 
-async function injectImports (code: string, ctx: Context, mergeExisting?: boolean) {
+async function injectImports (code: string | MagicString, ctx: Context, mergeExisting?: boolean) {
   const { isCJSContext, matchedImports } = await detectImports(code, ctx)
 
   return addImportToCode(code, matchedImports, isCJSContext, mergeExisting)

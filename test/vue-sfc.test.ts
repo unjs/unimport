@@ -18,7 +18,7 @@ test('vue-sfc', () => {
     ]
   })
 
-  expect(vueTemplateAutoImport(input, ctx)).toMatchInlineSnapshot(`
+  expect(vueTemplateAutoImport(input, ctx).toString()).toMatchInlineSnapshot(`
     "import { multiplier as __unimport_multiplier } from 'foo';
     function _sfc_render(_ctx, _cache, \$props, \$setup, \$data, \$options) {
       return _openBlock(), _createElementBlock(\\"div\\", null, [

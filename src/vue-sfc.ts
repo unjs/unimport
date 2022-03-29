@@ -1,13 +1,16 @@
 import MagicString from 'magic-string'
 import { Unimport } from './context'
 import { Import } from './types'
-import { toImports } from './utils'
+import { toImports, getMagicString } from './utils'
 
 const contextRE = /\b_ctx\.([\w_]+)\b/g
 
-export function vueTemplateAutoImport (code: string, ctx: Unimport) {
-  const matches = Array.from(code.matchAll(contextRE))
-  const s = new MagicString(code)
+export function vueTemplateAutoImport (code: string | MagicString, ctx: Unimport) {
+  const s = getMagicString(code)
+  const matches = Array.from(s.original.matchAll(contextRE))
+  if (!matches.length) {
+    return s
+  }
 
   const imports = ctx.getImports()
   const targets: Import[] = []
@@ -32,7 +35,9 @@ export function vueTemplateAutoImport (code: string, ctx: Unimport) {
     }
   }
 
-  s.prepend(toImports(targets))
+  if (targets.length) {
+    s.prepend(toImports(targets))
+  }
 
-  return s.toString()
+  return s
 }
