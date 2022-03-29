@@ -4,11 +4,13 @@ import type { FilterPattern } from '@rollup/pluginutils'
 import { createFilter } from '@rollup/pluginutils'
 import { UnimportOptions } from './types'
 import { createUnimport } from './context'
+import { scanDirExports } from './scan'
 
 export interface UnimportPluginOptions extends UnimportOptions {
   include: FilterPattern
   exclude: FilterPattern
   dts: boolean | string
+  dirs: string[]
 }
 
 export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
@@ -36,7 +38,13 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
         map: s.generateMap()
       }
     },
-    buildStart () {
+    async buildStart () {
+      if (options.dirs?.length) {
+        await ctx.modifyDynamicImports(async (imports) => {
+          imports.push(...await scanDirExports(options.dirs))
+        })
+      }
+
       if (dts) {
         return fs.writeFile(dts, ctx.generateTypeDecarations(), 'utf-8')
       }
