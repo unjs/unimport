@@ -1,9 +1,18 @@
 <script setup lang="ts">
+const count = ref(1)
 
+function inc () {
+  count.value += 1
+}
 </script>
 
 <template>
-  <h1>Hello World</h1>
+  <div>
+    <h1>{{ count }}</h1>
+    <button @click="inc">
+      Inc
+    </button>
+  </div>
 </template>
 
 <style>
