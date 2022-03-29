@@ -48,5 +48,6 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const multiplier: typeof import('/Users/antfu/i/unimport/playground/composables/index')['multiplier']
   const useDoubled: typeof import('/Users/antfu/i/unimport/playground/composables/index')['useDoubled']
+  const bump: typeof import('/Users/antfu/i/unimport/playground/composables/index')['bump']
 }
 export {}

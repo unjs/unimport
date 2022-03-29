@@ -13,6 +13,9 @@ function inc () {
     <button @click="inc">
       Inc
     </button>
+    <button @click="bump">
+      x1
+    </button>
   </div>
 </template>
 
