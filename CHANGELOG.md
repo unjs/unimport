@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/unjs/unimport/compare/v0.1.3...v0.1.4) (2022-04-05)
+
+
+### Bug Fixes
+
+* template literal detection ([3ea56ff](https://github.com/unjs/unimport/commit/3ea56fffb02d4efb7760526023601196a721a718))
+
 ### [0.1.3](https://github.com/unjs/unimport/compare/v0.1.2...v0.1.3) (2022-03-24)
 
 
