@@ -10,7 +10,8 @@ describe('fixtures', async () => {
   const { injectImports } = createUnimport({
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
-      { name: 'foobar', from: 'foobar', as: 'foobar' }
+      { name: 'foobar', from: 'foobar', as: 'foobar' },
+      { name: 'fooConst', from: 'foo', as: 'fooConst' }
     ],
     presets: [
       {

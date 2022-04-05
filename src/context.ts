@@ -41,7 +41,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       .filter(i => !i.disabled)
 
     // Create regex
-    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:[.(\\)\\[\\]])`, 'g')
+    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})\\s*(?:[.(\\)\\[\\];+\\-*&\\|])`, 'g')
 
     // Create map
     ctx.map.clear()
