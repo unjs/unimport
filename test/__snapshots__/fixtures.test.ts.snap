@@ -85,6 +85,11 @@ const divRef = ref(null)
 "
 `;
 
+exports[`fixtures > template-tag.ts 1`] = `
+"import { ref } from 'vue';const z = ref\`barfoo\`
+"
+`;
+
 exports[`fixtures > vue.js 1`] = `
 "import { ref } from 'vue';const a = ref(0)
 "

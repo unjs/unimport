@@ -1,7 +1,6 @@
 import { detectSyntax } from 'mlly'
-import escapeRE from 'escape-string-regexp'
 import type { Import, TypeDeclrationOptions, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, makeMatchRegex } from './utils'
 import { resolveBuiltinPresets } from './preset'
 
 interface Context {
@@ -41,7 +40,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       .filter(i => !i.disabled)
 
     // Create regex
-    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})\\s*(?:[.(\\)\\[\\];+\\-*&\\|])`, 'g')
+    ctx.matchRE = makeMatchRegex(imports)
 
     // Create map
     ctx.map.clear()
