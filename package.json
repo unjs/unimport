@@ -43,7 +43,7 @@
     "mlly": "^0.5.2",
     "pathe": "^0.2.0",
     "scule": "^0.2.1",
-    "unplugin": "^0.6.1"
+    "unplugin": "^0.6.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",

@@ -5577,7 +5577,7 @@ unbuild@latest:
     standard-version: latest
     typescript: latest
     unbuild: latest
-    unplugin: ^0.6.1
+    unplugin: ^0.6.2
     vitest: ^0.9.3
   languageName: unknown
   linkType: soft
@@ -5607,9 +5607,9 @@ unbuild@latest:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "unplugin@npm:0.6.1"
+"unplugin@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "unplugin@npm:0.6.2"
   dependencies:
     chokidar: ^3.5.3
     webpack-sources: ^3.2.3
@@ -5628,7 +5628,7 @@ unbuild@latest:
       optional: true
     webpack:
       optional: true
-  checksum: ece0552cef85fc042ffd91d26554b4d66bde7270551d21acfc7ec556134bd59a99785e427be395b85fefad1db9dea4e3769f281cf413bde846ec23782e715d88
+  checksum: 0ad0b290c00a528196f9af95cb31872d92221f1cd4a3b3ee7c72d6b1cf2130c1c342aca97ccee44e5c911b59cdf996c095c8188802d7ff7a002a98b84eafc4eb
   languageName: node
   linkType: hard
 
