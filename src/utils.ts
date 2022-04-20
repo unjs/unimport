@@ -39,7 +39,7 @@ export function stripCommentsAndStrings (code: string) {
 }
 
 export function makeMatchRegex (imports: Import[]): RegExp {
-  return new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})\\s*(?:[.(\\)\\[\\];+\\-*&\\|\`])`, 'g')
+  return new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})\\s*(?:[.(\\)\\[\\];+\\-*&\\|\`<>])`, 'g')
 }
 
 export function toImports (imports: Import[], isCJS = false) {
