@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/unjs/unimport/compare/v0.1.5...v0.1.6) (2022-04-20)
+
+
+### Bug Fixes
+
+* support ts generic ([c085469](https://github.com/unjs/unimport/commit/c08546972432b9a9fcf20d42dc41124d2e6f66c6))
+
+### [0.1.5](https://github.com/unjs/unimport/compare/v0.1.4...v0.1.5) (2022-04-13)
+
+
+### Bug Fixes
+
+* support template tag ([a1ab167](https://github.com/unjs/unimport/commit/a1ab1674543c7493cb01e2ad638537739414c4ee))
+
+### [0.1.4](https://github.com/unjs/unimport/compare/v0.1.3...v0.1.4) (2022-04-05)
+
+
+### Bug Fixes
+
+* template literal detection ([3ea56ff](https://github.com/unjs/unimport/commit/3ea56fffb02d4efb7760526023601196a721a718))
+
 ### [0.1.3](https://github.com/unjs/unimport/compare/v0.1.2...v0.1.3) (2022-03-24)
 
 

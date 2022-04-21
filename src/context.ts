@@ -1,10 +1,9 @@
 import { detectSyntax } from 'mlly'
-import escapeRE from 'escape-string-regexp'
 import MagicString from 'magic-string'
-import type { Import, InjectImportsOptions, TypeDeclrationOptions, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, getString, getMagicString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAutoImport } from './vue-sfc'
+import { Import, UnimportOptions, InjectImportsOptions, TypeDeclrationOptions } from './types'
+import { normalizeImports, dedupeImports, makeMatchRegex, toExports, toTypeDeclrationFile, stripCommentsAndStrings, getString, excludeRE, separatorRE, importAsRE, getMagicString, addImportToCode } from './utils'
 
 export interface UnimportContext {
   readonly imports: Import[]
@@ -43,7 +42,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       .filter(i => !i.disabled)
 
     // Create regex
-    ctx.matchRE = new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})(?:[.(\\)\\[\\];])`, 'g')
+    ctx.matchRE = makeMatchRegex(imports)
 
     // Create map
     ctx.map.clear()

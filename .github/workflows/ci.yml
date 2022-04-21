@@ -13,15 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.1
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: pnpm
-      - run: pnpm install
-      - run: pnpm lint
-      - run: pnpm build
-      - run: pnpm test -- --coverage
-      - uses: codecov/codecov-action@v2
+          cache: yarn
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn build
+      - run: yarn test --coverage
+      - uses: codecov/codecov-action@v3

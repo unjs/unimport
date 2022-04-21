@@ -69,7 +69,8 @@ exports[`fixtures > react.jsx 1`] = `
 `;
 
 exports[`fixtures > template-literal.ts 1`] = `
-"import { ref } from 'vue';const z = \`bar-\${ref()}\`
+"import { ref } from 'vue';
+import { fooConst } from 'foo';const z = \`bar-\${ref()}-\${fooConst}\`
 "
 `;
 
@@ -81,6 +82,16 @@ exports[`fixtures > template-ref.vue 1`] = `
 <script setup>
 const divRef = ref(null)
 </script>
+"
+`;
+
+exports[`fixtures > template-tag.ts 1`] = `
+"import { ref } from 'vue';const z = ref\`barfoo\`
+"
+`;
+
+exports[`fixtures > ts-generic.ts 1`] = `
+"import { useState } from 'react';useState<number>()
 "
 `;
 

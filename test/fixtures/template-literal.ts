@@ -1,1 +1,1 @@
-const z = `bar-${ref()}`
+const z = `bar-${ref()}-${fooConst}`
