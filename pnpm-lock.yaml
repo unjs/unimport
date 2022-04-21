@@ -6,6 +6,7 @@ specifiers:
   c8: latest
   escape-string-regexp: ^5.0.0
   eslint: ^8.13.0
+  fast-glob: ^3.2.11
   globby: ^13.1.1
   local-pkg: ^0.4.1
   magic-string: ^0.26.1
@@ -33,6 +34,7 @@ devDependencies:
   '@nuxtjs/eslint-config-typescript': 9.0.0_eslint@8.13.0+typescript@4.6.3
   c8: 7.11.2
   eslint: 8.13.0
+  fast-glob: 3.2.11
   standard-version: 9.3.2
   typescript: 4.6.3
   unbuild: 0.7.4

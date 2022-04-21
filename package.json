@@ -49,6 +49,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "c8": "latest",
     "eslint": "^8.13.0",
+    "fast-glob": "^3.2.11",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
