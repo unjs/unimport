@@ -1,7 +1,6 @@
 
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import escapeRE from 'escape-string-regexp'
 import type { Import, Preset, TypeDeclrationOptions } from './types'
 
 export const excludeRE = [
@@ -15,6 +14,8 @@ export const excludeRE = [
 
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
+export const matchRE = /(?:\b|^)([\w_$]+)\s*(?:[.()[\];+*&|`<>-])/g
+
 const regexRE = /\/.*?(?<!\\)\/[gimsuy]*/g
 const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm
 const singlelineCommentsRE = /\/\/\s.*$/gm
@@ -36,10 +37,6 @@ export function stripCommentsAndStrings (code: string) {
     .replace(quotesRE[0], '""')
     .replace(quotesRE[1], '``')
     .replace(regexRE, 'new RegExp("")')
-}
-
-export function makeMatchRegex (imports: Import[]): RegExp {
-  return new RegExp(`(?:\\b|^)(${imports.map(i => escapeRE(i.as)).join('|')})\\s*(?:[.(\\)\\[\\];+\\-*&\\|\`<>])`, 'g')
 }
 
 export function toImports (imports: Import[], isCJS = false) {
