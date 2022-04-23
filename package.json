@@ -48,11 +48,11 @@
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "c8": "latest",
-    "eslint": "^8.13.0",
+    "eslint": "^8.14.0",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "^0.9.3"
+    "vitest": "^0.9.4"
   },
   "packageManager": "yarn@3.2.0"
 }
