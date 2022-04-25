@@ -5585,7 +5585,7 @@ unbuild@latest:
     typescript: latest
     unbuild: latest
     unplugin: ^0.6.2
-    vitest: ^0.9.4
+    vitest: ^0.10.0
   languageName: unknown
   linkType: soft
 
@@ -5719,9 +5719,9 @@ unbuild@latest:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.9.4":
-  version: 0.9.4
-  resolution: "vitest@npm:0.9.4"
+"vitest@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "vitest@npm:0.10.0"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
@@ -5746,7 +5746,7 @@ unbuild@latest:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 31614494f682a6adcedb5c1199e21de7d8b34ca836ab3374691a2948d72d1fb0691366d11560dca23f07c92585f65c305d46199de2d84a0e4407e9f213aca229
+  checksum: bbcf6079f9b667be7d5def4aa397ad1318d282aa283f3aecda9822ce3bc9c1d1aac0423a8f05dfc4b772631571c2ea719bbe78072a2629ca207ed5b575836de1
   languageName: node
   linkType: hard
 
