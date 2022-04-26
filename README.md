@@ -63,12 +63,12 @@ const { createUnimport } = require('unimport')
 ```
 
 ```js
-const { addImports } = createUnimport({
+const { injectImports } = createUnimport({
   imports: [{ name: 'fooBar', from: 'test-id' }]
 })
 
 // { code: "import { fooBar } from 'test-id';console.log(fooBar())" }
-console.log(addImports('console.log(fooBar())'))
+console.log(injectImports('console.log(fooBar())'))
 ```
 
 ## 💻 Development
