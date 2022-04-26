@@ -56,9 +56,14 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     _combinedImports = undefined
   }
 
+  function clearDynamicImports () {
+    ctx.dynamicImports.length = 0
+  }
+
   reload()
 
   return {
+    clearDynamicImports,
     modifyDynamicImports,
     getImports: () => ctx.imports,
     detectImports: (code: string) => detectImports(code, ctx),
