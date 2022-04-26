@@ -52,7 +52,7 @@
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "^0.9.4"
+    "vitest": "^0.10.0"
   },
   "packageManager": "yarn@3.2.0"
 }
