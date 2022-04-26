@@ -63,20 +63,20 @@ const { createUnimport } = require('unimport')
 ```
 
 ```js
-const { addImports } = createUnimport({
+const { injectImports } = createUnimport({
   imports: [{ name: 'fooBar', from: 'test-id' }]
 })
 
 // { code: "import { fooBar } from 'test-id';console.log(fooBar())" }
-console.log(addImports('console.log(fooBar())'))
+console.log(injectImports('console.log(fooBar())'))
 ```
 
 ## 💻 Development
 
 - Clone this repository
 - Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable` (use `npm i -g corepack` for Node.js < 16.10)
-- Install dependencies using `yarn install`
-- Run interactive tests using `yarn dev`
+- Install dependencies using `pnpm install`
+- Run interactive tests using `pnpm dev`
 
 ## License
 
