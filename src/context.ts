@@ -18,7 +18,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   let _combinedImports: Import[] | undefined
 
   const ctx: Context = {
-    staticImports: [].concat(opts.imports).filter(Boolean),
+    staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
     get imports () {
       if (!_combinedImports) {
@@ -45,7 +45,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     // Create map
     ctx.map.clear()
     for (const _import of imports) {
-      ctx.map.set(_import.as, _import)
+      ctx.map.set(_import.as ?? _import.name, _import)
     }
 
     return imports
@@ -97,7 +97,7 @@ async function detectImports (code: string, ctx: Context) {
 
   const matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
-    .filter(i => i && !i.disabled)
+    .filter(i => i && !i.disabled) as Import[]
 
   return {
     strippedCode,

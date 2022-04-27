@@ -31,6 +31,7 @@
     "dev": "vitest dev",
     "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
     "prepack": "unbuild",
+    "typecheck": "tsc --noEmit",
     "release": "pnpm test && standard-version && git push --follow-tags && npm publish",
     "test": "vitest run --coverage"
   },

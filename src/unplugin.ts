@@ -11,7 +11,7 @@ export interface UnimportPluginOptions extends UnimportOptions {
   dts: boolean | string
 }
 
-export default createUnplugin<Partial<UnimportPluginOptions>>((options) => {
+export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => {
   const ctx = createUnimport(options)
   const filter = createFilter(
     options.include || [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/],
