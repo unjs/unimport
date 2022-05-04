@@ -49,12 +49,12 @@
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "c8": "latest",
-    "eslint": "^8.14.0",
-    "fast-glob": "^3.2.11",
+    "eslint": "latest",
+    "fast-glob": "latest",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "^0.10.2"
+    "vitest": "latest"
   },
-  "packageManager": "pnpm@6.32.11"
+  "packageManager": "pnpm@7.0.0"
 }

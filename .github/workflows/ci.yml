@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.1
+        uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -24,5 +24,5 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm build
-      - run: pnpm test -- --coverage
+      - run: pnpm test --coverage
       - uses: codecov/codecov-action@v2
