@@ -1,13 +1,12 @@
 import { detectSyntax } from 'mlly'
 import type { Import, TypeDeclrationOptions, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, makeMatchRegex } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE } from './utils'
 import { resolveBuiltinPresets } from './preset'
 
 interface Context {
   readonly imports: Import[]
   staticImports: Import[]
   dynamicImports: Import[]
-  matchRE: RegExp
   map: Map<string, Import>
 }
 
@@ -26,8 +25,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       }
       return _combinedImports
     },
-    map: new Map(),
-    matchRE: /__never__/g
+    map: new Map()
   }
 
   // Resolve presets
@@ -38,9 +36,6 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     // eslint-disable-next-line no-console
     const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
       .filter(i => !i.disabled)
-
-    // Create regex
-    ctx.matchRE = makeMatchRegex(imports)
 
     // Create map
     ctx.map.clear()
@@ -81,7 +76,7 @@ async function detectImports (code: string, ctx: Context) {
 
   // Find all possible injection
   const matched = new Set(
-    Array.from(strippedCode.matchAll(ctx.matchRE)).map(i => i[1])
+    Array.from(strippedCode.matchAll(matchRE)).map(i => i[1])
   )
 
   // Remove those already defined
