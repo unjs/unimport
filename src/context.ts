@@ -1,15 +1,14 @@
 import { detectSyntax } from 'mlly'
 import MagicString from 'magic-string'
+import type { Import, InjectImportsOptions, TypeDeclrationOptions, UnimportOptions } from './types'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAutoImport } from './vue-sfc'
-import { Import, UnimportOptions, InjectImportsOptions, TypeDeclrationOptions } from './types'
-import { normalizeImports, dedupeImports, makeMatchRegex, toExports, toTypeDeclrationFile, stripCommentsAndStrings, getString, excludeRE, separatorRE, importAsRE, getMagicString, addImportToCode } from './utils'
 
 export interface UnimportContext {
   readonly imports: Import[]
   staticImports: Import[]
   dynamicImports: Import[]
-  matchRE: RegExp
   map: Map<string, Import>
 }
 
@@ -20,7 +19,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   let _combinedImports: Import[] | undefined
 
   const ctx: UnimportContext = {
-    staticImports: [].concat(opts.imports).filter(Boolean),
+    staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
     get imports () {
       if (!_combinedImports) {
@@ -28,8 +27,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       }
       return _combinedImports
     },
-    map: new Map(),
-    matchRE: /__never__/g
+    map: new Map()
   }
 
   // Resolve presets
@@ -41,13 +39,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
       .filter(i => !i.disabled)
 
-    // Create regex
-    ctx.matchRE = makeMatchRegex(imports)
-
     // Create map
     ctx.map.clear()
     for (const _import of imports) {
-      ctx.map.set(_import.as, _import)
+      ctx.map.set(_import.as ?? _import.name, _import)
     }
 
     return imports
@@ -86,7 +81,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
 
   // Find all possible injection
   const matched = new Set(
-    Array.from(strippedCode.matchAll(ctx.matchRE)).map(i => i[1])
+    Array.from(strippedCode.matchAll(matchRE)).map(i => i[1])
   )
 
   // Remove those already defined
@@ -102,7 +97,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
 
   const matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
-    .filter(i => i && !i.disabled)
+    .filter(i => i && !i.disabled) as Import[]
 
   return {
     strippedCode,

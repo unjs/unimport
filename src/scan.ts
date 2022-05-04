@@ -51,7 +51,9 @@ export async function scanExports (filepath: string) {
         imports.push({ name, as: name, from: filepath })
       }
     } else if (exp.type === 'declaration') {
-      imports.push({ name: exp.name, as: exp.name, from: filepath })
+      if (exp.name) {
+        imports.push({ name: exp.name, as: exp.name, from: filepath })
+      }
     }
   }
 

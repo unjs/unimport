@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/unjs/unimport/compare/v0.1.7...v0.1.8) (2022-04-28)
+
+
+### Bug Fixes
+
+* correctly dedupe ([08f5282](https://github.com/unjs/unimport/commit/08f528200b773a5b5be1cc168c40779098b04cce))
+
 ### [0.1.7](https://github.com/unjs/unimport/compare/v0.1.6...v0.1.7) (2022-04-26)
 
 
