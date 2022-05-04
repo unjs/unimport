@@ -1,6 +1,6 @@
 {
   "name": "unimport",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Unified utils for auto importing APIs in modules",
   "repository": "unjs/unimport",
   "license": "MIT",
@@ -31,7 +31,8 @@
     "dev": "vitest dev",
     "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
     "prepack": "unbuild",
-    "release": "yarn test && standard-version && git push --follow-tags && npm publish",
+    "typecheck": "tsc --noEmit",
+    "release": "pnpm test && standard-version && git push --follow-tags && npm publish",
     "test": "vitest run --coverage"
   },
   "dependencies": {
@@ -48,11 +49,12 @@
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "c8": "latest",
-    "eslint": "^8.13.0",
+    "eslint": "^8.14.0",
+    "fast-glob": "^3.2.11",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "^0.9.3"
+    "vitest": "^0.10.2"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "pnpm@6.32.11"
 }

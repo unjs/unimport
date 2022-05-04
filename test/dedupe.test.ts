@@ -96,4 +96,29 @@ describe('dedupeImports', () => {
 
     expect(warnMsg).toMatchInlineSnapshot('""')
   })
+
+  it('should dedupe some from', () => {
+    expect(dedupeImports(
+      [
+        {
+          name: 'foo',
+          from: 'module1'
+        },
+        {
+          name: 'foo',
+          from: 'module1'
+        }
+      ],
+      warnFn
+    )).toMatchInlineSnapshot(`
+      [
+        {
+          "from": "module1",
+          "name": "foo",
+        },
+      ]
+    `)
+
+    expect(warnMsg).toMatchInlineSnapshot('""')
+  })
 })

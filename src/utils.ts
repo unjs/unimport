@@ -91,6 +91,10 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
     }
 
     const other = imports[map.get(name)!]
+    if (other.from === i.from) {
+      indexToRemove.add(idx)
+      return
+    }
     const diff = (other.priority || 1) - (i.priority || 1)
     if (diff === 0) {
       warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored`)
@@ -183,12 +187,15 @@ export function addImportToCode (code: string, imports: Import[], isCJS = false,
       if (!map.has(target)) {
         map.set(target, [])
       }
-      map.get(target).push(i)
+      map.get(target)!.push(i)
     })
 
     for (const [target, items] of map.entries()) {
       const strings = items.map(i => stringifyImportAlias(i) + ', ')
-      s.appendLeft(target.start + target.code.match(/^\s*import\s*{/)[0].length, ' ' + strings.join('').trim())
+      const importLength = target.code.match(/^\s*import\s*{/)?.[0]?.length
+      if (importLength) {
+        s.appendLeft(target.start + importLength, ' ' + strings.join('').trim())
+      }
     }
   } else {
     newImports = imports

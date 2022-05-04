@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/unjs/unimport/compare/v0.1.7...v0.1.8) (2022-04-28)
+
+
+### Bug Fixes
+
+* correctly dedupe ([08f5282](https://github.com/unjs/unimport/commit/08f528200b773a5b5be1cc168c40779098b04cce))
+
+### [0.1.7](https://github.com/unjs/unimport/compare/v0.1.6...v0.1.7) (2022-04-26)
+
+
+### Features
+
+* expose `clearDynamicImports` to context ([2f82f0a](https://github.com/unjs/unimport/commit/2f82f0a761b7c10bfea0cbc94edb6c0f7c7b421c))
+
+
+### Bug Fixes
+
+* dedupe imports from same source ([7faa56f](https://github.com/unjs/unimport/commit/7faa56f71bde9f89767da6cd74fd624445915014))
+
 ### [0.1.6](https://github.com/unjs/unimport/compare/v0.1.5...v0.1.6) (2022-04-20)
 
 
