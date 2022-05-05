@@ -48,7 +48,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
     async buildStart () {
       if (options.dirs?.length) {
         await ctx.modifyDynamicImports(async (imports) => {
-          imports.push(...await scanDirExports(options.dirs))
+          imports.push(...await scanDirExports(options.dirs!))
         })
       }
 
