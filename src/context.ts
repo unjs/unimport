@@ -1,22 +1,21 @@
 import { detectSyntax } from 'mlly'
 import MagicString from 'magic-string'
-import type { Import, InjectImportsOptions, TypeDeclrationOptions, UnimportOptions } from './types'
+import type { Addon, Import, InjectImportsOptions, TypeDeclrationOptions, UnimportContext, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
-import { vueTemplateAutoImport } from './vue-sfc'
-
-export interface UnimportContext {
-  readonly imports: Import[]
-  staticImports: Import[]
-  dynamicImports: Import[]
-  map: Map<string, Import>
-}
+import vueTemplateAddon from './addons/vue-template'
 
 export type Unimport = ReturnType<typeof createUnimport>
 
 export function createUnimport (opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
+
+  const addons: Addon[] = []
+
+  if (opts.addons?.vueTemplate) {
+    addons.push(vueTemplateAddon)
+  }
 
   const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
@@ -27,6 +26,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       }
       return _combinedImports
     },
+    addons,
     map: new Map()
   }
 
@@ -57,6 +57,17 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     ctx.dynamicImports.length = 0
   }
 
+  function generateTypeDecarations (options?: TypeDeclrationOptions) {
+    let dts = toTypeDeclrationFile(ctx.imports, {
+      resolvePath: i => i.from.replace(/\.ts$/, ''),
+      ...options
+    })
+    for (const addon of ctx.addons) {
+      dts = addon.decleration?.(dts) ?? dts
+    }
+    return dts
+  }
+
   reload()
 
   return {
@@ -66,10 +77,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string | MagicString, options?: InjectImportsOptions) => injectImports(code, ctx, options),
     toExports: () => toExports(ctx.imports),
-    generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, {
-      resolvePath: i => i.from.replace(/\.ts$/, ''),
-      ...options
-    })
+    generateTypeDecarations
   }
 }
 
@@ -109,8 +117,8 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
 async function injectImports (code: string | MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
   const s = getMagicString(code)
 
-  if (options?.vueTemplate) {
-    vueTemplateAutoImport(s, ctx)
+  for (const addon of ctx.addons) {
+    await addon.transform(s, ctx)
   }
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx)

@@ -175,7 +175,7 @@ export function getString (code:string | MagicString) {
   if (typeof code === 'string') {
     return code
   }
-  return code.original
+  return code.toString()
 }
 
 export function getMagicString (code:string | MagicString) {
