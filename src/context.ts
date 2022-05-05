@@ -58,12 +58,13 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   function generateTypeDecarations (options?: TypeDeclrationOptions) {
-    let dts = toTypeDeclrationFile(ctx.imports, {
+    const opts: TypeDeclrationOptions = {
       resolvePath: i => i.from.replace(/\.ts$/, ''),
       ...options
-    })
+    }
+    let dts = toTypeDeclrationFile(ctx.imports, opts)
     for (const addon of ctx.addons) {
-      dts = addon.decleration?.(dts) ?? dts
+      dts = addon.decleration?.(dts, ctx, opts) ?? dts
     }
     return dts
   }
@@ -75,7 +76,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     modifyDynamicImports,
     getImports: () => ctx.imports,
     detectImports: (code: string) => detectImports(code, ctx),
-    injectImports: (code: string | MagicString, options?: InjectImportsOptions) => injectImports(code, ctx, options),
+    injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
     toExports: () => toExports(ctx.imports),
     generateTypeDecarations
   }
@@ -114,11 +115,11 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
   }
 }
 
-async function injectImports (code: string | MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
+async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions) {
   const s = getMagicString(code)
 
   for (const addon of ctx.addons) {
-    await addon.transform(s, ctx)
+    await addon.transform(s, id, ctx)
   }
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx)

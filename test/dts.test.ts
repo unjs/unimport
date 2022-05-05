@@ -30,7 +30,8 @@ test('dts', () => {
 
   expect(generateTypeDecarations())
     .toMatchInlineSnapshot(`
-      "declare global {
+      "export {}
+      declare global {
         const customDefault: typeof import('default')['default']
         const foobar: typeof import('foobar')['foobar']
         const ref: typeof import('vue')['ref']
@@ -42,7 +43,6 @@ test('dts', () => {
         const useEffect: typeof import('react')['useEffect']
         const useRef: typeof import('react')['useRef']
         const \$: typeof import('jquery')['\$']
-      }
-      export {}"
+      }"
     `)
 })

@@ -21,7 +21,7 @@ describe('vue-template', () => {
   })
 
   test('inject', async () => {
-    expect((await ctx.injectImports(input)).code.toString()).toMatchInlineSnapshot(`
+    expect((await ctx.injectImports(input, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
       "import { multiplier as __unimport_multiplier } from 'foo';
       function _sfc_render(_ctx, _cache, \$props, \$setup, \$data, \$options) {
         return _openBlock(), _createElementBlock(\\"div\\", null, [
@@ -35,10 +35,17 @@ describe('vue-template', () => {
 
   test('dts', () => {
     expect(ctx.generateTypeDecarations()).toMatchInlineSnapshot(`
-      "declare global {
+      "export {}
+      declare global {
         const multiplier: typeof import('foo')['multiplier']
       }
-      export {}"
+      // for vue template auto import
+      declare module 'vue' {
+        interface ComponentCustomProperties {
+          multiplier: typeof import('foo')['multiplier']
+        }
+      }
+      "
     `)
   })
 })

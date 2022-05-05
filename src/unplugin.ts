@@ -12,7 +12,6 @@ export interface UnimportPluginOptions extends UnimportOptions {
   exclude: FilterPattern
   dts: boolean | string
   dirs: string[]
-  vueTemplate: boolean
 }
 
 export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => {
@@ -33,9 +32,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
     async transform (_code, id) {
       const s = new MagicString(_code)
 
-      await ctx.injectImports(s, {
-        vueTemplate: options.vueTemplate && id.endsWith('.vue')
-      })
+      await ctx.injectImports(s, id)
 
       if (!s.hasChanged()) {
         return

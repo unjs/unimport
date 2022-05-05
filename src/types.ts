@@ -81,6 +81,6 @@ export interface InjectImportsOptions {
 }
 
 export interface Addon {
-  transform: (code: string | MagicString, ctx: UnimportContext) => MagicString | Promise<MagicString>
-  decleration?: (dts: string) => string
+  transform: (code: MagicString, id: string | undefined, ctx: UnimportContext) => MagicString | Promise<MagicString>
+  decleration?: (dts: string, ctx: UnimportContext, options: TypeDeclrationOptions) => string
 }

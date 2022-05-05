@@ -15,7 +15,9 @@ export default defineConfig({
       dirs: [
         './composables'
       ],
-      vueTemplate: true
+      addons: {
+        vueTemplate: true
+      }
     }),
     inspect()
   ]

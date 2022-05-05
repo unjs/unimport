@@ -1,12 +1,13 @@
-import MagicString from 'magic-string'
-import { UnimportContext, Import, Addon } from '../types'
-import { toImports, getMagicString } from '../utils'
+import { Import, Addon } from '../types'
+import { toImports, toTypeDeclrationItems } from '../utils'
 
 const contextRE = /\b_ctx\.([\w_]+)\b/g
 
 const vueTemplateAddon: Addon = {
-  transform (code: string | MagicString, ctx: UnimportContext) {
-    const s = getMagicString(code)
+  transform (s, id, ctx) {
+    if (!id || !id.endsWith('.vue')) {
+      return s
+    }
     const matches = Array.from(s.original.matchAll(contextRE))
     if (!matches.length) {
       return s
@@ -41,8 +42,18 @@ const vueTemplateAddon: Addon = {
 
     return s
   },
-  decleration (dts:string) {
-    return dts
+  decleration (dts, ctx, options) {
+    const items = toTypeDeclrationItems(ctx.imports, options)
+      .map(i => i.replace('const ', ''))
+    return dts +
+`
+// for vue template auto import
+declare module 'vue' {
+  interface ComponentCustomProperties {
+${items.map(i => '    ' + i).join('\n')}
+  }
+}
+`
   }
 }
 
