@@ -31,6 +31,8 @@
     "dev": "vitest dev",
     "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
     "prepack": "unbuild",
+    "play": "pnpm -C playground run dev",
+    "play:build": "pnpm -C playground run build",
     "typecheck": "vue-tsc --noEmit",
     "release": "pnpm test && standard-version && git push --follow-tags && npm publish",
     "test": "vitest run --coverage"

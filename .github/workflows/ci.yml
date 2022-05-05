@@ -22,7 +22,8 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - run: pnpm lint
-      - run: pnpm typecheck
       - run: pnpm build
       - run: pnpm test
       - uses: codecov/codecov-action@v2
+      - run: pnpm play:build
+      - run: pnpm typecheck
