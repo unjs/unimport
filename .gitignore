@@ -13,4 +13,4 @@ coverage
 dist
 node_modules
 types
-play/unimport.d.ts
+playground/unimport.d.ts
