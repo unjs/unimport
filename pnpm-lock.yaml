@@ -14,7 +14,7 @@ importers:
       local-pkg: ^0.4.1
       magic-string: ^0.26.1
       mlly: ^0.5.2
-      pathe: ^0.2.0
+      pathe: ^0.3.0
       scule: ^0.2.1
       standard-version: latest
       typescript: latest
@@ -29,7 +29,7 @@ importers:
       local-pkg: 0.4.1
       magic-string: 0.26.1
       mlly: 0.5.2
-      pathe: 0.2.0
+      pathe: 0.3.0
       scule: 0.2.1
       unplugin: 0.6.2
     devDependencies:
@@ -40,7 +40,7 @@ importers:
       standard-version: 9.3.2
       typescript: 4.6.4
       unbuild: 0.7.4
-      vitest: 0.10.2_c8@7.11.2
+      vitest: 0.10.4_c8@7.11.2
       vue-tsc: 0.34.11_typescript@4.6.4
 
   playground:
@@ -3254,6 +3254,10 @@ packages:
   /pathe/0.2.0:
     resolution: {integrity: sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==}
 
+  /pathe/0.3.0:
+    resolution: {integrity: sha512-3vUjp552BJzCw9vqKsO5sttHkbYqqsZtH0x1PNtItgqx8BXEXzoY1SYRKcL6BTyVh4lGJGLj0tM42elUDMvcYA==}
+    dev: false
+
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
     dev: true
@@ -4016,8 +4020,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.10.2_c8@7.11.2:
-    resolution: {integrity: sha512-41D+nhswCco5vy1NXmpAjZX11Aj+HMnyhjWQD12piwHibf4bvdTGtni56UcFWcvONVoIForgDuLrKSohHJjwQA==}
+  /vitest/0.10.4_c8@7.11.2:
+    resolution: {integrity: sha512-FJ2av2PVozmyz9nqHRoC3H8j2z0OQXj8P8jS5oyMY9mfPWB06GS5k/1Ot++TkVBLQRHZCcVzjbK4BO7zqAJZGQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:

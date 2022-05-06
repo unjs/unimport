@@ -44,7 +44,7 @@
     "local-pkg": "^0.4.1",
     "magic-string": "^0.26.1",
     "mlly": "^0.5.2",
-    "pathe": "^0.2.0",
+    "pathe": "^0.3.0",
     "scule": "^0.2.1",
     "unplugin": "^0.6.2"
   },
