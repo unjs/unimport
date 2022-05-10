@@ -1,4 +1,3 @@
-
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
 import type { Import, Preset, TypeDeclrationOptions } from './types'
@@ -14,7 +13,7 @@ export const excludeRE = [
 
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
-export const matchRE = /(?:\b|^)([\w_$]+)\s*(?:[.()[\];+*&|`<>-])/g
+export const matchRE = /(?:\b|^)([\w_$]+)\s*(?:[.()[\];+*&|`<>,-])/g
 
 const regexRE = /\/.*?(?<!\\)\/[gimsuy]*/g
 const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm

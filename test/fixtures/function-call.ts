@@ -1,0 +1,1 @@
+useFoo(ref, 1)
