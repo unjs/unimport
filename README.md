@@ -7,6 +7,13 @@
 
 > Unified utils for auto importing APIs in modules
 
+## Features
+
+- Auto import registed APIs for Vite, Webpack or esbuild powered by [unplugin](https://github.com/unjs/unplugin)
+- TypeScript declartion file generation
+- Auto import for custom APIs defined under specific directories
+- Auto import for Vue template
+
 ## Install
 
 ```sh
@@ -70,6 +77,64 @@ const { injectImports } = createUnimport({
 // { code: "import { fooBar } from 'test-id';console.log(fooBar())" }
 console.log(injectImports('console.log(fooBar())'))
 ```
+
+## Configurations
+
+### Type Declarations
+
+```ts
+Unimport.vite({
+  dts: true // or a path to generateed file
+})
+```
+
+### Directory Auto Import
+
+```ts
+Unimport.vite({
+  dirs: [
+    './composables'
+  ]
+})
+```
+
+Exported APIs for modules under `./composables` will be auto imported.
+
+
+### Vue Template Auto Import
+
+In Vue's template, usage of APIs are in different context than plain modules. Thus some custom transformation are required. To enable it, set `addons.vueTemplate` to `true`:
+
+```ts
+Unimport.vite({
+  addons: {
+    vueTemplate: true
+  }
+})
+```
+
+#### Caveats
+
+When auto-import a ref, inline operations won't be auto unwrapped.
+
+```ts
+export const counter = ref(0)
+```
+
+```html
+<template>
+  <!-- this is ok -->
+  <div>{{ counter }}</div>
+
+  <!-- counter here is a ref, this won't work, volar will throw -->
+  <div>{{ counter + 1 }}</div>
+
+  <!-- use this instead -->
+  <div>{{ counter.value + 1 }}</div>
+</template>
+```
+
+We recommend using [Volar](https://github.com/johnsoncodehk/volar) for type checking, which will help you to identify the misusage.
 
 ## 💻 Development
 
