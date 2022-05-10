@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/unjs/unimport/compare/v0.1.9...v0.2.0) (2022-05-10)
+
+
+### Features
+
+* auto import for template working! ([3453042](https://github.com/unjs/unimport/commit/3453042167ed01eb6c12ba6e832ace30e2bbe9cc))
+* dts generation ([2e4dcdc](https://github.com/unjs/unimport/commit/2e4dcdcfbf4266800af3a013ce56e3293e7dfdc1))
+* introduce addon system ([c788851](https://github.com/unjs/unimport/commit/c7888514ab6a41def867b4080def4377a547fc2d))
+* options for vue template auto import ([c242918](https://github.com/unjs/unimport/commit/c242918e6f706160d2d58b8593571d2fb6bc74d4))
+* **unplugin:** support auto import fomr directory ([a8d17c2](https://github.com/unjs/unimport/commit/a8d17c2fcbd2d74e0d0c9eda7ef76780ffc57811))
+
+
+### Bug Fixes
+
+* support auto import for variables ([4059581](https://github.com/unjs/unimport/commit/40595815a865c97389ff2a7380c9a1f338ede00d))
+
 ### [0.1.9](https://github.com/unjs/unimport/compare/v0.1.8...v0.1.9) (2022-05-09)
 
 
