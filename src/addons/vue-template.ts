@@ -4,8 +4,8 @@ import { toImports, toTypeDeclrationItems } from '../utils'
 const contextRE = /\b_ctx\.([\w_]+)\b/g
 
 const vueTemplateAddon: Addon = {
-  transform (s, id, ctx) {
-    if (!id || !id.endsWith('.vue')) {
+  transform (s, _, ctx) {
+    if (!s.original.includes('_ctx.')) {
       return s
     }
     const matches = Array.from(s.original.matchAll(contextRE))
