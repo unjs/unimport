@@ -10,7 +10,7 @@
 ## Features
 
 - Auto import registed APIs for Vite, Webpack or esbuild powered by [unplugin](https://github.com/unjs/unplugin)
-- TypeScript declartion file generation
+- TypeScript declaration file generation
 - Auto import for custom APIs defined under specific directories
 - Auto import for Vue template
 
