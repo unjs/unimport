@@ -1,15 +1,21 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": [
-    "src"
-  ],
   "exclude": [
     "test/fixtures/**"
   ]

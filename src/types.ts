@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+import MagicString from 'magic-string'
 import type { BuiltinPresetName } from './presets'
 
 export type ModuleId = string
@@ -28,10 +30,28 @@ export interface Preset extends ImportCommon {
   imports: (PresetImport | Preset)[]
 }
 
+export interface UnimportContext {
+  readonly imports: Import[]
+  staticImports: Import[]
+  dynamicImports: Import[]
+  map: Map<string, Import>
+  addons: Addon[]
+}
+
+export interface AddonsOptions {
+  /**
+   * Enable auto import inside for Vue's <template>
+   *
+   * @default false
+   */
+  vueTemplate?: boolean
+}
+
 export interface UnimportOptions {
   imports: Import[]
   presets: (Preset | BuiltinPresetName)[]
   warn: (msg: string) => void
+  addons: AddonsOptions
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined
@@ -51,4 +71,16 @@ export interface TypeDeclrationOptions {
    * @default true
    */
   exportHelper?: boolean
+}
+
+export interface InjectImportsOptions {
+  /**
+   * @default false
+   */
+  mergeExisting?: boolean
+}
+
+export interface Addon {
+  transform: (code: MagicString, id: string | undefined, ctx: UnimportContext) => MagicString | Promise<MagicString>
+  decleration?: (dts: string, ctx: UnimportContext, options: TypeDeclrationOptions) => string
 }

@@ -1,14 +1,9 @@
 import { detectSyntax } from 'mlly'
-import type { Import, TypeDeclrationOptions, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE } from './utils'
+import MagicString from 'magic-string'
+import type { Addon, Import, InjectImportsOptions, TypeDeclrationOptions, UnimportContext, UnimportOptions } from './types'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
-
-interface Context {
-  readonly imports: Import[]
-  staticImports: Import[]
-  dynamicImports: Import[]
-  map: Map<string, Import>
-}
+import vueTemplateAddon from './addons/vue-template'
 
 export type Unimport = ReturnType<typeof createUnimport>
 
@@ -16,7 +11,13 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
 
-  const ctx: Context = {
+  const addons: Addon[] = []
+
+  if (opts.addons?.vueTemplate) {
+    addons.push(vueTemplateAddon)
+  }
+
+  const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
     get imports () {
@@ -25,6 +26,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       }
       return _combinedImports
     },
+    addons,
     map: new Map()
   }
 
@@ -55,6 +57,18 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     ctx.dynamicImports.length = 0
   }
 
+  function generateTypeDecarations (options?: TypeDeclrationOptions) {
+    const opts: TypeDeclrationOptions = {
+      resolvePath: i => i.from.replace(/\.ts$/, ''),
+      ...options
+    }
+    let dts = toTypeDeclrationFile(ctx.imports, opts)
+    for (const addon of ctx.addons) {
+      dts = addon.decleration?.(dts, ctx, opts) ?? dts
+    }
+    return dts
+  }
+
   reload()
 
   return {
@@ -62,16 +76,16 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     modifyDynamicImports,
     getImports: () => ctx.imports,
     detectImports: (code: string) => detectImports(code, ctx),
-    injectImports: (code: string, mergeExisting?: boolean) => injectImports(code, ctx, mergeExisting),
+    injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
     toExports: () => toExports(ctx.imports),
-    generateTypeDecarations: (options?: TypeDeclrationOptions) => toTypeDeclrationFile(ctx.imports, options)
+    generateTypeDecarations
   }
 }
 
 // eslint-disable-next-line require-await
-async function detectImports (code: string, ctx: Context) {
+async function detectImports (code: string | MagicString, ctx: UnimportContext) {
   // Strip comments so we don't match on them
-  const strippedCode = stripCommentsAndStrings(code)
+  const strippedCode = stripCommentsAndStrings(getString(code))
   const isCJSContext = detectSyntax(strippedCode).hasCJS
 
   // Find all possible injection
@@ -101,8 +115,14 @@ async function detectImports (code: string, ctx: Context) {
   }
 }
 
-async function injectImports (code: string, ctx: Context, mergeExisting?: boolean) {
-  const { isCJSContext, matchedImports } = await detectImports(code, ctx)
+async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions) {
+  const s = getMagicString(code)
 
-  return addImportToCode(code, matchedImports, isCJSContext, mergeExisting)
+  for (const addon of ctx.addons) {
+    await addon.transform(s, id, ctx)
+  }
+
+  const { isCJSContext, matchedImports } = await detectImports(s, ctx)
+
+  return addImportToCode(s, matchedImports, isCJSContext, options?.mergeExisting)
 }

@@ -144,10 +144,11 @@ export function toTypeDeclrationFile (imports: Import[], options?: TypeDeclratio
     exportHelper = true
   } = options || {}
 
-  let declration = 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
+  let declration = ''
   if (exportHelper) {
-    declration += '\nexport {}'
+    declration += 'export {}\n'
   }
+  declration += 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
   return declration
 }
 
@@ -170,12 +171,26 @@ function toImportModuleMap (imports: Import[]) {
   return map
 }
 
-export function addImportToCode (code: string, imports: Import[], isCJS = false, mergeExisting = false) {
+export function getString (code:string | MagicString) {
+  if (typeof code === 'string') {
+    return code
+  }
+  return code.toString()
+}
+
+export function getMagicString (code:string | MagicString) {
+  if (typeof code === 'string') {
+    return new MagicString(code)
+  }
+  return code
+}
+
+export function addImportToCode (code: string | MagicString, imports: Import[], isCJS = false, mergeExisting = false) {
   let newImports: Import[] = []
-  const s = new MagicString(code)
+  const s = getMagicString(code)
 
   if (mergeExisting && !isCJS) {
-    const existing = findStaticImports(code).map(i => parseStaticImport(i))
+    const existing = findStaticImports(s.original).map(i => parseStaticImport(i))
     const map = new Map<StaticImport, Import[]>()
 
     imports.forEach((i) => {

@@ -31,7 +31,9 @@
     "dev": "vitest dev",
     "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
     "prepack": "unbuild",
-    "typecheck": "tsc --noEmit",
+    "play": "pnpm -C playground run dev",
+    "play:build": "pnpm -C playground run build",
+    "typecheck": "vue-tsc --noEmit",
     "release": "pnpm test && standard-version && git push --follow-tags && npm publish",
     "test": "vitest run --coverage"
   },
@@ -54,7 +56,8 @@
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "latest"
+    "vitest": "latest",
+    "vue-tsc": "^0.34.11"
   },
   "packageManager": "pnpm@7.0.1"
 }
