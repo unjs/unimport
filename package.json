@@ -42,7 +42,7 @@
     "escape-string-regexp": "^5.0.0",
     "globby": "^13.1.1",
     "local-pkg": "^0.4.1",
-    "magic-string": "^0.26.1",
+    "magic-string": "^0.26.2",
     "mlly": "^0.5.2",
     "pathe": "^0.3.0",
     "scule": "^0.2.1",
