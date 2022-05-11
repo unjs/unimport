@@ -12,7 +12,7 @@ importers:
       fast-glob: latest
       globby: ^13.1.1
       local-pkg: ^0.4.1
-      magic-string: ^0.26.1
+      magic-string: ^0.26.2
       mlly: ^0.5.2
       pathe: ^0.3.0
       scule: ^0.2.1
@@ -27,7 +27,7 @@ importers:
       escape-string-regexp: 5.0.0
       globby: 13.1.1
       local-pkg: 0.4.1
-      magic-string: 0.26.1
+      magic-string: 0.26.2
       mlly: 0.5.2
       pathe: 0.3.0
       scule: 0.2.1
@@ -40,23 +40,23 @@ importers:
       standard-version: 9.3.2
       typescript: 4.6.4
       unbuild: 0.7.4
-      vitest: 0.12.3_c8@7.11.2
+      vitest: 0.12.4_c8@7.11.2
       vue-tsc: 0.34.12_typescript@4.6.4
 
   playground:
     specifiers:
-      '@vitejs/plugin-vue': ^2.3.2
+      '@vitejs/plugin-vue': ^2.3.3
       typescript: ^4.6.4
-      vite: ^2.9.8
+      vite: ^2.9.9
       vite-plugin-inspect: ^0.5.0
       vue: ^3.2.33
     dependencies:
       vue: 3.2.33
     devDependencies:
-      '@vitejs/plugin-vue': 2.3.2_vite@2.9.8+vue@3.2.33
+      '@vitejs/plugin-vue': 2.3.3_vite@2.9.9+vue@3.2.33
       typescript: 4.6.4
-      vite: 2.9.8
-      vite-plugin-inspect: 0.5.0_vite@2.9.8
+      vite: 2.9.9
+      vite-plugin-inspect: 0.5.0_vite@2.9.9
 
 packages:
 
@@ -632,14 +632,14 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-vue/2.3.2_vite@2.9.8+vue@3.2.33:
-    resolution: {integrity: sha512-umyypfSHS4kQLdYAnJHhaASq7FRzNCdvcRoQ3uYGNk1/M4a+hXUd7ysN7BLhCrWH6uBokyCkFeUAaFDzSaaSrQ==}
+  /@vitejs/plugin-vue/2.3.3_vite@2.9.9+vue@3.2.33:
+    resolution: {integrity: sha512-SmQLDyhz+6lGJhPELsBdzXGc+AcaT8stgkbiTFGpXPe8Tl1tJaBw1A6pxDqDuRsVkD8uscrkx3hA7QDOoKYtyw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       vite: ^2.5.10
       vue: ^3.2.25
     dependencies:
-      vite: 2.9.8
+      vite: 2.9.9
       vue: 3.2.33
     dev: true
 
@@ -2928,8 +2928,8 @@ packages:
     dependencies:
       sourcemap-codec: 1.4.8
 
-  /magic-string/0.26.1:
-    resolution: {integrity: sha512-ndThHmvgtieXe8J/VGPjG+Apu7v7ItcD5mhEIvOscWjPF/ccOiLxHaSuCAS2G+3x4GKsAbT8u7zdyamupui8Tg==}
+  /magic-string/0.26.2:
+    resolution: {integrity: sha512-NzzlXpclt5zAbmo6h6jNc8zl2gNRGHvmsZW4IvZhTC4W7k4OlLP+S5YLussa/r3ixNT66KOQfNORlXHSOy/X4A==}
     engines: {node: '>=12'}
     dependencies:
       sourcemap-codec: 1.4.8
@@ -3488,7 +3488,7 @@ packages:
       rollup: ^2.70
       typescript: ^4.6
     dependencies:
-      magic-string: 0.26.1
+      magic-string: 0.26.2
       rollup: 2.70.2
       typescript: 4.6.4
     optionalDependencies:
@@ -3925,7 +3925,7 @@ packages:
       esbuild: 0.14.37
       hookable: 5.1.1
       jiti: 1.13.0
-      magic-string: 0.26.1
+      magic-string: 0.26.2
       mkdirp: 1.0.4
       mkdist: 0.3.10_typescript@4.6.4
       mlly: 0.5.2
@@ -4012,7 +4012,7 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-inspect/0.5.0_vite@2.9.8:
+  /vite-plugin-inspect/0.5.0_vite@2.9.9:
     resolution: {integrity: sha512-eArca+5jrNx1hQL+5s79eT5Xq4VXjJcihJhK8GT/+W2GqefVxFO1WO78RnD0HPI+hKSdEFo+B4z2zeaE8DTvWQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4023,7 +4023,7 @@ packages:
       kolorist: 1.5.1
       sirv: 2.0.2
       ufo: 0.8.4
-      vite: 2.9.8
+      vite: 2.9.9
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4052,8 +4052,32 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.12.3_c8@7.11.2:
-    resolution: {integrity: sha512-Dc4uJAcnUampdJ6+C8IasrmL+Px+oDhS9gxeHlL9uwUzoM0ae2WydAK9UF2THxHszfZogLGT37atQwOkj1Lqvg==}
+  /vite/2.9.9:
+    resolution: {integrity: sha512-ffaam+NgHfbEmfw/Vuh6BHKKlI/XIAhxE5QSS7gFLIngxg171mg1P3a4LSRME0z2ZU1ScxoKzphkipcYwSD5Ew==}
+    engines: {node: '>=12.2.0'}
+    hasBin: true
+    peerDependencies:
+      less: '*'
+      sass: '*'
+      stylus: '*'
+    peerDependenciesMeta:
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+    dependencies:
+      esbuild: 0.14.37
+      postcss: 8.4.13
+      resolve: 1.22.0
+      rollup: 2.70.2
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vitest/0.12.4_c8@7.11.2:
+    resolution: {integrity: sha512-EDxdhlAt6vcu6y4VouAI60z78iCAVFnfBL4VlSQVQnGmOk5altOtIKvp3xfZ+cfo4iVHgqq1QNyf5qOFiL4leg==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
