@@ -21,7 +21,7 @@ importers:
       unbuild: latest
       unplugin: ^0.6.3
       vitest: latest
-      vue-tsc: ^0.34.13
+      vue-tsc: ^0.34.15
     dependencies:
       '@rollup/pluginutils': 4.2.1
       escape-string-regexp: 5.0.0
@@ -34,14 +34,14 @@ importers:
       unplugin: 0.6.3
     devDependencies:
       '@nuxtjs/eslint-config-typescript': 10.0.0_hcfsmds2fshutdssjqluwm76uu
-      c8: 7.11.2
+      c8: 7.11.3
       eslint: 8.15.0
       fast-glob: 3.2.11
-      standard-version: 9.3.2
+      standard-version: 9.5.0
       typescript: 4.6.4
       unbuild: 0.7.4
-      vitest: 0.12.4_c8@7.11.2
-      vue-tsc: 0.34.13_typescript@4.6.4
+      vitest: 0.12.6_c8@7.11.3
+      vue-tsc: 0.34.15_typescript@4.6.4
 
   playground:
     specifiers:
@@ -485,7 +485,7 @@ packages:
     dev: true
 
   /@types/json5/0.0.29:
-    resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
+    resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
   /@types/minimist/1.2.2:
@@ -643,32 +643,32 @@ packages:
       vue: 3.2.33
     dev: true
 
-  /@volar/code-gen/0.34.13:
-    resolution: {integrity: sha512-FO1jC3aB514Ydg0yX3Usx+s/hwnKhDI9yfcEuCyJvWLZtcc+DOrWJu4G0MMLG6AdRvn5UbSyec/g5TnevYfY1g==}
+  /@volar/code-gen/0.34.15:
+    resolution: {integrity: sha512-g30glPo5N9bJocf1NBt802UcmqgZ3UtPst9b/Tangj+zR+K2RV5S2Un/suR6ZRiETXtg3nmrUcCgsTSJ6PC29A==}
     dependencies:
-      '@volar/source-map': 0.34.13
+      '@volar/source-map': 0.34.15
     dev: true
 
-  /@volar/source-map/0.34.13:
-    resolution: {integrity: sha512-Cb9rqhA00Q1tgqr2XjckMqlOJlozaBd6R4PndsvTRkGHTwdlv63CvunJGdAh6dXOIDZRKvhplfIJDKS9nDiIIA==}
+  /@volar/source-map/0.34.15:
+    resolution: {integrity: sha512-Y3sENK/kqsgD7Vtve6gq6/Dor6JuoJWR+s9iwHcHTcA4VDkJnJRGHcvP8S3SVBsWl7T9qtlnvH3WCbFj7WlXrw==}
     dev: true
 
-  /@volar/vue-code-gen/0.34.13:
-    resolution: {integrity: sha512-rNuxyKmv+NW+SbQx6Hx6oQrkAtk7LWc47fiKKt0LZhNPQaNGj7/zhTvpe+aLFCDZw+a6rrH622qi+eovOOAnBA==}
+  /@volar/vue-code-gen/0.34.15:
+    resolution: {integrity: sha512-GglGsHxPPb7mW2v//5MUrkzxAO68YEIL5bRwpZD0Cp9np34keQdd1SHB5DXdoyU38cnfHJWjBlqCYpTnz2CR/w==}
     dependencies:
-      '@volar/code-gen': 0.34.13
-      '@volar/source-map': 0.34.13
+      '@volar/code-gen': 0.34.15
+      '@volar/source-map': 0.34.15
       '@vue/compiler-core': 3.2.33
       '@vue/compiler-dom': 3.2.33
       '@vue/shared': 3.2.33
     dev: true
 
-  /@volar/vue-typescript/0.34.13:
-    resolution: {integrity: sha512-vfZngBr0fkZSA5BajA8VLTsao7ZES7j5pHch6xV5vjjcuK6GIbxytQjKPq20Q34DMUrvgI6g30yULAc6zSB4rQ==}
+  /@volar/vue-typescript/0.34.15:
+    resolution: {integrity: sha512-7jwhYl1NQB0uYgTO74x+OBSD4SPF7bI3m1KFQ98Wt/NOTXr57YcUyOkDBImcTKRLX3PHG9ex6OfT7u3jiZ2Zzg==}
     dependencies:
-      '@volar/code-gen': 0.34.13
-      '@volar/source-map': 0.34.13
-      '@volar/vue-code-gen': 0.34.13
+      '@volar/code-gen': 0.34.15
+      '@volar/source-map': 0.34.15
+      '@volar/vue-code-gen': 0.34.15
       '@vue/compiler-sfc': 3.2.33
       '@vue/reactivity': 3.2.33
     dev: true
@@ -772,7 +772,7 @@ packages:
     dev: true
 
   /add-stream/1.0.0:
-    resolution: {integrity: sha1-anmQQ3ynNtXhKI25K9MmbV9csqo=}
+    resolution: {integrity: sha512-qQLMr+8o0WC4FZGQTcJiKBVC59JylcPSrTtk6usvmIDFUOCKegapy1VHQwRbFMOFyb/inzUVqHs+eMYKDM1YeQ==}
     dev: true
 
   /ajv/6.12.6:
@@ -816,7 +816,7 @@ packages:
     dev: true
 
   /array-ify/1.0.0:
-    resolution: {integrity: sha1-nlKHYrSpBmrRY6aWKjZEGOlibs4=}
+    resolution: {integrity: sha512-c5AMf34bKdvPhQ7tBGhqkgKNUzMr4WUs+WDtC2ZUGOUncbxKMTvqxYctiseW3+L4bA8ec+GcZ6/A/FW4m8ukng==}
     dev: true
 
   /array-includes/3.1.4:
@@ -846,7 +846,7 @@ packages:
     dev: true
 
   /arrify/1.0.1:
-    resolution: {integrity: sha1-iYUI2iIm84DfkEcoRWhJwVAaSw0=}
+    resolution: {integrity: sha512-3CYzex9M9FGQjCGMGyi6/31c8GJbgb0qGyrx5HWxPd0aCwh4cB2YjMb2Xf9UuoogrMrlO9cTqnB5rI5GHZTcUA==}
     engines: {node: '>=0.10.0'}
     dev: true
 
@@ -907,8 +907,8 @@ packages:
       semver: 7.3.7
     dev: true
 
-  /c8/7.11.2:
-    resolution: {integrity: sha512-6ahJSrhS6TqSghHm+HnWt/8Y2+z0hM/FQyB1ybKhAR30+NYL9CTQ1uwHxuWw6U7BHlHv6wvhgOrH81I+lfCkxg==}
+  /c8/7.11.3:
+    resolution: {integrity: sha512-6YBmsaNmqRm9OS3ZbIiL2EZgi1+Xc4O24jL3vMYGE6idixYuGdy76rIfIdltSKDj9DpLNrcXSonUTR1miBD0wA==}
     engines: {node: '>=10.12.0'}
     hasBin: true
     dependencies:
@@ -1105,8 +1105,8 @@ packages:
     resolution: {integrity: sha512-IpVePh16EbbB02V+UA+HQnnPIohgXvJRxHcS5+Uwk4AT5LjzCZJm5sp/yqs5C6KZJ1jMsV4paEV13BN1pvDuxQ==}
     dev: true
 
-  /conventional-changelog-conventionalcommits/4.6.1:
-    resolution: {integrity: sha512-lzWJpPZhbM1R0PIzkwzGBCnAkH5RKJzJfFQZcl/D+2lsJxAwGnDKBqn/F4C1RD31GJNn8NuKWQzAZDAVXPp2Mw==}
+  /conventional-changelog-conventionalcommits/4.6.3:
+    resolution: {integrity: sha512-LTTQV4fwOM4oLPad317V/QNQ1FY4Hju5qeBIM1uTHbrnCE+Eg4CdRZ3gO2pUeR+tzWdp80M2j3qFFEDWVqOV4g==}
     engines: {node: '>=10'}
     dependencies:
       compare-func: 2.0.0
@@ -1191,14 +1191,14 @@ packages:
       through2: 4.0.2
     dev: true
 
-  /conventional-changelog/3.1.24:
-    resolution: {integrity: sha512-ed6k8PO00UVvhExYohroVPXcOJ/K1N0/drJHx/faTH37OIZthlecuLIRX/T6uOp682CAoVoFpu+sSEaeuH6Asg==}
+  /conventional-changelog/3.1.25:
+    resolution: {integrity: sha512-ryhi3fd1mKf3fSjbLXOfK2D06YwKNic1nC9mWqybBHdObPd8KJ2vjaXZfYj1U23t+V8T8n0d7gwnc9XbIdFbyQ==}
     engines: {node: '>=10'}
     dependencies:
       conventional-changelog-angular: 5.0.13
       conventional-changelog-atom: 2.0.8
       conventional-changelog-codemirror: 2.0.8
-      conventional-changelog-conventionalcommits: 4.6.1
+      conventional-changelog-conventionalcommits: 4.6.3
       conventional-changelog-core: 4.2.4
       conventional-changelog-ember: 2.0.9
       conventional-changelog-eslint: 3.0.9
@@ -2289,13 +2289,6 @@ packages:
       signal-exit: 3.0.7
     dev: true
 
-  /fs-access/1.0.1:
-    resolution: {integrity: sha1-1qh/JiJxzv6+wwxVNAf7mV2od3o=}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      null-check: 1.0.0
-    dev: true
-
   /fs-extra/10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
@@ -3111,11 +3104,6 @@ packages:
       boolbase: 1.0.0
     dev: true
 
-  /null-check/1.0.0:
-    resolution: {integrity: sha1-l33/1xdgErnsMNKjnbXPcqBDnt0=}
-    engines: {node: '>=0.10.0'}
-    dev: true
-
   /object-inspect/1.12.0:
     resolution: {integrity: sha512-Ho2z80bVIvJloH+YzRmpZVQe87+qASmBUKZDWgx9cu+KDrX2ZDH/3tMy+gXbZETVGs2M8YdxObOh7XAtim9Y0g==}
     dev: true
@@ -3654,22 +3642,21 @@ packages:
       readable-stream: 3.6.0
     dev: true
 
-  /standard-version/9.3.2:
-    resolution: {integrity: sha512-u1rfKP4o4ew7Yjbfycv80aNMN2feTiqseAhUhrrx2XtdQGmu7gucpziXe68Z4YfHVqlxVEzo4aUA0Iu3VQOTgQ==}
+  /standard-version/9.5.0:
+    resolution: {integrity: sha512-3zWJ/mmZQsOaO+fOlsa0+QK90pwhNd042qEcw6hKFNoLFs7peGyvPffpEBbK/DSGPbyOvli0mUIFv5A4qTjh2Q==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
       chalk: 2.4.2
-      conventional-changelog: 3.1.24
+      conventional-changelog: 3.1.25
       conventional-changelog-config-spec: 2.1.0
-      conventional-changelog-conventionalcommits: 4.6.1
+      conventional-changelog-conventionalcommits: 4.6.3
       conventional-recommended-bump: 6.1.0
       detect-indent: 6.1.0
       detect-newline: 3.1.0
       dotgitignore: 2.1.0
       figures: 3.2.0
       find-up: 5.0.0
-      fs-access: 1.0.1
       git-semver-tags: 4.1.1
       semver: 7.3.7
       stringify-package: 1.0.1
@@ -4052,8 +4039,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.12.4_c8@7.11.2:
-    resolution: {integrity: sha512-EDxdhlAt6vcu6y4VouAI60z78iCAVFnfBL4VlSQVQnGmOk5altOtIKvp3xfZ+cfo4iVHgqq1QNyf5qOFiL4leg==}
+  /vitest/0.12.6_c8@7.11.3:
+    resolution: {integrity: sha512-YWbCTv0XKBuBw5YtuW/iufuguoi8QhGpYyi2g57Oo7akpscMkkWTAaZGgY0ux1oJJtO/pc/8GFt0EF32WFBUUQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
@@ -4073,7 +4060,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.1
       '@types/chai-subset': 1.3.3
-      c8: 7.11.2
+      c8: 7.11.3
       chai: 4.3.6
       local-pkg: 0.4.1
       tinypool: 0.1.3
@@ -4103,13 +4090,13 @@ packages:
       - supports-color
     dev: true
 
-  /vue-tsc/0.34.13_typescript@4.6.4:
-    resolution: {integrity: sha512-xvmUq03dFpLfYSfE8jl2lwDPcbrmh81TB+OsVkkp+Em3Ar4ff2XgMKuUgoFXpWTv5tLLoYYpggFWwYADa2zgQg==}
+  /vue-tsc/0.34.15_typescript@4.6.4:
+    resolution: {integrity: sha512-xRNaOpg/UCHnRcz9vOdbIjB7uCQ0mifHpqNaejAho7em4WLOzNdJx4R9HMJrqWek44keg7AblIiwM+86QfXx9g==}
     hasBin: true
     peerDependencies:
       typescript: '*'
     dependencies:
-      '@volar/vue-typescript': 0.34.13
+      '@volar/vue-typescript': 0.34.15
       typescript: 4.6.4
     dev: true
 
