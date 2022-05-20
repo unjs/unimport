@@ -21,7 +21,7 @@
 npm install unimport
 
 # yarn
-yarn install unimport
+yarn add unimport
 
 # pnpm
 pnpm install unimport
