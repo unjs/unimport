@@ -30,7 +30,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     },
     addons,
     map: new Map(),
-    invalidate() {
+    invalidate () {
       _combinedImports = undefined
     }
   }
@@ -55,8 +55,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   async function modifyDynamicImports (fn: (imports: Import[]) => Thenable<void | Import[]>) {
     const result = await fn(ctx.dynamicImports)
-    if (Array.isArray(result))
-      ctx.dynamicImports = result
+    if (Array.isArray(result)) { ctx.dynamicImports = result }
     _combinedImports = undefined
   }
 
