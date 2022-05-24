@@ -3,7 +3,7 @@ import MagicString from 'magic-string'
 import type { Addon, Import, InjectImportsOptions, TypeDeclrationOptions, UnimportContext, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
-import vueTemplateAddon from './addons/vue-template'
+import { vueTemplateAddon } from './addons'
 
 export type Unimport = ReturnType<typeof createUnimport>
 
@@ -13,8 +13,11 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   const addons: Addon[] = []
 
-  if (opts.addons?.vueTemplate) {
-    addons.push(vueTemplateAddon)
+  if (Array.isArray(opts.addons)) {
+    addons.push(...opts.addons)
+  }
+  else if (opts.addons?.vueTemplate) {
+    addons.push(vueTemplateAddon())
   }
 
   const ctx: UnimportContext = {

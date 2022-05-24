@@ -51,7 +51,7 @@ export interface UnimportOptions {
   imports: Import[]
   presets: (Preset | BuiltinPresetName)[]
   warn: (msg: string) => void
-  addons: AddonsOptions
+  addons: AddonsOptions | Addon[]
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined

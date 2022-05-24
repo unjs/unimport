@@ -3,7 +3,7 @@ import { toImports, toTypeDeclrationItems } from '../utils'
 
 const contextRE = /\b_ctx\.([\w_]+)\b/g
 
-const vueTemplateAddon: Addon = {
+export const vueTemplateAddon = (): Addon => ({
   transform (s) {
     if (!s.original.includes('_ctx.')) {
       return s
@@ -51,6 +51,4 @@ ${items.map(i => '    ' + i).join('\n')}
 }
 `
   }
-}
-
-export default vueTemplateAddon
+})

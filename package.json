@@ -17,6 +17,11 @@
       "require": "./dist/unplugin.cjs",
       "types": "./dist/unplugin.d.ts"
     },
+    "./addons": {
+      "import": "./dist/addons.mjs",
+      "require": "./dist/addons.cjs",
+      "types": "./dist/addons.d.ts"
+    },
     "./*": "./*"
   },
   "main": "./dist/index.cjs",
