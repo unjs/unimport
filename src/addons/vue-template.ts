@@ -4,7 +4,7 @@ import { toImports, toTypeDeclrationItems } from '../utils'
 const contextRE = /\b_ctx\.([\w_]+)\b/g
 
 const vueTemplateAddon: Addon = {
-  transform (s, _, ctx) {
+  transform (s) {
     if (!s.original.includes('_ctx.')) {
       return s
     }
@@ -13,7 +13,7 @@ const vueTemplateAddon: Addon = {
       return s
     }
 
-    const imports = ctx.imports
+    const imports = this.imports
     const targets: Import[] = []
 
     for (const match of matches) {
@@ -42,8 +42,8 @@ const vueTemplateAddon: Addon = {
 
     return s
   },
-  decleration (dts, ctx, options) {
-    const items = toTypeDeclrationItems(ctx.imports, options)
+  decleration (dts, options) {
+    const items = toTypeDeclrationItems(this.imports, options)
       .map(i => i.replace('const ', ''))
     return dts +
 `

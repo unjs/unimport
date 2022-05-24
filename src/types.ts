@@ -80,7 +80,10 @@ export interface InjectImportsOptions {
   mergeExisting?: boolean
 }
 
+export type Thenable<T> = Promise<T> | T
+
 export interface Addon {
-  transform: (code: MagicString, id: string | undefined, ctx: UnimportContext) => MagicString | Promise<MagicString>
-  decleration?: (dts: string, ctx: UnimportContext, options: TypeDeclrationOptions) => string
+  transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
+  decleration?: (this: UnimportContext, dts: string, options: TypeDeclrationOptions) => string
+  matchImports?: (this: UnimportContext, scannedNames: Set<string>, matched: Import[]) => Thenable<Import[] | void>
 }

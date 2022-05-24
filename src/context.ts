@@ -64,7 +64,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     }
     let dts = toTypeDeclrationFile(ctx.imports, opts)
     for (const addon of ctx.addons) {
-      dts = addon.decleration?.(dts, ctx, opts) ?? dts
+      dts = addon.decleration?.call(ctx, dts, opts) ?? dts
     }
     return dts
   }
@@ -104,9 +104,13 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
       .forEach(i => matched.delete(i))
   }
 
-  const matchedImports = Array.from(matched)
+  let matchedImports = Array.from(matched)
     .map(name => ctx.map.get(name))
     .filter(i => i && !i.disabled) as Import[]
+
+  for (const addon of ctx.addons) {
+    matchedImports = await addon.matchImports?.call(ctx, matched, matchedImports) || matchedImports
+  }
 
   return {
     strippedCode,
@@ -119,7 +123,7 @@ async function injectImports (code: string | MagicString, id: string | undefined
   const s = getMagicString(code)
 
   for (const addon of ctx.addons) {
-    await addon.transform(s, id, ctx)
+    await addon.transform?.call(ctx, s, id)
   }
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx)
