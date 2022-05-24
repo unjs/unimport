@@ -7,6 +7,9 @@ describe('inject import', () => {
       imports: [{ name: 'fooBar', from: 'test-id' }]
     })
     expect((await injectImports('console.log(fooBar())')).code)
-      .toMatchInlineSnapshot('"import { fooBar } from \'test-id\';console.log(fooBar())"')
+      .toMatchInlineSnapshot(`
+        "import { fooBar } from 'test-id';
+        console.log(fooBar())"
+      `)
   })
 })

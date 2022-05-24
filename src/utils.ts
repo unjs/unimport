@@ -218,7 +218,7 @@ export function addImportToCode (code: string | MagicString, imports: Import[], 
 
   const newEntries = toImports(newImports, isCJS)
   if (newEntries) {
-    s.prepend(newEntries)
+    s.prepend(newEntries + '\n')
   }
 
   return {

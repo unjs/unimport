@@ -32,17 +32,17 @@ test('dts', () => {
     .toMatchInlineSnapshot(`
       "export {}
       declare global {
+        const \$: typeof import('jquery')['\$']
+        const THREE: typeof import('three')
+        const computed: typeof import('vue')['computed']
         const customDefault: typeof import('default')['default']
         const foobar: typeof import('foobar')['foobar']
-        const ref: typeof import('vue')['ref']
         const reactive: typeof import('vue')['reactive']
-        const computed: typeof import('vue')['computed']
+        const ref: typeof import('vue')['ref']
         const toRefs: typeof import('vue')['toRefs']
-        const THREE: typeof import('three')
-        const useState: typeof import('react')['useState']
         const useEffect: typeof import('react')['useEffect']
         const useRef: typeof import('react')['useRef']
-        const \$: typeof import('jquery')['\$']
+        const useState: typeof import('react')['useState']
       }"
     `)
 })

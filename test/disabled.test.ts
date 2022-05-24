@@ -9,7 +9,10 @@ describe('able to disable', () => {
   test('disable: false', async () => {
     item.disabled = false
     expect((await injectImports('console.log(fooBar())')).code)
-      .toMatchInlineSnapshot('"import { fooBar } from \'test-id\';console.log(fooBar())"')
+      .toMatchInlineSnapshot(`
+        "import { fooBar } from 'test-id';
+        console.log(fooBar())"
+      `)
   })
   test('disable: true', async () => {
     item.disabled = true
@@ -23,6 +26,9 @@ describe('able to disable', () => {
     })
     item.disabled = true
     expect((await injectImports('console.log(fooBar())')).code)
-      .toMatchInlineSnapshot('"import { fooBar } from \'other-id\';console.log(fooBar())"')
+      .toMatchInlineSnapshot(`
+        "import { fooBar } from 'other-id';
+        console.log(fooBar())"
+      `)
   })
 })

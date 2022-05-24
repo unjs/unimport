@@ -12,11 +12,6 @@ describe('scan-dirs', () => {
       .toMatchInlineSnapshot(`
         [
           {
-            "as": "foo",
-            "from": "foo.ts",
-            "name": "default",
-          },
-          {
             "as": "multiplier",
             "from": "index.ts",
             "name": "multiplier",
@@ -44,6 +39,11 @@ describe('scan-dirs', () => {
           {
             "as": "nested",
             "from": "nested/index.ts",
+            "name": "default",
+          },
+          {
+            "as": "foo",
+            "from": "foo.ts",
             "name": "default",
           },
         ]

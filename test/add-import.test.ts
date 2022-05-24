@@ -29,6 +29,7 @@ import { } from 'specifier5'
         import { import4 } from 'specifier4';
         import { foo as import5 } from 'specifier5';
         import { import10 } from 'specifier10';
+
         import { foo } from 'specifier1'
         import { bar } from 'specifier1'
         import defaultFoo from 'specifier2'
@@ -45,6 +46,7 @@ import { } from 'specifier5'
         "import { import2 } from 'specifier2';
         import { import4 } from 'specifier4';
         import { import10 } from 'specifier10';
+
         import { import1, foo } from 'specifier1'
         import { bar } from 'specifier1'
         import defaultFoo from 'specifier2'

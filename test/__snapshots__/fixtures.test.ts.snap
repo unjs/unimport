@@ -1,7 +1,8 @@
 // Vitest Snapshot v1
 
 exports[`fixtures > comments.ts 1`] = `
-"import { ref, computed } from 'vue';/* import { ref } from 'vue' */
+"import { ref, computed } from 'vue';
+/* import { ref } from 'vue' */
 // import { computed } from 'vue'
 
 const a = {
@@ -19,39 +20,46 @@ const b = { class: \\"text-sm opacity-75\\" };
 `;
 
 exports[`fixtures > custom.js 1`] = `
-"import customDefault from 'default';const a = customDefault(customNamed())
+"import customDefault from 'default';
+const a = customDefault(customNamed())
 const a = customDefaultAlias()
 "
 `;
 
 exports[`fixtures > dollar.js 1`] = `
-"import { $ } from 'jquery';$('hi')
+"import { $ } from 'jquery';
+$('hi')
 "
 `;
 
 exports[`fixtures > existing6.jsx 1`] = `
-"import { computed } from 'vue';const a = computed(() => /^(https?:\\\\/\\\\/|\\\\/\\\\/)/.test(props.to))
+"import { computed } from 'vue';
+const a = computed(() => /^(https?:\\\\/\\\\/|\\\\/\\\\/)/.test(props.to))
 "
 `;
 
 exports[`fixtures > function-call.ts 1`] = `
-"import { ref } from 'vue';useFoo(ref, 1)
+"import { ref } from 'vue';
+useFoo(ref, 1)
 "
 `;
 
 exports[`fixtures > glob.ts 1`] = `
-"import { ref } from 'vue';const modules = import.meta.glob(\\"/src/nested/*.vue\\");
+"import { ref } from 'vue';
+const modules = import.meta.glob(\\"/src/nested/*.vue\\");
 const msg = ref(\\"Global Imports\\");
 "
 `;
 
 exports[`fixtures > import-all.ts 1`] = `
-"import * as THREE from 'three';const scene = new THREE.Scene()
+"import * as THREE from 'three';
+const scene = new THREE.Scene()
 "
 `;
 
 exports[`fixtures > props.ts 1`] = `
-"import { ref, toRefs } from 'vue';const a = z.ref(0)
+"import { ref, toRefs } from 'vue';
+const a = z.ref(0)
 console.log({
   ...toRefs(a)
 })
@@ -59,13 +67,15 @@ console.log({
 `;
 
 exports[`fixtures > prototype.ts 1`] = `
-"import { foobar } from 'foobar';const a = Object.keys(foobar)
+"import { foobar } from 'foobar';
+const a = Object.keys(foobar)
 const c = a.toString()
 "
 `;
 
 exports[`fixtures > react.jsx 1`] = `
-"import { useState } from 'react';export function Component() {
+"import { useState } from 'react';
+export function Component() {
   const [count, setCount] = useState()
 
   return <div>{ count }</div>
@@ -75,12 +85,14 @@ exports[`fixtures > react.jsx 1`] = `
 
 exports[`fixtures > template-literal.ts 1`] = `
 "import { ref } from 'vue';
-import { fooConst } from 'foo';const z = \`bar-\${ref()}-\${fooConst}\`
+import { fooConst } from 'foo';
+const z = \`bar-\${ref()}-\${fooConst}\`
 "
 `;
 
 exports[`fixtures > template-ref.vue 1`] = `
-"import { ref } from 'vue';<template>
+"import { ref } from 'vue';
+<template>
   <div ref=\\"divRef\\"></div>
 </template>
 
@@ -91,16 +103,19 @@ const divRef = ref(null)
 `;
 
 exports[`fixtures > template-tag.ts 1`] = `
-"import { ref } from 'vue';const z = ref\`barfoo\`
+"import { ref } from 'vue';
+const z = ref\`barfoo\`
 "
 `;
 
 exports[`fixtures > ts-generic.ts 1`] = `
-"import { useState } from 'react';useState<number>()
+"import { useState } from 'react';
+useState<number>()
 "
 `;
 
 exports[`fixtures > vue.js 1`] = `
-"import { ref } from 'vue';const a = ref(0)
+"import { ref } from 'vue';
+const a = ref(0)
 "
 `;
