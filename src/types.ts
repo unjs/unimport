@@ -36,6 +36,7 @@ export interface UnimportContext {
   dynamicImports: Import[]
   map: Map<string, Import>
   addons: Addon[]
+  invalidate(): void
 }
 
 export interface AddonsOptions {

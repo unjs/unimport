@@ -29,7 +29,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       return _combinedImports
     },
     addons,
-    map: new Map()
+    map: new Map(),
+    invalidate() {
+      _combinedImports = undefined
+    }
   }
 
   // Resolve presets
