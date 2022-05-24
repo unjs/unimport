@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/unjs/unimport/compare/v0.2.2...v0.2.3) (2022-05-24)
+
+
+### Bug Fixes
+
+* **types:** redirect sub module types ([5314d44](https://github.com/unjs/unimport/commit/5314d44c19f66d5df8c46f1687222a594a98c642))
+
 ### [0.2.2](https://github.com/unjs/unimport/compare/v0.2.1...v0.2.2) (2022-05-24)
 
 
