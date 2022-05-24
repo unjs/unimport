@@ -1,6 +1,6 @@
 import { detectSyntax } from 'mlly'
 import MagicString from 'magic-string'
-import type { Addon, Import, InjectImportsOptions, TypeDeclrationOptions, UnimportContext, UnimportOptions } from './types'
+import type { Addon, Import, InjectImportsOptions, Thenable, TypeDeclrationOptions, UnimportContext, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
@@ -53,8 +53,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return imports
   }
 
-  async function modifyDynamicImports (fn: (imports: Import[]) => Promise<void> | void) {
-    await fn(ctx.dynamicImports)
+  async function modifyDynamicImports (fn: (imports: Import[]) => Thenable<void | Import[]>) {
+    const result = await fn(ctx.dynamicImports)
+    if (Array.isArray(result))
+      ctx.dynamicImports = result
     _combinedImports = undefined
   }
 
