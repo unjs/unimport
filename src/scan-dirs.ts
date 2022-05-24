@@ -1,12 +1,12 @@
 import { promises as fs } from 'fs'
-import { globby } from 'globby'
+import fg from 'fast-glob'
 import { resolve, parse as parsePath } from 'pathe'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
 
 export async function resolveFiles (path: string, pattern: string | string[]) {
-  const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
+  const files = await fg(pattern, { cwd: path, followSymbolicLinks: true })
   return files.map(p => resolve(path, p))
 }
 

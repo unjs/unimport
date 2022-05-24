@@ -29,8 +29,8 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
     transformInclude (id) {
       return filter(id)
     },
-    async transform (_code, id) {
-      const s = new MagicString(_code)
+    async transform (code, id) {
+      const s = new MagicString(code)
 
       await ctx.injectImports(s, id)
 
