@@ -15,8 +15,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   if (Array.isArray(opts.addons)) {
     addons.push(...opts.addons)
-  }
-  else if (opts.addons?.vueTemplate) {
+  } else if (opts.addons?.vueTemplate) {
     addons.push(vueTemplateAddon())
   }
 

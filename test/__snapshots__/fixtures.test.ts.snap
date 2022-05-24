@@ -58,7 +58,7 @@ const scene = new THREE.Scene()
 `;
 
 exports[`fixtures > props.ts 1`] = `
-"import { ref, toRefs } from 'vue';
+"import { toRefs } from 'vue';
 const a = z.ref(0)
 console.log({
   ...toRefs(a)

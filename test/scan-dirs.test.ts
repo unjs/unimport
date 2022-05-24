@@ -5,26 +5,24 @@ import { scanDirExports } from '../src'
 describe('scan-dirs', () => {
   test('scanDirExports', async () => {
     const dir = join(__dirname, '../playground/composables')
-    expect((await scanDirExports(dir)).map(i => ({
-      ...i,
-      from: relative(dir, i.from)
-    })))
+    expect((await scanDirExports(dir))
+      .map(i => ({
+        ...i,
+        from: relative(dir, i.from)
+      }))
+      .sort((a, b) => a.as!.localeCompare(b.as!))
+    )
       .toMatchInlineSnapshot(`
         [
-          {
-            "as": "multiplier",
-            "from": "index.ts",
-            "name": "multiplier",
-          },
-          {
-            "as": "useDoubled",
-            "from": "index.ts",
-            "name": "useDoubled",
-          },
           {
             "as": "bump",
             "from": "index.ts",
             "name": "bump",
+          },
+          {
+            "as": "foo",
+            "from": "foo.ts",
+            "name": "default",
           },
           {
             "as": "localA",
@@ -37,14 +35,19 @@ describe('scan-dirs', () => {
             "name": "localBAlias",
           },
           {
+            "as": "multiplier",
+            "from": "index.ts",
+            "name": "multiplier",
+          },
+          {
             "as": "nested",
             "from": "nested/index.ts",
             "name": "default",
           },
           {
-            "as": "foo",
-            "from": "foo.ts",
-            "name": "default",
+            "as": "useDoubled",
+            "from": "index.ts",
+            "name": "useDoubled",
           },
         ]
       `)

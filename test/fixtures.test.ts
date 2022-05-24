@@ -11,7 +11,8 @@ describe('fixtures', async () => {
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
       { name: 'foobar', from: 'foobar', as: 'foobar' },
-      { name: 'fooConst', from: 'foo', as: 'fooConst' }
+      { name: 'fooConst', from: 'foo', as: 'fooConst' },
+      { name: 'test', from: 'vitest', as: 'test' }
     ],
     presets: [
       {
