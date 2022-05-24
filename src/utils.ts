@@ -136,6 +136,7 @@ export function toTypeDeclrationItems (imports: Import[], options?: TypeDeclrati
       const from = options?.resolvePath?.(i) || i.from
       return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
     })
+    .sort()
 }
 
 export function toTypeDeclrationFile (imports: Import[], options?: TypeDeclrationOptions) {
