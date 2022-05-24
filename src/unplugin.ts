@@ -5,7 +5,7 @@ import { createFilter } from '@rollup/pluginutils'
 import MagicString from 'magic-string'
 import { UnimportOptions } from './types'
 import { createUnimport } from './context'
-import { scanDirExports } from './scan'
+import { scanDirExports } from './scan-dirs'
 
 export interface UnimportPluginOptions extends UnimportOptions {
   include: FilterPattern

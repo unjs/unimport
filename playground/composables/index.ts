@@ -9,3 +9,11 @@ export function useDoubled (v: Ref<number>) {
 export function bump () {
   multiplier.value += 1
 }
+
+const localA = 'localA'
+const localB = 'localB'
+
+export {
+  localA,
+  localB as localBAlias
+}

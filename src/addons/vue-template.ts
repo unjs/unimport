@@ -9,10 +9,6 @@ const vueTemplateAddon: Addon = {
       return s
     }
     const matches = Array.from(s.original.matchAll(contextRE))
-    if (!matches.length) {
-      return s
-    }
-
     const imports = this.imports
     const targets: Import[] = []
 

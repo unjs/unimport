@@ -5,6 +5,7 @@ import { Preset } from '../types'
 
 let _cache: Preset | undefined
 
+/* c8 ignore start */
 export default (): Preset => {
   const excluded = ['toRefs', 'utils']
 
@@ -30,3 +31,4 @@ export default (): Preset => {
 
   return _cache
 }
+/* c8 ignore end */

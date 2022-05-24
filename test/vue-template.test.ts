@@ -5,6 +5,7 @@ const input = `
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return _openBlock(), _createElementBlock("div", null, [
     _createElementVNode("h1", null, _toDisplayString($setup.count) + " x " + _toDisplayString(_ctx.multiplier) + " = " + _toDisplayString($setup.doubled), 1),
+    _toDisplayString(_ctx.foo),
     _createElementVNode("button", { onClick: $setup.inc }, " Inc ")
   ]);
 }
@@ -26,6 +27,7 @@ describe('vue-template', () => {
       function _sfc_render(_ctx, _cache, \$props, \$setup, \$data, \$options) {
         return _openBlock(), _createElementBlock(\\"div\\", null, [
           _createElementVNode(\\"h1\\", null, _toDisplayString(\$setup.count) + \\" x \\" + _toDisplayString(__unimport_multiplier) + \\" = \\" + _toDisplayString(\$setup.doubled), 1),
+          _toDisplayString(_ctx.foo),
           _createElementVNode(\\"button\\", { onClick: \$setup.inc }, \\" Inc \\")
         ]);
       }
@@ -47,5 +49,11 @@ describe('vue-template', () => {
       }
       "
     `)
+  })
+
+  test('skip non-targets', async () => {
+    const input = 'ctx.multiplier'
+    expect((await ctx.injectImports(input, 'a.vue')).code.toString())
+      .toEqual(input)
   })
 })
