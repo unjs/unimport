@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/unjs/unimport/compare/v0.2.1...v0.2.2) (2022-05-24)
+
+
+### Features
+
+* allow `modifyDynamicImports` to replace array ([abcb52c](https://github.com/unjs/unimport/commit/abcb52cc12524e264e7d0c9ed985373b50ce8728))
+* expose addons ([a954785](https://github.com/unjs/unimport/commit/a9547851f78775a266f1718a50a14ff956698684))
+* improve addons API ([bd92eac](https://github.com/unjs/unimport/commit/bd92eac74566148a7f0c525dfc938d61372d7245))
+* improve coverage ([37d39a0](https://github.com/unjs/unimport/commit/37d39a030741bf443152caa402741e72ef32036e))
+* support importing side-effects ([0d2da20](https://github.com/unjs/unimport/commit/0d2da20ea08e727c3bf9a9a98b29afc8b7f5f506))
+
+
+### Bug Fixes
+
+* don't match identifiers starts with `.` ([6cddef4](https://github.com/unjs/unimport/commit/6cddef49d93346069f112ebeae9f1fd93d01c125))
+* improve match regex ([0e68fd7](https://github.com/unjs/unimport/commit/0e68fd72c18af7bf8c1c9402a06d5742978f1776))
+* sort dts entries ([3d71eef](https://github.com/unjs/unimport/commit/3d71eef9f43cbb0d34c55a6d915d57b2d29146b6))
+
 ### [0.2.1](https://github.com/unjs/unimport/compare/v0.1.9...v0.2.1) (2022-05-10)
 
 
