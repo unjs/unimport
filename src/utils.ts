@@ -46,7 +46,14 @@ export function toImports (imports: Import[], isCJS = false) {
       const imports = Array.from(importSet)
         .filter((i) => {
           // handle special imports
-          if (i.name === 'default') {
+          if (!i.name || i.as === '') {
+            entries.push(
+              isCJS
+                ? `require('${name}');`
+                : `import '${name}';`
+            )
+            return false
+          } else if (i.name === 'default') {
             entries.push(
               isCJS
                 ? `const { default: ${i.as} } = require('${name}');`
@@ -61,6 +68,7 @@ export function toImports (imports: Import[], isCJS = false) {
             )
             return false
           }
+
           return true
         })
 
@@ -83,7 +91,7 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
   const indexToRemove = new Set<number>()
 
   imports.filter(i => !i.disabled).forEach((i, idx) => {
-    const name = i.as || i.name
+    const name = i.as ?? i.name
     if (!map.has(name)) {
       map.set(name, idx)
       return
@@ -229,7 +237,7 @@ export function addImportToCode (code: string | MagicString, imports: Import[], 
 
 export function normalizeImports (imports: Import[]): Import[] {
   for (const _import of imports) {
-    _import.as = _import.as || _import.name
+    _import.as = _import.as ?? _import.name
   }
   return imports
 }

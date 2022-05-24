@@ -91,7 +91,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
   const isCJSContext = detectSyntax(strippedCode).hasCJS
 
   // Find all possible injection
-  const matched = new Set(
+  const identifiers = new Set(
     Array.from(strippedCode.matchAll(matchRE)).map(i => i[1])
   )
 
@@ -103,15 +103,15 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
         ...(i[2]?.split(separatorRE) || [])
       ])
       .map(i => i.replace(importAsRE, '').trim())
-      .forEach(i => matched.delete(i))
+      .forEach(i => identifiers.delete(i))
   }
 
-  let matchedImports = Array.from(matched)
+  let matchedImports = Array.from(identifiers)
     .map(name => ctx.map.get(name))
     .filter(i => i && !i.disabled) as Import[]
 
   for (const addon of ctx.addons) {
-    matchedImports = await addon.matchImports?.call(ctx, matched, matchedImports) || matchedImports
+    matchedImports = await addon.matchImports?.call(ctx, identifiers, matchedImports) || matchedImports
   }
 
   return {

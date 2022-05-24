@@ -64,7 +64,8 @@ describe('toImports', () => {
       { from: 'test1', name: 'foo', as: 'foo' },
       { from: 'test1', name: 'bar', as: 'bar' },
       { from: 'test2', name: 'foobar', as: 'foobar' },
-      { from: 'test2', name: 'default', as: 'defaultAlias' }
+      { from: 'test2', name: 'default', as: 'defaultAlias' },
+      { from: 'sideeffects', name: '', as: '' }
     ]
     expect(toImports(imports))
       .toMatchInlineSnapshot(`
@@ -72,7 +73,8 @@ describe('toImports', () => {
         import * as bar from 'test1';
         import { foo, bar } from 'test1';
         import defaultAlias from 'test2';
-        import { foobar } from 'test2';"
+        import { foobar } from 'test2';
+        import 'sideeffects';"
       `)
     expect(toImports(imports, true))
       .toMatchInlineSnapshot(`
@@ -80,7 +82,8 @@ describe('toImports', () => {
         const bar = require('test1');
         const { foo, bar } = require('test1');
         const { default: defaultAlias } = require('test2');
-        const { foobar } = require('test2');"
+        const { foobar } = require('test2');
+        require('sideeffects');"
       `)
   })
 })
