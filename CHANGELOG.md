@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/unjs/unimport/compare/v0.2.3...v0.2.4) (2022-05-25)
+
+
+### Bug Fixes
+
+* exclude existing class define ([94c3a7d](https://github.com/unjs/unimport/commit/94c3a7dfa9cbe8ac392322fecf34f03cf707c58d))
+* regexes break with unbalanced backticks ([#51](https://github.com/unjs/unimport/issues/51)) ([c6764ba](https://github.com/unjs/unimport/commit/c6764bafc0b800459167944fdf4ac782a03bd341))
+
 ### [0.2.3](https://github.com/unjs/unimport/compare/v0.2.2...v0.2.3) (2022-05-24)
 
 
