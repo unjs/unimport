@@ -12,7 +12,9 @@ describe('fixtures', async () => {
       { name: 'default', from: 'default', as: 'customDefault' },
       { name: 'foobar', from: 'foobar', as: 'foobar' },
       { name: 'fooConst', from: 'foo', as: 'fooConst' },
-      { name: 'test', from: 'vitest', as: 'test' }
+      { name: 'test', from: 'vitest', as: 'test' },
+      { name: 'Foo', from: 'foobar', as: 'Foo' },
+      { name: 'Bar', from: 'foobar', as: 'Bar' }
     ],
     presets: [
       {

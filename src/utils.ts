@@ -4,11 +4,13 @@ import type { Import, Preset, TypeDeclrationOptions } from './types'
 
 export const excludeRE = [
   // imported from other module
-  /\bimport\s*([\s\S]+?)\s*from\b/g,
+  /\bimport\s*(.+?)\s*from\b/gs,
   // defined as function
-  /\bfunction\s*([\w_$]+?)\s*\(/g,
+  /\bfunction\s*([\w_$]+?)\s*\(/gs,
+  // defined as class
+  /\bclass\s*([\w_$]+?)\s*{/gs,
   // defined as local variable
-  /\b(?:const|let|var)\s+?(\[[\s\S]*?\]|\{[\s\S]*?\}|[\s\S]+?)\s*?[=;\n]/g
+  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs
 ]
 
 export const importAsRE = /^.*\sas\s+/
