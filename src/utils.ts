@@ -33,9 +33,9 @@ export function stripCommentsAndStrings (code: string) {
     .replace(multilineCommentsRE, '')
     .replace(singlelineCommentsRE, '')
     .replace(templateLiteralRE, '` + $1 + `')
+    .replace(regexRE, 'new RegExp("")')
     .replace(quotesRE[0], '""')
     .replace(quotesRE[1], '``')
-    .replace(regexRE, 'new RegExp("")')
 }
 
 export function toImports (imports: Import[], isCJS = false) {
