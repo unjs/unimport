@@ -12,3 +12,6 @@ const bar = computed(() => {})
 
 const b = { class: "text-sm opacity-75" };
 // reactive
+//reactive
+/*reactive*/
+/**/
