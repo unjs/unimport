@@ -18,8 +18,8 @@ export const separatorRE = /[,[\]{}\n]/g
 export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\];+*&|`<>,\n-])/g
 
 const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
-const multilineCommentsRE = /\/\*\s(.|[\r\n])*?\*\//gm
-const singlelineCommentsRE = /\/\/\s.*$/gm
+const multilineCommentsRE = /\/\*.*?\*\//gms
+const singlelineCommentsRE = /\/\/.*$/gm
 const templateLiteralRE = /\$\{\s*(.*?)\s*\}/g
 const quotesRE = [
   /(["'])((?:\\\1|(?!\1)|.|\r)*?)\1/gm,
