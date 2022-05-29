@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/unjs/unimport/compare/v0.2.4...v0.2.5) (2022-05-29)
+
+
+### Bug Fixes
+
+* no space in comment ([#56](https://github.com/unjs/unimport/issues/56)) ([720d164](https://github.com/unjs/unimport/commit/720d164ee90e564a2a9441a2381540391c33b525))
+* slash in regex ([#52](https://github.com/unjs/unimport/issues/52)) ([685c320](https://github.com/unjs/unimport/commit/685c32093a37195f3844048f1f69494eb06f7c69))
+* space in template literal ([#55](https://github.com/unjs/unimport/issues/55)) ([55bcb46](https://github.com/unjs/unimport/commit/55bcb46e392067d683d44efeb8bb6c7cf11f3d62))
+
 ### [0.2.4](https://github.com/unjs/unimport/compare/v0.2.3...v0.2.4) (2022-05-25)
 
 
