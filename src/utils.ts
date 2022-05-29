@@ -20,7 +20,7 @@ export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\];+*&|`<>,\n-])/g
 const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 const multilineCommentsRE = /\/\*.*?\*\//gms
 const singlelineCommentsRE = /\/\/.*$/gm
-const templateLiteralRE = /\$\{(.*?)\}/g
+const templateLiteralRE = /\$\{\s*(.*?)\s*\}/g
 const quotesRE = [
   /(["'])((?:\\\1|(?!\1)|.|\r)*?)\1/gm,
   /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm
