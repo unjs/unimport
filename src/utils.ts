@@ -31,22 +31,79 @@ export function defineUnimportPreset (preset: Preset): Preset {
 }
 
 export function stripCommentsAndStrings (code: string) {
-  code = code
-    .replace(multilineCommentsRE, '')
-    .replace(singlelineCommentsRE, '')
-
-  // Recursively replace ${} to support nested constructs (e.g. ${`${x}`})
-  for (let i = 0; i < 16; i++) {
-    const originalCode = code
-    code = code.replace(templateLiteralRE, '` + $1 + `')
-    if (code === originalCode) {
-      break
+  code = code.replace(regexRE, (match) => {
+    if (match === '//') { return match }
+    if (match.startsWith('/*')) { return match }
+    return 'new RegExp("")'
+  })
+  let result = ''
+  const stateStack = ['executableCode']
+  for (let i = 0; i < code.length; i++) {
+    const state = stateStack[0]
+    const char = code[i]
+    const nextChar = code[i + 1]
+    if (state === 'executableCode' || state === 'templateLiteralInterpolationCode') {
+      if (char === '/') {
+        if (nextChar === '/') {
+          stateStack.unshift('singleLineComment')
+          i++
+        } else if (nextChar === '*') {
+          stateStack.unshift('multiLineComment')
+          i++
+        } else {
+          result += char
+        }
+      } else if (char === '}' && state === 'templateLiteralInterpolationCode') {
+        stateStack.shift()
+        result += ' + `'
+      } else {
+        if (char === "'") {
+          stateStack.unshift('singleQuoteString')
+        } else if (char === '"') {
+          stateStack.unshift('doubleQuoteString')
+        } else if (char === '`') {
+          stateStack.unshift('templateLiteral')
+        }
+        result += char
+      }
+    } else if (state === 'singleLineComment') {
+      if (char === '\n') {
+        stateStack.shift()
+      }
+    } else if (state === 'multiLineComment') {
+      if (char === '*' && nextChar === '/') {
+        stateStack.shift()
+        i++
+      }
+    } else if (state === 'singleQuoteString') {
+      if (char === '\\') {
+        i++ // skip next character
+      } else if (char === "'") {
+        stateStack.shift()
+        result += char
+      }
+    } else if (state === 'doubleQuoteString') {
+      if (char === '\\') {
+        i++ // skip next character
+      } else if (char === '"') {
+        stateStack.shift()
+        result += char
+      }
+    } else if (state === 'templateLiteral') {
+      if (char === '\\') {
+        i++ // skip next character
+      } else if (char === '`') {
+        stateStack.shift()
+        result += char
+      } else if (char === '$' && nextChar === '{') {
+        stateStack.unshift('templateLiteralInterpolationCode')
+        i++
+        result += '` + '
+      }
     }
   }
-
-  return code.replace(regexRE, 'new RegExp("")')
-    .replace(quotesRE[0], '$1$1')
-    .replace(quotesRE[1], '``')
+  console.log('WHAAAAT', result)
+  return result
 }
 
 export function toImports (imports: Import[], isCJS = false) {
