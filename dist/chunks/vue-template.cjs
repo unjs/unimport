@@ -96,7 +96,6 @@ function stripCommentsAndStrings(code) {
       }
     }
   }
-  console.log("WHAAAAT", result);
   return result;
 }
 function toImports(imports, isCJS = false) {
