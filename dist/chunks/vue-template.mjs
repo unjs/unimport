@@ -11,26 +11,87 @@ const importAsRE = /^.*\sas\s+/;
 const separatorRE = /[,[\]{}\n]/g;
 const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\];+*&|`<>,\n-])/g;
 const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g;
-const multilineCommentsRE = /\/\*.*?\*\//gms;
-const singlelineCommentsRE = /\/\/.*$/gm;
-const templateLiteralRE = /\$\{\s*((?:(?!\$\{).|\n|\r)*?)\s*\}/g;
-const quotesRE = [
-  /(["'`])((?:\\\1|(?!\1)|.|\r)*?)\1/gm,
-  /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm
-];
 function defineUnimportPreset(preset) {
   return preset;
 }
 function stripCommentsAndStrings(code) {
-  code = code.replace(multilineCommentsRE, "").replace(singlelineCommentsRE, "");
-  for (let i = 0; i < 16; i++) {
-    const originalCode = code;
-    code = code.replace(templateLiteralRE, "` + $1 + `");
-    if (code === originalCode) {
-      break;
+  code = code.replace(regexRE, (match) => {
+    if (match === "//") {
+      return match;
+    }
+    if (match.startsWith("/*")) {
+      return match;
+    }
+    return 'new RegExp("")';
+  });
+  let result = "";
+  const stateStack = ["executableCode"];
+  for (let i = 0; i < code.length; i++) {
+    const state = stateStack[0];
+    const char = code[i];
+    const nextChar = code[i + 1];
+    if (state === "executableCode" || state === "templateLiteralInterpolationCode") {
+      if (char === "/") {
+        if (nextChar === "/") {
+          stateStack.unshift("singleLineComment");
+          i++;
+        } else if (nextChar === "*") {
+          stateStack.unshift("multiLineComment");
+          i++;
+        } else {
+          result += char;
+        }
+      } else if (char === "}" && state === "templateLiteralInterpolationCode") {
+        stateStack.shift();
+        result += " + `";
+      } else {
+        if (char === "'") {
+          stateStack.unshift("singleQuoteString");
+        } else if (char === '"') {
+          stateStack.unshift("doubleQuoteString");
+        } else if (char === "`") {
+          stateStack.unshift("templateLiteral");
+        }
+        result += char;
+      }
+    } else if (state === "singleLineComment") {
+      if (char === "\n") {
+        stateStack.shift();
+      }
+    } else if (state === "multiLineComment") {
+      if (char === "*" && nextChar === "/") {
+        stateStack.shift();
+        i++;
+      }
+    } else if (state === "singleQuoteString") {
+      if (char === "\\") {
+        i++;
+      } else if (char === "'") {
+        stateStack.shift();
+        result += char;
+      }
+    } else if (state === "doubleQuoteString") {
+      if (char === "\\") {
+        i++;
+      } else if (char === '"') {
+        stateStack.shift();
+        result += char;
+      }
+    } else if (state === "templateLiteral") {
+      if (char === "\\") {
+        i++;
+      } else if (char === "`") {
+        stateStack.shift();
+        result += char;
+      } else if (char === "$" && nextChar === "{") {
+        stateStack.unshift("templateLiteralInterpolationCode");
+        i++;
+        result += "` + ";
+      }
     }
   }
-  return code.replace(regexRE, 'new RegExp("")').replace(quotesRE[0], "$1$1").replace(quotesRE[1], "``");
+  console.log("WHAAAAT", result);
+  return result;
 }
 function toImports(imports, isCJS = false) {
   const map = toImportModuleMap(imports);
