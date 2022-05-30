@@ -17,25 +17,11 @@ export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
 export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\];+*&|`<>,\n-])/g
 
-const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
-const multilineCommentsRE = /\/\*.*?\*\//gms
-const singlelineCommentsRE = /\/\/.*$/gm
-const templateLiteralRE = /\$\{\s*((?:(?!\$\{).|\n|\r)*?)\s*\}/g
-const quotesRE = [
-  /(["'`])((?:\\\1|(?!\1)|.|\r)*?)\1/gm, // single-line strings
-  /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm // multi-line strings (i.e. template literals only)
-]
-
 export function defineUnimportPreset (preset: Preset): Preset {
   return preset
 }
 
 export function stripCommentsAndStrings (code: string) {
-  code = code.replace(regexRE, (match) => {
-    if (match === '//') { return match }
-    if (match.startsWith('/*')) { return match }
-    return 'new RegExp("")'
-  })
   let result = ''
   const stateStack = ['executableCode']
   for (let i = 0; i < code.length; i++) {
@@ -51,7 +37,13 @@ export function stripCommentsAndStrings (code: string) {
           stateStack.unshift('multiLineComment')
           i++
         } else {
-          result += char
+          const regexLength = detectPotentialRegex(code, i)
+          if (regexLength) {
+            i += regexLength
+            result += 'new RegExp("")'
+          } else {
+            result += char
+          }
         }
       } else if (char === '}' && state === 'templateLiteralInterpolationCode') {
         stateStack.shift()
@@ -103,6 +95,43 @@ export function stripCommentsAndStrings (code: string) {
     }
   }
   return result
+}
+
+function detectPotentialRegex (code: String, index: number) {
+  let isInsideCharacterClass = false
+  let endIndex = null
+  for (let i = index + 1; i < code.length; i++) {
+    const char = code[i]
+    if (char === '\\') {
+      i++ // skip next character
+    }
+    if (char === '[') {
+      isInsideCharacterClass = true
+    }
+    if (isInsideCharacterClass && char === ']') {
+      isInsideCharacterClass = false
+    }
+    if (char === '\n') {
+      return null
+    }
+    if (char === '/' && !isInsideCharacterClass) {
+      endIndex = i
+      break
+    }
+  }
+  if (!endIndex) {
+    // Closing "/" was not found
+    return null
+  }
+  if (endIndex === index + 1) {
+    // "//" = empty regex is impossible
+    return null
+  }
+  const regexFlags = 'gimsuy'
+  while (regexFlags.includes(code[endIndex + 1])) {
+    endIndex++
+  }
+  return endIndex - index
 }
 
 export function toImports (imports: Import[], isCJS = false) {
