@@ -11,6 +11,8 @@ const foo = ref(0)
 const bar = computed(() => {})
 
 const b = { class: "text-sm opacity-75" };
+const templateLiteralWithDoubleSlash = `http://${useEffect()}`
+const templateLiteralWithPseudoComment = `/* ${toRefs()} */`
 // reactive
 //reactive
 /*reactive*/
