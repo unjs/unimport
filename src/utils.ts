@@ -102,7 +102,6 @@ export function stripCommentsAndStrings (code: string) {
       }
     }
   }
-  console.log('WHAAAAT', result)
   return result
 }
 
