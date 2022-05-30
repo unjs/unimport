@@ -10,7 +10,7 @@
 .vscode
 *.log*
 coverage
-# dist
+dist
 node_modules
 types
 playground/unimport.d.ts
