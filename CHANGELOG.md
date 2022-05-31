@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/unjs/unimport/compare/v0.2.5...v0.2.6) (2022-05-31)
+
+
+### Bug Fixes
+
+* nested quotes in template string, multiline template string ([#49](https://github.com/unjs/unimport/issues/49)) ([#58](https://github.com/unjs/unimport/issues/58)) ([d5921ae](https://github.com/unjs/unimport/commit/d5921ae69553ad4a3092223e43df038d5c715505))
+* use `strip-literal` for more correct comments removal ([#60](https://github.com/unjs/unimport/issues/60)) ([087407e](https://github.com/unjs/unimport/commit/087407e0d7a6f88bdce3be3c15dd4236c4368ca9))
+
 ### [0.2.5](https://github.com/unjs/unimport/compare/v0.2.4...v0.2.5) (2022-05-29)
 
 
