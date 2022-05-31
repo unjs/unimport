@@ -1,5 +1,6 @@
 import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
 import MagicString from 'magic-string'
+import { stripLiteral } from 'strip-literal'
 import type { Import, Preset, TypeDeclrationOptions } from './types'
 
 export const excludeRE = [
@@ -15,123 +16,17 @@ export const excludeRE = [
 
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
-export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\];+*&|`<>,\n-])/g
+export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\]};+*&|`<>,\n-])/g
+
+const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
+
+export function stripCommentsAndStrings (code: string) {
+  return stripLiteral(code, true)
+    .replace(regexRE, 'new RegExp("")')
+}
 
 export function defineUnimportPreset (preset: Preset): Preset {
   return preset
-}
-
-export function stripCommentsAndStrings (code: string) {
-  let result = ''
-  const stateStack = ['executableCode']
-  for (let i = 0; i < code.length; i++) {
-    const state = stateStack[0]
-    const char = code[i]
-    const nextChar = code[i + 1]
-    if (state === 'executableCode' || state === 'templateLiteralInterpolationCode') {
-      if (char === '/') {
-        if (nextChar === '/') {
-          stateStack.unshift('singleLineComment')
-          i++
-        } else if (nextChar === '*') {
-          stateStack.unshift('multiLineComment')
-          i++
-        } else {
-          const regexLength = detectPotentialRegex(code, i)
-          if (regexLength) {
-            i += regexLength
-            result += 'new RegExp("")'
-          } else {
-            result += char
-          }
-        }
-      } else if (char === '}' && state === 'templateLiteralInterpolationCode') {
-        stateStack.shift()
-        result += ' + `'
-      } else {
-        if (char === "'") {
-          stateStack.unshift('singleQuoteString')
-        } else if (char === '"') {
-          stateStack.unshift('doubleQuoteString')
-        } else if (char === '`') {
-          stateStack.unshift('templateLiteral')
-        }
-        result += char
-      }
-    } else if (state === 'singleLineComment') {
-      if (char === '\n') {
-        stateStack.shift()
-      }
-    } else if (state === 'multiLineComment') {
-      if (char === '*' && nextChar === '/') {
-        stateStack.shift()
-        i++
-      }
-    } else if (state === 'singleQuoteString') {
-      if (char === '\\') {
-        i++ // skip next character
-      } else if (char === "'") {
-        stateStack.shift()
-        result += char
-      }
-    } else if (state === 'doubleQuoteString') {
-      if (char === '\\') {
-        i++ // skip next character
-      } else if (char === '"') {
-        stateStack.shift()
-        result += char
-      }
-    } else if (state === 'templateLiteral') {
-      if (char === '\\') {
-        i++ // skip next character
-      } else if (char === '`') {
-        stateStack.shift()
-        result += char
-      } else if (char === '$' && nextChar === '{') {
-        stateStack.unshift('templateLiteralInterpolationCode')
-        i++
-        result += '` + '
-      }
-    }
-  }
-  return result
-}
-
-function detectPotentialRegex (code: String, index: number) {
-  let isInsideCharacterClass = false
-  let endIndex = null
-  for (let i = index + 1; i < code.length; i++) {
-    const char = code[i]
-    if (char === '\\') {
-      i++ // skip next character
-    }
-    if (char === '[') {
-      isInsideCharacterClass = true
-    }
-    if (isInsideCharacterClass && char === ']') {
-      isInsideCharacterClass = false
-    }
-    if (char === '\n') {
-      return null
-    }
-    if (char === '/' && !isInsideCharacterClass) {
-      endIndex = i
-      break
-    }
-  }
-  if (!endIndex) {
-    // Closing "/" was not found
-    return null
-  }
-  if (endIndex === index + 1) {
-    // "//" = empty regex is impossible
-    return null
-  }
-  const regexFlags = 'gimsuy'
-  while (regexFlags.includes(code[endIndex + 1])) {
-    endIndex++
-  }
-  return endIndex - index
 }
 
 export function toImports (imports: Import[], isCJS = false) {
