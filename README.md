@@ -84,7 +84,7 @@ console.log(injectImports('console.log(fooBar())'))
 
 ```ts
 Unimport.vite({
-  dts: true // or a path to generateed file
+  dts: true // or a path to generated file
 })
 ```
 
