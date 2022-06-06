@@ -52,7 +52,7 @@
     "pathe": "^0.3.0",
     "scule": "^0.2.1",
     "strip-literal": "^0.3.0",
-    "unplugin": "^0.6.3"
+    "unplugin": "^0.7.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
@@ -62,7 +62,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.36.1"
+    "vue-tsc": "^0.37.0"
   },
-  "packageManager": "pnpm@7.1.8"
+  "packageManager": "pnpm@7.1.9"
 }
