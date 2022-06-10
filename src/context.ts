@@ -92,7 +92,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 async function detectImports (code: string | MagicString, ctx: UnimportContext) {
   // Strip comments so we don't match on them
   const strippedCode = stripCommentsAndStrings(getString(code))
-  const isCJSContext = detectSyntax(strippedCode).hasCJS
+  const syntax = detectSyntax(strippedCode)
+  const isCJSContext = syntax.hasCJS && !syntax.hasESM
 
   // Find all possible injection
   const identifiers = new Set(
