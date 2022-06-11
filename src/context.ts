@@ -56,11 +56,12 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   async function modifyDynamicImports (fn: (imports: Import[]) => Thenable<void | Import[]>) {
     const result = await fn(ctx.dynamicImports)
     if (Array.isArray(result)) { ctx.dynamicImports = result }
-    _combinedImports = undefined
+    _combinedImports = reload()
   }
 
   function clearDynamicImports () {
     ctx.dynamicImports.length = 0
+    _combinedImports = reload()
   }
 
   function generateTypeDecarations (options?: TypeDeclrationOptions) {
