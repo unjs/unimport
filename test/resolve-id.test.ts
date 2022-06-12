@@ -1,11 +1,12 @@
+import { resolve } from 'pathe'
 import { describe, expect, test } from 'vitest'
-import { createUnimport } from '../src'
+import { createUnimport, resolveIdAbsolute } from '../src'
 
 describe('resolve-id', () => {
   const input = `
 let a = ref(0)
 let b = computed(() => a.value)
-const router = useRouter()
+const path = resolvePath()
   `
 
   test('inject', async () => {
@@ -25,11 +26,10 @@ const router = useRouter()
     expect((await ctx.injectImports(input, 'a.vue')).code.toString())
       .toMatchInlineSnapshot(`
         "import { ref, computed } from 'vue?from=a.vue';
-        import { useRouter } from 'vue-router?from=a.vue';
 
         let a = ref(0)
         let b = computed(() => a.value)
-        const router = useRouter()
+        const path = resolvePath()
           "
       `)
 
@@ -43,11 +43,26 @@ const router = useRouter()
           "vue",
           "a.vue",
         ],
-        [
-          "vue-router",
-          "a.vue",
-        ],
       ]
     `)
+  })
+
+  test('resolveAbsolute', async () => {
+    const cwd = process.cwd()
+    const path = resolve(cwd, 'a.vue')
+    const ctx = createUnimport({
+      presets: [
+        'vue',
+        {
+          from: 'mlly',
+          imports: ['resolvePath']
+        }
+      ],
+      resolveId: resolveIdAbsolute
+    })
+
+    const transformed = (await ctx.injectImports(input, path)).code.toString()
+    expect(transformed).toContain('node_modules/vue')
+    expect(transformed).toContain('node_modules/mlly')
   })
 })

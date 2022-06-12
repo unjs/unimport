@@ -1,4 +1,4 @@
-import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
+import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
 import type { Import, Preset, TypeDeclrationOptions } from './types'
@@ -231,4 +231,10 @@ export function normalizeImports (imports: Import[]): Import[] {
     _import.as = _import.as ?? _import.name
   }
   return imports
+}
+
+export function resolveIdAbsolute (id: string, parentId?: string) {
+  return resolvePath(id, {
+    url: parentId
+  })
 }
