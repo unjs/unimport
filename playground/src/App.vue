@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const count = ref(1)
-const doubled = useDoubled(count)
 
 function inc () {
   count.value += 1
@@ -9,7 +8,7 @@ function inc () {
 
 <template>
   <div>
-    <h1>{{ count }} x {{ multiplier }} = {{ doubled }}</h1>
+    <h1>{{ count }} x {{ multiplier }} = {{ count * multiplier }}</h1>
     <button @click="inc">
       Inc
     </button>

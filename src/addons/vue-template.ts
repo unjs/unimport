@@ -1,7 +1,8 @@
 import { Import, Addon } from '../types'
-import { toImports, toTypeDeclrationItems } from '../utils'
+import { toImports } from '../utils'
 
 const contextRE = /\b_ctx\.([\w_]+)\b/g
+const UNREF_KEY = '_unimport_unref_'
 
 export const vueTemplateAddon = (): Addon => ({
   transform (s) {
@@ -22,8 +23,8 @@ export const vueTemplateAddon = (): Addon => ({
       const start = match.index!
       const end = start + match[0].length
 
-      const tempName = '__unimport_' + name
-      s.overwrite(start, end, tempName)
+      const tempName = `_unimport_${name}`
+      s.overwrite(start, end, `${UNREF_KEY}(${tempName})`)
       if (!targets.find(i => i.as === tempName)) {
         targets.push({
           ...item,
@@ -33,17 +34,27 @@ export const vueTemplateAddon = (): Addon => ({
     }
 
     if (targets.length) {
+      targets.push({
+        name: 'unref',
+        from: 'vue',
+        as: UNREF_KEY
+      })
       s.prepend(toImports(targets))
     }
 
     return s
   },
   decleration (dts, options) {
-    const items = toTypeDeclrationItems(this.imports, options)
-      .map(i => i.replace('const ', ''))
+    const items = this.imports
+      .map((i) => {
+        const from = options?.resolvePath?.(i) || i.from
+        return `readonly ${i.as}: UnwrapRef<typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}>`
+      })
+      .sort()
     return dts +
 `
 // for vue template auto import
+import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
 ${items.map(i => '    ' + i).join('\n')}
