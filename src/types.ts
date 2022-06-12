@@ -37,6 +37,7 @@ export interface UnimportContext {
   map: Map<string, Import>
   addons: Addon[]
   invalidate(): void
+  resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
 }
 
 export interface AddonsOptions {
@@ -53,6 +54,10 @@ export interface UnimportOptions {
   presets: (Preset | BuiltinPresetName)[]
   warn: (msg: string) => void
   addons: AddonsOptions | Addon[]
+  /**
+   * Custom resolver to auto import id
+   */
+  resolveId?: (id: string, importee?:string) => Thenable<string | void>
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined

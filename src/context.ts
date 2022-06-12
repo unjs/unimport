@@ -32,7 +32,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     map: new Map(),
     invalidate () {
       _combinedImports = undefined
-    }
+    },
+    resolveId: (id, parentId) => opts.resolveId?.(id, parentId)
   }
 
   // Resolve presets
@@ -135,5 +136,10 @@ async function injectImports (code: string | MagicString, id: string | undefined
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx)
 
-  return addImportToCode(s, matchedImports, isCJSContext, options?.mergeExisting)
+  const resolvedImports = await Promise.all(matchedImports.map(async i => ({
+    ...i,
+    from: await ctx.resolveId(i.from, id) || i.from
+  })))
+
+  return addImportToCode(s, resolvedImports, isCJSContext, options?.mergeExisting)
 }
