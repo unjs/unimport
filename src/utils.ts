@@ -18,11 +18,43 @@ export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
 export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\]};+*&|`<>,\n-])/g
 
+const multilineCommentsRE = /\/\*.*?\*\//gms
+const singlelineCommentsRE = /\/\/.*$/gm
+const templateLiteralRE = /\$\{\s*((?:(?!\$\{).|\n|\r)*?)\s*\}/g
+const quotesRE = [
+  /(["'`])((?:\\\1|(?!\1)|.|\r)*?)\1/gm, // single-line strings
+  /([`])((?:\\\1|(?!\1)|.|\n|\r)*?)\1/gm // multi-line strings (i.e. template literals only)
+]
+
 const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
 export function stripCommentsAndStrings (code: string) {
-  return stripLiteral(code, true)
-    .replace(regexRE, 'new RegExp("")')
+  try {
+    return stripLiteral(code)
+      .replace(regexRE, 'new RegExp("")')
+  } catch {
+    // TODO: improve https://github.com/antfu/strip-literal/pull/1
+    return stripCommentsAndStringsSimple(code)
+  }
+}
+
+export function stripCommentsAndStringsSimple (code: string) {
+  code = code
+    .replace(multilineCommentsRE, '')
+    .replace(singlelineCommentsRE, '')
+
+  // Recursively replace ${} to support nested constructs (e.g. ${`${x}`})
+  for (let i = 0; i < 16; i++) {
+    const originalCode = code
+    code = code.replace(templateLiteralRE, '` + $1 + `')
+    if (code === originalCode) {
+      break
+    }
+  }
+
+  return code.replace(regexRE, 'new RegExp("")')
+    .replace(quotesRE[0], '$1$1')
+    .replace(quotesRE[1], '``')
 }
 
 export function defineUnimportPreset (preset: Preset): Preset {
