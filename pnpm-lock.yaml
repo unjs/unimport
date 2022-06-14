@@ -16,7 +16,7 @@ importers:
       pathe: ^0.3.0
       scule: ^0.2.1
       standard-version: latest
-      strip-literal: ^0.3.0
+      strip-literal: ^0.4.0
       typescript: latest
       unbuild: latest
       unplugin: ^0.7.0
@@ -31,7 +31,7 @@ importers:
       mlly: 0.5.2
       pathe: 0.3.0
       scule: 0.2.1
-      strip-literal: 0.3.0
+      strip-literal: 0.4.0
       unplugin: 0.7.0
     devDependencies:
       '@nuxtjs/eslint-config-typescript': 10.0.0_ud6rd4xtew5bv4yhvkvu24pzm4
@@ -3708,8 +3708,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /strip-literal/0.3.0:
-    resolution: {integrity: sha512-J+lfm3Pw5nzURj2B8acyvUSBqs3JbjM8WAfrmeH3qcn32+ew6kFwbZFV9+X8k9UOIAkQw9WPSzFZy3083c7l5Q==}
+  /strip-literal/0.4.0:
+    resolution: {integrity: sha512-ql/sBDoJOybTKSIOWrrh8kgUEMjXMwRAkZTD0EwiwxQH/6tTPkZvMIEjp0CRlpi6V5FMiJyvxeRkEi1KrGISoA==}
     dependencies:
       acorn: 8.7.1
     dev: false

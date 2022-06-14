@@ -89,15 +89,6 @@ export function Component() {
 "
 `;
 
-exports[`fixtures > special-case.ts 1`] = `
-"// https://github.com/nuxt/framework/issues/5435
-
-function ssrRender(_ctx, _push, _parent, _attrs) {
-  _push(\`<div\${_ssrRenderAttrs(_mergeProps({ class: \\"text-sm\\" }, _attrs))}><a href=\\"#\\" class=\\"font-medium text-blue-600 hover:text-blue-500\\"> ¿Olvidaste tu contraseña? </a></div>\`)
-}
-"
-`;
-
 exports[`fixtures > template-literal.ts 1`] = `
 "import { ref, reactive, computed, toRefs } from 'vue';
 import { fooConst } from 'foo';
