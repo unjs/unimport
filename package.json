@@ -51,7 +51,7 @@
     "mlly": "^0.5.2",
     "pathe": "^0.3.0",
     "scule": "^0.2.1",
-    "strip-literal": "^0.4.0",
+    "strip-literal": "^0.3.0",
     "unplugin": "^0.7.0"
   },
   "devDependencies": {
