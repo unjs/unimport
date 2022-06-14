@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.9](https://github.com/unjs/unimport/compare/v0.2.8...v0.2.9) (2022-06-14)
+
+
+### Bug Fixes
+
+* keep `ctx.map` up-to-date, close [#71](https://github.com/unjs/unimport/issues/71) ([6a31073](https://github.com/unjs/unimport/commit/6a310730a34f5c3f875acd61a19b440b3df988da))
+
 ### [0.2.8](https://github.com/unjs/unimport/compare/v0.2.7...v0.2.8) (2022-06-13)
 
 
