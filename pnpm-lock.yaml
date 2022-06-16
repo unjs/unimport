@@ -12,7 +12,7 @@ importers:
       fast-glob: ^3.2.11
       local-pkg: ^0.4.1
       magic-string: ^0.26.2
-      mlly: ^0.5.2
+      mlly: ^0.5.3
       pathe: ^0.3.0
       scule: ^0.2.1
       standard-version: latest
@@ -28,7 +28,7 @@ importers:
       fast-glob: 3.2.11
       local-pkg: 0.4.1
       magic-string: 0.26.2
-      mlly: 0.5.2
+      mlly: 0.5.3
       pathe: 0.3.0
       scule: 0.2.1
       strip-literal: 0.4.0
@@ -3010,8 +3010,8 @@ packages:
   /mlly/0.3.19:
     resolution: {integrity: sha512-zMq5n3cOf4fOzA4WoeulxagbAgMChdev3MgP6K51k7M0u2whTXxupfIY4VVzws4vxkiWhwH1rVQcsw7zDGfRhA==}
 
-  /mlly/0.5.2:
-    resolution: {integrity: sha512-4GTELSSErv6ZZJYU98fZNuIBJcXSz+ktHdRrCYEqU1m6ZlebOCG0jwZ+IEd9vOrbpYsVBBMC5OTrEyLnKRcauQ==}
+  /mlly/0.5.3:
+    resolution: {integrity: sha512-im69tuLD9EJh9fc9TZRpJEFvsBcGMez7glUCWDcHWWCKzhvPmNvyaYjp/+h0qJJN/Xovrs//GzGjOOKmFw4Gog==}
     dependencies:
       pathe: 0.2.0
       pkg-types: 0.3.2
@@ -3903,7 +3903,7 @@ packages:
       magic-string: 0.26.2
       mkdirp: 1.0.4
       mkdist: 0.3.10_typescript@4.7.3
-      mlly: 0.5.2
+      mlly: 0.5.3
       mri: 1.2.0
       pathe: 0.2.0
       pkg-types: 0.3.2
