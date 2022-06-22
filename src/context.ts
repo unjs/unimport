@@ -10,6 +10,7 @@ export type Unimport = ReturnType<typeof createUnimport>
 export function createUnimport (opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
+  const _map = new Map()
 
   const addons: Addon[] = []
 
@@ -23,45 +24,51 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
     get imports () {
-      if (!_combinedImports) {
-        _combinedImports = reload()
-      }
-      return _combinedImports
+      return updateImports()
     },
-    addons,
-    map: new Map(),
+    get map () {
+      updateImports()
+      return _map
+    },
     invalidate () {
       _combinedImports = undefined
     },
-    resolveId: (id, parentId) => opts.resolveId?.(id, parentId)
+    resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
+    addons
   }
 
   // Resolve presets
   ctx.staticImports.push(...resolveBuiltinPresets(opts.presets || []))
 
-  function reload () {
-    // Combine static and dynamic imports
-    // eslint-disable-next-line no-console
-    const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
-      .filter(i => !i.disabled)
+  function updateImports () {
+    if (!_combinedImports) {
+      // Combine static and dynamic imports
+      // eslint-disable-next-line no-console
+      const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
+        .filter(i => !i.disabled)
 
-    // Create map
-    ctx.map.clear()
-    for (const _import of imports) {
-      ctx.map.set(_import.as ?? _import.name, _import)
+      // Create map
+      _map.clear()
+      for (const _import of imports) {
+        _map.set(_import.as ?? _import.name, _import)
+      }
+
+      _combinedImports = imports
     }
-
-    return imports
+    return _combinedImports
   }
 
   async function modifyDynamicImports (fn: (imports: Import[]) => Thenable<void | Import[]>) {
     const result = await fn(ctx.dynamicImports)
-    if (Array.isArray(result)) { ctx.dynamicImports = result }
-    _combinedImports = undefined
+    if (Array.isArray(result)) {
+      ctx.dynamicImports = result
+    }
+    ctx.invalidate()
   }
 
   function clearDynamicImports () {
     ctx.dynamicImports.length = 0
+    ctx.invalidate()
   }
 
   function generateTypeDecarations (options?: TypeDeclrationOptions) {
@@ -76,7 +83,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return dts
   }
 
-  reload()
+  updateImports()
 
   return {
     clearDynamicImports,

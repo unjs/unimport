@@ -17,11 +17,10 @@ export const excludeRE = [
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
 export const matchRE = /(?<![\w_$/)]\.)([\w_$]+)\s*(?:[.()[\]};+*&|`<>,\n-])/g
-
 const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
 export function stripCommentsAndStrings (code: string) {
-  return stripLiteral(code, true)
+  return stripLiteral(code)
     .replace(regexRE, 'new RegExp("")')
 }
 

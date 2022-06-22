@@ -1,6 +1,6 @@
 {
   "name": "unimport",
-  "version": "0.2.7",
+  "version": "0.2.9",
   "description": "Unified utils for auto importing APIs in modules",
   "repository": "unjs/unimport",
   "license": "MIT",
@@ -48,10 +48,10 @@
     "fast-glob": "^3.2.11",
     "local-pkg": "^0.4.1",
     "magic-string": "^0.26.2",
-    "mlly": "^0.5.2",
+    "mlly": "^0.5.3",
     "pathe": "^0.3.0",
     "scule": "^0.2.1",
-    "strip-literal": "^0.3.0",
+    "strip-literal": "^0.4.0",
     "unplugin": "^0.7.0"
   },
   "devDependencies": {
@@ -62,7 +62,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.37.3"
+    "vue-tsc": "^0.37.9"
   },
-  "packageManager": "pnpm@7.2.0"
+  "packageManager": "pnpm@7.2.1"
 }
