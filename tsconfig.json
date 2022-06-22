@@ -17,7 +17,7 @@
       "vite/client"
     ]
   },
-  "exclude": [
-    "test/fixtures/**"
+  "include": [
+    "src/**/*.ts"
   ]
 }
