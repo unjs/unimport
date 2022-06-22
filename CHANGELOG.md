@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.10](https://github.com/unjs/unimport/compare/v0.2.9...v0.2.10) (2022-06-22)
+
+
+### Features
+
+* new `resolveId` options ([#73](https://github.com/unjs/unimport/issues/73)) ([6f83408](https://github.com/unjs/unimport/commit/6f83408e78591ed4792ff8487953af17c9327958))
+
+
+### Bug Fixes
+
+* improve match re, close [#79](https://github.com/unjs/unimport/issues/79) ([36403af](https://github.com/unjs/unimport/commit/36403af1ced8e5514121c80f3566785aa0f1e264))
+
 ### [0.2.9](https://github.com/unjs/unimport/compare/v0.2.8...v0.2.9) (2022-06-14)
 
 
