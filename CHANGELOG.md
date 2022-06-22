@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/unjs/unimport/compare/v0.2.10...v0.3.0) (2022-06-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **vue-template:** auto unwrap (#72)
+
+### Features
+
+* **vue-template:** auto unwrap ([#72](https://github.com/unjs/unimport/issues/72)) ([741015b](https://github.com/unjs/unimport/commit/741015b9cd4fc45c1ca75cf05ef3c8e6aa39dd69))
+
 ### [0.2.10](https://github.com/unjs/unimport/compare/v0.2.9...v0.2.10) (2022-06-22)
 
 
