@@ -33,6 +33,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     invalidate () {
       _combinedImports = undefined
     },
+    resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
     addons
   }
 
@@ -141,6 +142,21 @@ async function injectImports (code: string | MagicString, id: string | undefined
   }
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx)
+  const imports = await resolveImports(ctx, matchedImports, id)
 
-  return addImportToCode(s, matchedImports, isCJSContext, options?.mergeExisting)
+  return addImportToCode(s, imports, isCJSContext, options?.mergeExisting)
+}
+
+async function resolveImports (ctx: UnimportContext, imports: Import[], id: string | undefined) {
+  const resolveCache = new Map<string, string>()
+
+  return await Promise.all(imports.map(async (i) => {
+    if (!resolveCache.has(i.from)) {
+      resolveCache.set(i.from, await ctx.resolveId(i.from, id) || i.from)
+    }
+    return <Import>{
+      ...i,
+      from: resolveCache.get(i.from)!
+    }
+  }))
 }
