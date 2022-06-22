@@ -1,0 +1,2 @@
+obj.fit()
+// @test-unmodified

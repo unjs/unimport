@@ -105,7 +105,9 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
 
   // Find all possible injection
   const identifiers = new Set(
-    Array.from(strippedCode.matchAll(matchRE)).map(i => i[1])
+    Array.from(strippedCode.matchAll(matchRE))
+      .map(i => i[1] === '.' ? '' : i[2]) // Remove dot access
+      .filter(Boolean)
   )
 
   // Remove those already defined

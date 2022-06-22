@@ -14,7 +14,9 @@ describe('fixtures', async () => {
       { name: 'fooConst', from: 'foo', as: 'fooConst' },
       { name: 'test', from: 'vitest', as: 'test' },
       { name: 'Foo', from: 'foobar', as: 'Foo' },
-      { name: 'Bar', from: 'foobar', as: 'Bar' }
+      { name: 'Bar', from: 'foobar', as: 'Bar' },
+      { name: 'it', from: 'it', as: 'it' },
+      { name: 'fit', from: 'fit', as: 'fit' }
     ],
     presets: [
       {
