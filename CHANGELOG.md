@@ -197,13 +197,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* use options for `generateTypeDecarations`
+* use options for `generateTypeDeclarations`
 
 ### Features
 
 * `scanDirExports` utils, close [#9](https://github.com/unjs/unimport/issues/9) ([#10](https://github.com/unjs/unimport/issues/10)) ([e6f7c71](https://github.com/unjs/unimport/commit/e6f7c711c2f9f69f3390049b09637e7d28296be5))
 * resolve priority from presets ([2353807](https://github.com/unjs/unimport/commit/2353807f8187cda87c99ad3184e0f1a332a9f9fa))
-* use options for `generateTypeDecarations` ([4c9c4dc](https://github.com/unjs/unimport/commit/4c9c4dc5dff3e76546dfd57785278cb3bfa099e3))
+* use options for `generateTypeDeclarations` ([4c9c4dc](https://github.com/unjs/unimport/commit/4c9c4dc5dff3e76546dfd57785278cb3bfa099e3))
 
 
 ### Bug Fixes

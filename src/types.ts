@@ -66,7 +66,7 @@ export interface ScanDirExportsOptions {
   fileFilter?: (file: string) => boolean
 }
 
-export interface TypeDeclrationOptions {
+export interface TypeDeclarationOptions {
   /**
    * Custom resolver for path of the import
    */
@@ -90,6 +90,6 @@ export type Thenable<T> = Promise<T> | T
 
 export interface Addon {
   transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
-  decleration?: (this: UnimportContext, dts: string, options: TypeDeclrationOptions) => string
+  declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => string
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>
 }
