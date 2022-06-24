@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/unjs/unimport/compare/v0.3.0...v0.4.0) (2022-06-24)
+
+
+### Bug Fixes
+
+* spelling of declaration ([#81](https://github.com/unjs/unimport/issues/81)) ([f371b9b](https://github.com/unjs/unimport/commit/f371b9b109c65b9c813be5917a820701cba9379b))
+* **vue-template:** augmente types with `@vue/runtime-core` ([#80](https://github.com/unjs/unimport/issues/80)) ([7c83d44](https://github.com/unjs/unimport/commit/7c83d4460807ffe8d1108440f27c032c25824840))
+
 ## [0.3.0](https://github.com/unjs/unimport/compare/v0.2.10...v0.3.0) (2022-06-22)
 
 
