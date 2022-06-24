@@ -44,7 +44,7 @@ export const vueTemplateAddon = (): Addon => ({
 
     return s
   },
-  decleration (dts, options) {
+  declaration (dts, options) {
     const items = this.imports
       .map((i) => {
         const from = options?.resolvePath?.(i) || i.from

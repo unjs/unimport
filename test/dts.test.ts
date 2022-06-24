@@ -3,7 +3,7 @@ import { expect, test } from 'vitest'
 import { createUnimport } from '../src'
 
 test('dts', () => {
-  const { generateTypeDecarations } = createUnimport({
+  const { generateTypeDeclarations } = createUnimport({
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
       { name: 'foobar', from: 'foobar', as: 'foobar' }
@@ -28,7 +28,7 @@ test('dts', () => {
     ]
   })
 
-  expect(generateTypeDecarations())
+  expect(generateTypeDeclarations())
     .toMatchInlineSnapshot(`
       "export {}
       declare global {

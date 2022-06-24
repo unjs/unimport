@@ -1,7 +1,7 @@
 import { detectSyntax } from 'mlly'
 import MagicString from 'magic-string'
-import type { Addon, Import, InjectImportsOptions, Thenable, TypeDeclrationOptions, UnimportContext, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclrationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
+import type { Addon, Import, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportOptions } from './types'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
 
@@ -71,14 +71,14 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     ctx.invalidate()
   }
 
-  function generateTypeDecarations (options?: TypeDeclrationOptions) {
-    const opts: TypeDeclrationOptions = {
+  function generateTypeDeclarations (options?: TypeDeclarationOptions) {
+    const opts: TypeDeclarationOptions = {
       resolvePath: i => i.from.replace(/\.ts$/, ''),
       ...options
     }
-    let dts = toTypeDeclrationFile(ctx.imports, opts)
+    let dts = toTypeDeclarationFile(ctx.imports, opts)
     for (const addon of ctx.addons) {
-      dts = addon.decleration?.call(ctx, dts, opts) ?? dts
+      dts = addon.declaration?.call(ctx, dts, opts) ?? dts
     }
     return dts
   }
@@ -92,7 +92,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
     toExports: () => toExports(ctx.imports),
-    generateTypeDecarations
+    generateTypeDeclarations
   }
 }
 

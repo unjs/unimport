@@ -1,7 +1,7 @@
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
-import type { Import, Preset, TypeDeclrationOptions } from './types'
+import type { Import, Preset, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
   // imported from other module
@@ -128,7 +128,7 @@ export function toExports (imports: Import[]) {
     .join('\n')
 }
 
-export function toTypeDeclrationItems (imports: Import[], options?: TypeDeclrationOptions) {
+export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
   return imports
     .map((i) => {
       const from = options?.resolvePath?.(i) || i.from
@@ -137,18 +137,18 @@ export function toTypeDeclrationItems (imports: Import[], options?: TypeDeclrati
     .sort()
 }
 
-export function toTypeDeclrationFile (imports: Import[], options?: TypeDeclrationOptions) {
-  const items = toTypeDeclrationItems(imports, options)
+export function toTypeDeclarationFile (imports: Import[], options?: TypeDeclarationOptions) {
+  const items = toTypeDeclarationItems(imports, options)
   const {
     exportHelper = true
   } = options || {}
 
-  let declration = ''
+  let declaration = ''
   if (exportHelper) {
-    declration += 'export {}\n'
+    declaration += 'export {}\n'
   }
-  declration += 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
-  return declration
+  declaration += 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
+  return declaration
 }
 
 function stringifyImportAlias (item: Import, isCJS = false) {
