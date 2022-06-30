@@ -12,14 +12,14 @@ importers:
       fast-glob: ^3.2.11
       local-pkg: ^0.4.1
       magic-string: ^0.26.2
-      mlly: ^0.5.3
-      pathe: ^0.3.1
+      mlly: ^0.5.4
+      pathe: ^0.3.2
       scule: ^0.2.1
       standard-version: latest
       strip-literal: ^0.4.0
       typescript: latest
       unbuild: latest
-      unplugin: ^0.7.0
+      unplugin: ^0.7.1
       vitest: latest
       vue-tsc: ^0.38.2
     dependencies:
@@ -28,11 +28,11 @@ importers:
       fast-glob: 3.2.11
       local-pkg: 0.4.1
       magic-string: 0.26.2
-      mlly: 0.5.3
-      pathe: 0.3.1
+      mlly: 0.5.4
+      pathe: 0.3.2
       scule: 0.2.1
       strip-literal: 0.4.0
-      unplugin: 0.7.0
+      unplugin: 0.7.1
     devDependencies:
       '@nuxtjs/eslint-config-typescript': 10.0.0_b5e7v2qnwxfo6hmiq56u52mz3e
       c8: 7.11.3
@@ -48,7 +48,7 @@ importers:
       '@vitejs/plugin-vue': ^2.3.3
       typescript: ^4.7.4
       vite: ^2.9.13
-      vite-plugin-inspect: ^0.5.0
+      vite-plugin-inspect: ^0.5.1
       vue: ^3.2.37
     dependencies:
       vue: 3.2.37
@@ -56,7 +56,7 @@ importers:
       '@vitejs/plugin-vue': 2.3.3_vite@2.9.13+vue@3.2.37
       typescript: 4.7.4
       vite: 2.9.13
-      vite-plugin-inspect: 0.5.0_vite@2.9.13
+      vite-plugin-inspect: 0.5.1_vite@2.9.13
 
 packages:
 
@@ -3007,14 +3007,11 @@ packages:
       typescript: 4.7.4
     dev: true
 
-  /mlly/0.3.19:
-    resolution: {integrity: sha512-zMq5n3cOf4fOzA4WoeulxagbAgMChdev3MgP6K51k7M0u2whTXxupfIY4VVzws4vxkiWhwH1rVQcsw7zDGfRhA==}
-
-  /mlly/0.5.3:
-    resolution: {integrity: sha512-im69tuLD9EJh9fc9TZRpJEFvsBcGMez7glUCWDcHWWCKzhvPmNvyaYjp/+h0qJJN/Xovrs//GzGjOOKmFw4Gog==}
+  /mlly/0.5.4:
+    resolution: {integrity: sha512-gFlsLWCjVwu/LM/ZfYUkmnbBoz7eyBIMUwVQYDqhd8IvtNFDeZ95uwAyxHE2Xx7tQwePQaCo4fECZ9MWFEUTgQ==}
     dependencies:
-      pathe: 0.2.0
-      pkg-types: 0.3.2
+      pathe: 0.3.2
+      pkg-types: 0.3.3
 
   /modify-values/1.0.1:
     resolution: {integrity: sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==}
@@ -3258,10 +3255,10 @@ packages:
 
   /pathe/0.2.0:
     resolution: {integrity: sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==}
+    dev: true
 
-  /pathe/0.3.1:
-    resolution: {integrity: sha512-cKMVe/pikPpreoODbjoliSk0cIT66JjEOWN30akc9WTo8kUjxFPYqmXvMBVPMSAJGJlx6v/nYzqSSHkp1cfezQ==}
-    dev: false
+  /pathe/0.3.2:
+    resolution: {integrity: sha512-qhnmX0TOqlCvdWWTkoM83wh5J8fZ2yhbDEc9MlsnAEtEc+JCwxUKEwmd6pkY9hRe6JR1Uecbc14VcAKX2yFSTA==}
 
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
@@ -3284,12 +3281,12 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pkg-types/0.3.2:
-    resolution: {integrity: sha512-eBYzX/7NYsQEOR2alWY4rnQB49G62oHzFpoi9Som56aUr8vB8UGcmcIia9v8fpBeuhH3Ltentuk2OGpp4IQV3Q==}
+  /pkg-types/0.3.3:
+    resolution: {integrity: sha512-6AJcCMnjUQPQv/Wk960w0TOmjhdjbeaQJoSKWRQv9N3rgkessCu6J0Ydsog/nw1MbpnxHuPzYbfOn2KmlZO1FA==}
     dependencies:
       jsonc-parser: 3.0.0
-      mlly: 0.3.19
-      pathe: 0.2.0
+      mlly: 0.5.4
+      pathe: 0.3.2
 
   /pluralize/8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -3903,10 +3900,10 @@ packages:
       magic-string: 0.26.2
       mkdirp: 1.0.4
       mkdist: 0.3.10_typescript@4.7.4
-      mlly: 0.5.3
+      mlly: 0.5.4
       mri: 1.2.0
       pathe: 0.2.0
-      pkg-types: 0.3.2
+      pkg-types: 0.3.3
       pretty-bytes: 6.0.0
       rimraf: 3.0.2
       rollup: 2.70.2
@@ -3924,12 +3921,12 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unplugin/0.7.0:
-    resolution: {integrity: sha512-OsiFrgybmqm5bGuaodvbLYhqUrvGuRHRMZDhddKEXTDbuQ1x+hR7M1WpQguXj03whVYjEYChhFo738cZH5RNig==}
+  /unplugin/0.7.1:
+    resolution: {integrity: sha512-Z6hNDXDNh9aimMkPU1mEjtk+2ova8gh0y7rJeJdGH1vWZOHwF2lLQiQ/R97rv9ymmzEQXsR2fyMet72T8jy6ew==}
     peerDependencies:
       esbuild: '>=0.13'
       rollup: ^2.50.0
-      vite: ^2.3.0
+      vite: ^2.3.0 || ^3.0.0-0
       webpack: 4 || 5
     peerDependenciesMeta:
       esbuild:
@@ -3944,7 +3941,7 @@ packages:
       acorn: 8.7.1
       chokidar: 3.5.3
       webpack-sources: 3.2.3
-      webpack-virtual-modules: 0.4.3
+      webpack-virtual-modules: 0.4.4
     dev: false
 
   /untyped/0.4.4:
@@ -3988,11 +3985,11 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-inspect/0.5.0_vite@2.9.13:
-    resolution: {integrity: sha512-eArca+5jrNx1hQL+5s79eT5Xq4VXjJcihJhK8GT/+W2GqefVxFO1WO78RnD0HPI+hKSdEFo+B4z2zeaE8DTvWQ==}
+  /vite-plugin-inspect/0.5.1_vite@2.9.13:
+    resolution: {integrity: sha512-cSVdNhVPAfH3OdVSV331/t/YWjg++HR/KiBkVST8pjLISna7O8gRwU8NN7KLrEBJqKKQqoRYLBb0RSdYurEyeg==}
     engines: {node: '>=14'}
     peerDependencies:
-      vite: ^2.9.0
+      vite: ^2.9.0 || ^3.0.0-0
     dependencies:
       '@rollup/pluginutils': 4.2.1
       debug: 4.3.4
@@ -4002,30 +3999,6 @@ packages:
       vite: 2.9.13
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /vite/2.9.12:
-    resolution: {integrity: sha512-suxC36dQo9Rq1qMB2qiRorNJtJAdxguu5TMvBHOc/F370KvqAe9t48vYp+/TbPKRNrMh/J55tOUmkuIqstZaew==}
-    engines: {node: '>=12.2.0'}
-    hasBin: true
-    peerDependencies:
-      less: '*'
-      sass: '*'
-      stylus: '*'
-    peerDependenciesMeta:
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-    dependencies:
-      esbuild: 0.14.37
-      postcss: 8.4.13
-      resolve: 1.22.0
-      rollup: 2.70.2
-    optionalDependencies:
-      fsevents: 2.3.2
     dev: true
 
   /vite/2.9.13:
@@ -4080,7 +4053,7 @@ packages:
       local-pkg: 0.4.1
       tinypool: 0.2.1
       tinyspy: 0.3.3
-      vite: 2.9.12
+      vite: 2.9.13
     transitivePeerDependencies:
       - less
       - sass
@@ -4130,8 +4103,8 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: false
 
-  /webpack-virtual-modules/0.4.3:
-    resolution: {integrity: sha512-5NUqC2JquIL2pBAAo/VfBP6KuGkHIZQXW/lNKupLPfhViwh8wNsu0BObtl09yuKZszeEUfbXz8xhrHvSG16Nqw==}
+  /webpack-virtual-modules/0.4.4:
+    resolution: {integrity: sha512-h9atBP/bsZohWpHnr+2sic8Iecb60GxftXsWNLLLSqewgIsGzByd2gcIID4nXcG+3tNe4GQG3dLcff3kXupdRA==}
     dev: false
 
   /which-boxed-primitive/1.0.2:
