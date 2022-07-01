@@ -89,6 +89,17 @@ export function Component() {
 "
 `;
 
+exports[`fixtures > switch.js 1`] = `
+"import { Foo, Bar } from 'foobar';
+switch (mode) {
+  case Foo:
+    return '1'
+  case Bar + 1:
+    return '2'
+}
+"
+`;
+
 exports[`fixtures > template-literal.ts 1`] = `
 "import { ref, reactive, computed, toRefs } from 'vue';
 import { fooConst } from 'foo';

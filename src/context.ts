@@ -106,7 +106,18 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext) 
   // Find all possible injection
   const identifiers = new Set(
     Array.from(strippedCode.matchAll(matchRE))
-      .map(i => i[1] === '.' ? '' : i[2]) // Remove dot access
+      .map((i) => {
+        // Remove dot access, but keep destructuring
+        if (i[1] === '.') {
+          return ''
+        }
+        // Remove property, but keep `switch case`
+        const end = strippedCode[i.index! + i[0].length]
+        if (end === ':' && i[1].trim() !== 'case') {
+          return ''
+        }
+        return i[2]
+      })
       .filter(Boolean)
   )
 
