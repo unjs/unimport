@@ -38,6 +38,7 @@ export interface UnimportContext {
   addons: Addon[]
   invalidate(): void
   resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
+  options: Partial<UnimportOptions>
 }
 
 export interface AddonsOptions {
@@ -54,6 +55,7 @@ export interface UnimportOptions {
   presets: (Preset | BuiltinPresetName)[]
   warn: (msg: string) => void
   addons: AddonsOptions | Addon[]
+  virtualImports: string[]
   /**
    * Custom resolver to auto import id
    */

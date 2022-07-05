@@ -40,7 +40,7 @@
     "play:build": "pnpm -C playground run build",
     "typecheck": "vue-tsc --noEmit",
     "release": "pnpm test && standard-version && git push --follow-tags && npm publish",
-    "test": "vitest run --coverage"
+    "test": "vitest --coverage"
   },
   "dependencies": {
     "@rollup/pluginutils": "^4.2.1",

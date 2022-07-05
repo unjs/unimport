@@ -1,4 +1,4 @@
-import { detectSyntax } from 'mlly'
+import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
 import type { Addon, Import, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
@@ -34,7 +34,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       _combinedImports = undefined
     },
     resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
-    addons
+    addons,
+    options: opts
   }
 
   // Resolve presets
@@ -92,8 +93,18 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     detectImports: (code: string) => detectImports(code, ctx),
     injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
     toExports: () => toExports(ctx.imports),
+    parseVirtualImports: (code:string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations
   }
+}
+
+function parseVirtualImports (code: string, ctx: UnimportContext) {
+  if (ctx.options.virtualImports?.length) {
+    return findStaticImports(code)
+      .filter(i => ctx.options.virtualImports!.includes(i.specifier))
+      .map(i => parseStaticImport(i))
+  }
+  return []
 }
 
 // eslint-disable-next-line require-await
@@ -155,6 +166,27 @@ async function injectImports (code: string | MagicString, id: string | undefined
   }
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx)
+
+  if (ctx.options.virtualImports?.length) {
+    const virtualImports = parseVirtualImports(s.toString(), ctx)
+    virtualImports.forEach((i) => {
+      s.remove(i.start, i.end)
+      Object.entries(i.namedImports || {})
+        .forEach(([name, as]) => {
+          const original = ctx.map.get(name)
+          if (!original) {
+            throw new Error(`[unimport] failed to find "${name}" imported from "${i.specifier}"`)
+          }
+          matchedImports.push({
+            from: original.from,
+            name: original.name,
+            as
+          })
+          console.log({ original, name, as })
+        })
+    })
+  }
+
   const imports = await resolveImports(ctx, matchedImports, id)
 
   return addImportToCode(s, imports, isCJSContext, options?.mergeExisting)
