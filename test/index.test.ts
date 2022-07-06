@@ -12,4 +12,11 @@ describe('inject import', () => {
         console.log(fooBar())"
       `)
   })
+  test('should not match export', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }]
+    })
+    expect((await injectImports('export { fooBar } from "test-id"')).code)
+      .toMatchInlineSnapshot('"export { fooBar } from \\"test-id\\""')
+  })
 })

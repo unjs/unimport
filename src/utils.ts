@@ -4,8 +4,8 @@ import { stripLiteral } from 'strip-literal'
 import type { Import, Preset, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
-  // imported from other module
-  /\bimport\s*(.+?)\s*from\b/gs,
+  // imported/exported from other module
+  /\b(import|export)\s*(.+?)\s*from\b/gs,
   // defined as function
   /\bfunction\s*([\w_$]+?)\s*\(/gs,
   // defined as class
