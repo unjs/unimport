@@ -17,7 +17,7 @@ export const excludeRE = [
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]/g
 export const matchRE = /(^|\.\.\.|[^\w_$\/)]|\bcase\s+)([\w_$]+)\s*(?=[.()[\]}:;+\-*&|`<>,\n])/g
-const regexRE = /\/.*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
+const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
 export function stripCommentsAndStrings (code: string) {
   return stripLiteral(code)

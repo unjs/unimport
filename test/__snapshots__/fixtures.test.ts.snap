@@ -44,6 +44,14 @@ const a = computed(() => /^(https?:\\\\/\\\\/|\\\\/\\\\/)/.test(props.to))
 "
 `;
 
+exports[`fixtures > false-regex.ts 1`] = `
+"import { ref } from 'vue';
+// https://github.com/antfu/unplugin-auto-import/issues/220
+const value = 1 / 1 + ref().val / 1
+console.log(value)
+"
+`;
+
 exports[`fixtures > function-call.ts 1`] = `
 "import { ref } from 'vue';
 useFoo(ref, 1)

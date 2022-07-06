@@ -52,7 +52,7 @@ describe('fixtures', async () => {
         expect(pass1).toBe(code)
       } else {
         expect(pass1).toMatchSnapshot()
-        expect(pass1).not.toBe(code)
+        expect(pass1).not.toEqual(code)
         const pass2 = (await injectImports(pass1))?.code ?? pass1
         expect(pass2).toBe(pass1)
       }
