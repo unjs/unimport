@@ -1,25 +1,27 @@
 import { promises as fs } from 'fs'
 import fg from 'fast-glob'
-import { resolve, parse as parsePath } from 'pathe'
+import { parse as parsePath, join } from 'pathe'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
-
-export async function resolveFiles (path: string, pattern: string | string[]) {
-  const files = await fg(pattern, { cwd: path, followSymbolicLinks: true })
-  return files.map(p => resolve(path, p))
-}
 
 export async function scanDirExports (dir: string | string[], options?: ScanDirExportsOptions) {
   const dirs = Array.isArray(dir) ? dir : [dir]
 
   const fileFilter = options?.fileFilter || (() => true)
-  const files = await Promise.all(
-    dirs.map(i => resolveFiles(i, [
-      '*.{ts,js,mjs,cjs,mts,cts}',
-      '*/index.{ts,js,mjs,cjs,mts,cts}'
-    ]))
-  ).then(r => r.flat().filter(fileFilter))
+  const files = await fg(
+    dirs.flatMap(i => [
+      i,
+      join(i, '*.{ts,js,mjs,cjs,mts,cts}'),
+      join(i, '*/index.{ts,js,mjs,cjs,mts,cts}')
+    ]),
+    {
+      absolute: true,
+      cwd: options?.cwd || process.cwd(),
+      onlyFiles: true,
+      followSymbolicLinks: true
+    }
+  ).then(r => r.filter(fileFilter))
 
   const imports: Import[] = []
 
@@ -45,6 +47,7 @@ export async function scanExports (filepath: string) {
     }
     imports.push({ name: 'default', as: camelCase(name), from: filepath })
   }
+
   for (const exp of exports) {
     if (exp.type === 'named') {
       for (const name of exp.names) {

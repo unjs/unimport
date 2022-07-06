@@ -64,6 +64,7 @@ export type PathFromResolver = (_import: Import) => string | undefined
 
 export interface ScanDirExportsOptions {
   fileFilter?: (file: string) => boolean
+  cwd?: string
 }
 
 export interface TypeDeclarationOptions {
