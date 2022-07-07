@@ -17,7 +17,7 @@ describe('virtual imports', () => {
     bar as BAR } from '#imports'
   
   const a = ref(1)
-  const b = shallowRef(2)
+  const b = shallowRef(2) // auto import
   
   effect(() => {})
   
@@ -41,11 +41,23 @@ describe('virtual imports', () => {
         import { foo as BAR } from 'foo';
         import { watch } from 'fs'
           const a = ref(1)
-          const b = shallowRef(2)
+          const b = shallowRef(2) // auto import
           
           effect(() => {})
           
           watch('file')"
+      `)
+  })
+
+  test('virtual imports only', async () => {
+    const fixture = `
+import { ref } from '#imports'
+const a = computed()
+`.trim()
+    expect((await ctx.injectImports(fixture, null, { autoImport: false })).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const a = computed()"
       `)
   })
 

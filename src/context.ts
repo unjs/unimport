@@ -90,10 +90,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     clearDynamicImports,
     modifyDynamicImports,
     getImports: () => ctx.imports,
-    detectImports: (code: string) => detectImports(getMagicString(code), ctx),
+    detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
     toExports: () => toExports(ctx.imports),
-    parseVirtualImports: (code:string) => parseVirtualImports(code, ctx),
+    parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations
   }
 }
@@ -108,14 +108,16 @@ function parseVirtualImports (code: string, ctx: UnimportContext) {
 }
 
 // eslint-disable-next-line require-await
-async function detectImports (s: MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
+async function detectImports (code: string | MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
+  const s = getMagicString(code)
   // Strip comments so we don't match on them
-  const code = s.original
-  const strippedCode = stripCommentsAndStrings(code)
+  const original = s.original
+  const strippedCode = stripCommentsAndStrings(original)
   const syntax = detectSyntax(strippedCode)
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
 
+  // Auto import, search for unreferenced usages
   if (options?.autoImport !== false) {
     // Find all possible injection
     const identifiers = new Set(
@@ -155,8 +157,9 @@ async function detectImports (s: MagicString, ctx: UnimportContext, options?: In
     }
   }
 
+  // Transform virtual imports like `import { foo } from '#imports'`
   if (options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
-    const virtualImports = parseVirtualImports(code, ctx)
+    const virtualImports = parseVirtualImports(original, ctx)
     virtualImports.forEach((i) => {
       s.remove(i.start, i.end)
       Object.entries(i.namedImports || {})
