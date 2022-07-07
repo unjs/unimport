@@ -221,7 +221,7 @@ export function addImportToCode (code: string | MagicString, imports: Import[], 
 
   return {
     s,
-    code: s.toString()
+    get code () { return s.toString() }
   }
 }
 

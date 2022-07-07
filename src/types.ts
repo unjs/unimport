@@ -86,6 +86,21 @@ export interface InjectImportsOptions {
    * @default false
    */
   mergeExisting?: boolean
+
+  /**
+   * If the module should be auto imported
+   *
+   * @default true
+   */
+  autoImport?: boolean
+
+  /**
+   * If the module should be transformed for virtual modules.
+   * Only available when `virtualImports` is set.
+   *
+   * @default true
+   */
+  transformVirtualImoports?: boolean
 }
 
 export type Thenable<T> = Promise<T> | T

@@ -1,7 +1,7 @@
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
 import type { Addon, Import, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, getString } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
 
@@ -90,7 +90,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     clearDynamicImports,
     modifyDynamicImports,
     getImports: () => ctx.imports,
-    detectImports: (code: string) => detectImports(code, ctx),
+    detectImports: (code: string) => detectImports(getMagicString(code), ctx),
     injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
     toExports: () => toExports(ctx.imports),
     parseVirtualImports: (code:string) => parseVirtualImports(code, ctx),
@@ -108,67 +108,55 @@ function parseVirtualImports (code: string, ctx: UnimportContext) {
 }
 
 // eslint-disable-next-line require-await
-async function detectImports (code: string | MagicString, ctx: UnimportContext) {
+async function detectImports (s: MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
   // Strip comments so we don't match on them
-  const strippedCode = stripCommentsAndStrings(getString(code))
+  const code = s.original
+  const strippedCode = stripCommentsAndStrings(code)
   const syntax = detectSyntax(strippedCode)
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
+  let matchedImports: Import[] = []
 
-  // Find all possible injection
-  const identifiers = new Set(
-    Array.from(strippedCode.matchAll(matchRE))
-      .map((i) => {
+  if (options?.autoImport !== false) {
+    // Find all possible injection
+    const identifiers = new Set(
+      Array.from(strippedCode.matchAll(matchRE))
+        .map((i) => {
         // Remove dot access, but keep destructuring
-        if (i[1] === '.') {
-          return ''
-        }
-        // Remove property, but keep `switch case`
-        const end = strippedCode[i.index! + i[0].length]
-        if (end === ':' && i[1].trim() !== 'case') {
-          return ''
-        }
-        return i[2]
-      })
-      .filter(Boolean)
-  )
+          if (i[1] === '.') {
+            return ''
+          }
+          // Remove property, but keep `switch case`
+          const end = strippedCode[i.index! + i[0].length]
+          if (end === ':' && i[1].trim() !== 'case') {
+            return ''
+          }
+          return i[2]
+        })
+        .filter(Boolean)
+    )
 
-  // Remove those already defined
-  for (const regex of excludeRE) {
-    Array.from(strippedCode.matchAll(regex))
-      .flatMap(i => [
-        ...(i[1]?.split(separatorRE) || []),
-        ...(i[2]?.split(separatorRE) || [])
-      ])
-      .map(i => i.replace(importAsRE, '').trim())
-      .forEach(i => identifiers.delete(i))
+    // Remove those already defined
+    for (const regex of excludeRE) {
+      Array.from(strippedCode.matchAll(regex))
+        .flatMap(i => [
+          ...(i[1]?.split(separatorRE) || []),
+          ...(i[2]?.split(separatorRE) || [])
+        ])
+        .map(i => i.replace(importAsRE, '').trim())
+        .forEach(i => identifiers.delete(i))
+    }
+
+    matchedImports = Array.from(identifiers)
+      .map(name => ctx.map.get(name))
+      .filter(i => i && !i.disabled) as Import[]
+
+    for (const addon of ctx.addons) {
+      matchedImports = await addon.matchImports?.call(ctx, identifiers, matchedImports) || matchedImports
+    }
   }
 
-  let matchedImports = Array.from(identifiers)
-    .map(name => ctx.map.get(name))
-    .filter(i => i && !i.disabled) as Import[]
-
-  for (const addon of ctx.addons) {
-    matchedImports = await addon.matchImports?.call(ctx, identifiers, matchedImports) || matchedImports
-  }
-
-  return {
-    strippedCode,
-    isCJSContext,
-    matchedImports
-  }
-}
-
-async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions) {
-  const s = getMagicString(code)
-
-  for (const addon of ctx.addons) {
-    await addon.transform?.call(ctx, s, id)
-  }
-
-  const { isCJSContext, matchedImports } = await detectImports(s, ctx)
-
-  if (ctx.options.virtualImports?.length) {
-    const virtualImports = parseVirtualImports(s.toString(), ctx)
+  if (options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
+    const virtualImports = parseVirtualImports(code, ctx)
     virtualImports.forEach((i) => {
       s.remove(i.start, i.end)
       Object.entries(i.namedImports || {})
@@ -186,6 +174,22 @@ async function injectImports (code: string | MagicString, id: string | undefined
     })
   }
 
+  return {
+    s,
+    strippedCode,
+    isCJSContext,
+    matchedImports
+  }
+}
+
+async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions) {
+  const s = getMagicString(code)
+
+  for (const addon of ctx.addons) {
+    await addon.transform?.call(ctx, s, id)
+  }
+
+  const { isCJSContext, matchedImports } = await detectImports(s, ctx, options)
   const imports = await resolveImports(ctx, matchedImports, id)
 
   return addImportToCode(s, imports, isCJSContext, options?.mergeExisting)
