@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/unjs/unimport/compare/v0.4.2...v0.4.3) (2022-07-07)
+
+
+### Features
+
+* transform virtual imports ([#85](https://github.com/unjs/unimport/issues/85)) ([07277e6](https://github.com/unjs/unimport/commit/07277e6536db1c8c58bb6cb345ab0b3b4af6e1ad))
+
+
+### Bug Fixes
+
+* don't auto-import for exports from other modules ([#87](https://github.com/unjs/unimport/issues/87)) ([4c345a4](https://github.com/unjs/unimport/commit/4c345a4fbff161828bd0e7330e14e3504ab62a35))
+
 ### [0.4.2](https://github.com/unjs/unimport/compare/v0.4.1...v0.4.2) (2022-07-06)
 
 
