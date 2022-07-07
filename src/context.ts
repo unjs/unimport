@@ -182,7 +182,6 @@ async function injectImports (code: string | MagicString, id: string | undefined
             name: original.name,
             as
           })
-          console.log({ original, name, as })
         })
     })
   }
