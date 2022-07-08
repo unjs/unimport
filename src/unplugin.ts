@@ -14,10 +14,17 @@ export interface UnimportPluginOptions extends UnimportOptions {
   dirs: string[]
 }
 
+export const defaultIncludes = [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/]
+export const defaultExcludes = [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]
+
+function toArray<T> (x: T | T[] | undefined | null): T[] {
+  return x == null ? [] : Array.isArray(x) ? x : [x]
+}
+
 export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => {
   const ctx = createUnimport(options)
   const filter = createFilter(
-    options.include || [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/],
+    toArray(options.include as string[] || []).length ? options.include : defaultIncludes,
     options.exclude || [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]
   )
   const dts = options.dts === true
