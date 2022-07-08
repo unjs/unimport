@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.4](https://github.com/unjs/unimport/compare/v0.4.3...v0.4.4) (2022-07-08)
+
+
+### Bug Fixes
+
+* **unplugin:** use default includes when `include` is provide as an empty array ([78e8d74](https://github.com/unjs/unimport/commit/78e8d7416b2ea723167777cc3a1175109e850358)), closes [/github.com/unjs/nitro/pull/295#issuecomment-1156519293](https://github.com/unjs//github.com/unjs/nitro/pull/295/issues/issuecomment-1156519293)
+
 ### [0.4.3](https://github.com/unjs/unimport/compare/v0.4.2...v0.4.3) (2022-07-07)
 
 
