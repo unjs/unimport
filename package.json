@@ -46,13 +46,13 @@
     "@rollup/pluginutils": "^4.2.1",
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.2.11",
-    "local-pkg": "^0.4.1",
+    "local-pkg": "^0.4.2",
     "magic-string": "^0.26.2",
     "mlly": "^0.5.4",
     "pathe": "^0.3.2",
     "scule": "^0.2.1",
     "strip-literal": "^0.4.0",
-    "unplugin": "^0.7.1"
+    "unplugin": "^0.7.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
