@@ -25,7 +25,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
   const ctx = createUnimport(options)
   const filter = createFilter(
     toArray(options.include as string[] || []).length ? options.include : defaultIncludes,
-    options.exclude || [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]
+    options.exclude || defaultExcludes
   )
   const dts = options.dts === true
     ? 'unimport.d.ts'
