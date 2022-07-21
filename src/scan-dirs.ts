@@ -9,11 +9,11 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
   const dirs = Array.isArray(dir) ? dir : [dir]
 
   const fileFilter = options?.fileFilter || (() => true)
+  const filePatterns = options?.filePatterns || ['*.{ts,js,mjs,cjs,mts,cts}']
   const files = await fg(
     dirs.flatMap(i => [
       i,
-      join(i, '*.{ts,js,mjs,cjs,mts,cts}'),
-      join(i, '*/index.{ts,js,mjs,cjs,mts,cts}')
+      ...filePatterns.map(p => join(i, p))
     ]),
     {
       absolute: true,
