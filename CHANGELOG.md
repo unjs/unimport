@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/unjs/unimport/compare/v0.5.0...v0.6.0) (2022-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **scan:** options for custom `filePatterns`, remove nested glob by default (#95)
+
+### Features
+
+* **scan:** options for custom `filePatterns`, remove nested glob by default ([#95](https://github.com/unjs/unimport/issues/95)) ([bbec5c0](https://github.com/unjs/unimport/commit/bbec5c08a20d38a60c78834bbe9b3283559c3835))
+
 ## [0.5.0](https://github.com/unjs/unimport/compare/v0.4.7...v0.5.0) (2022-07-21)
 
 
