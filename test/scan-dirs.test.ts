@@ -40,16 +40,25 @@ describe('scan-dirs', () => {
             "name": "multiplier",
           },
           {
-            "as": "nested",
-            "from": "nested/index.ts",
-            "name": "default",
-          },
-          {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",
           },
         ]
       `)
+  })
+
+  test('scanDirExports nested', async () => {
+    const dir = join(__dirname, '../playground/composables')
+    expect((await scanDirExports(dir, {
+      filePatterns: [
+        '*.{ts,js,mjs,cjs,mts,cts}',
+        '*/index.{ts,js,mjs,cjs,mts,cts}'
+      ]
+    }))
+      .map(i => relative(dir, i.from))
+      .sort()
+    )
+      .toContain('nested/index.ts')
   })
 })

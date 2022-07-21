@@ -65,7 +65,21 @@ export interface UnimportOptions {
 export type PathFromResolver = (_import: Import) => string | undefined
 
 export interface ScanDirExportsOptions {
+  /**
+   * Glob patterns for matching files
+   *
+   * @default ['*.{ts,js,mjs,cjs,mts,cts}']
+   */
+  filePatterns?: string[]
+  /**
+   * Custom function to filter scanned files
+   */
   fileFilter?: (file: string) => boolean
+  /**
+   * Current working directory
+   *
+   * @default process.cwd()
+   */
   cwd?: string
 }
 
