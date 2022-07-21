@@ -21,7 +21,7 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
       onlyFiles: true,
       followSymbolicLinks: true
     }
-  ).then(r => r.filter(fileFilter))
+  ).then(r => r.sort().filter(fileFilter))
 
   const imports: Import[] = []
 
