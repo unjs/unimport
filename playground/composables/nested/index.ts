@@ -1,3 +1,3 @@
 export default function () {
-  return 'nested'
+  return 'from nested composables'
 }

@@ -4,6 +4,7 @@ const count = ref(1)
 function inc () {
   count.value += 1
 }
+
 </script>
 
 <template>
@@ -15,6 +16,9 @@ function inc () {
     <button @click="bump">
       x1
     </button>
+    <div>
+      {{ nested() }}
+    </div>
   </div>
 </template>
 

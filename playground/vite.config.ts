@@ -13,7 +13,7 @@ export default defineConfig({
         'vue'
       ],
       dirs: [
-        './composables'
+        './composables/**'
       ],
       addons: {
         vueTemplate: true
