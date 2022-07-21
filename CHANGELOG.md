@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.1](https://github.com/unjs/unimport/compare/v0.6.0...v0.6.1) (2022-07-21)
+
+
+### Bug Fixes
+
+* **scan:** sort glob for stable result ([5fd42aa](https://github.com/unjs/unimport/commit/5fd42aadfc63337ce3a737fb2450b3a5a2640459))
+
 ## [0.6.0](https://github.com/unjs/unimport/compare/v0.5.0...v0.6.0) (2022-07-21)
 
 
