@@ -48,7 +48,7 @@
     "fast-glob": "^3.2.11",
     "local-pkg": "^0.4.2",
     "magic-string": "^0.26.2",
-    "mlly": "^0.5.4",
+    "mlly": "^0.5.5",
     "pathe": "^0.3.2",
     "scule": "^0.2.1",
     "strip-literal": "^0.4.0",
@@ -62,7 +62,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.38.5"
+    "vue-tsc": "^0.38.9"
   },
   "packageManager": "pnpm@7.5.1"
 }
