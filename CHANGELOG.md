@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/unjs/unimport/compare/v0.4.7...v0.5.0) (2022-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **dir:** support glob pattern in `dirs` (#86)
+
+### Features
+
+* **dir:** support glob pattern in `dirs` ([#86](https://github.com/unjs/unimport/issues/86)) ([08bc27a](https://github.com/unjs/unimport/commit/08bc27a330994c0fae67894eee9b31cfd341be5e))
+
 ### [0.4.7](https://github.com/unjs/unimport/compare/v0.4.6...v0.4.7) (2022-07-21)
 
 ### [0.4.6](https://github.com/unjs/unimport/compare/v0.4.5...v0.4.6) (2022-07-21)
