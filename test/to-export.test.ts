@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { describe, it, expect } from 'vitest'
 import { Import } from '../src/types'
 import { toExports } from '../src/utils'
@@ -72,6 +73,21 @@ describe('toExports', () => {
       .toMatchInlineSnapshot(`
         "export { foo } from 'test1';
         export { foobar } from 'test2';"
+      `)
+  })
+
+  it('relative path', () => {
+    const root = process.cwd()
+    const imports: Import[] = [
+      { from: resolve(root, 'foo.ts'), name: 'foo1', as: 'foo1' },
+      { from: resolve(root, '../foo.ts'), name: 'foo2', as: 'foo2' },
+      { from: resolve(root, 'foo/bar.ts'), name: 'foo3', as: 'foo3' }
+    ]
+    expect(toExports(imports, root))
+      .toMatchInlineSnapshot(`
+        "export { foo1 } from './foo';
+        export { foo2 } from '../foo';
+        export { foo3 } from './foo/bar';"
       `)
   })
 })

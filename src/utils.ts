@@ -1,3 +1,4 @@
+import { isAbsolute, relative } from 'pathe'
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
@@ -107,11 +108,17 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
   return imports.filter((_, idx) => !indexToRemove.has(idx))
 }
 
-export function toExports (imports: Import[]) {
+export function toExports (imports: Import[], fileDir?: string) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
       name = name.replace(/\.[a-z]+$/, '')
+      if (fileDir && isAbsolute(name)) {
+        name = relative(fileDir, name)
+        if (!name.match(/^[.\/]/)) {
+          name = './' + name
+        }
+      }
       const entries: string[] = []
       const filtered = Array.from(imports).filter((i) => {
         if (i.name === '*') {

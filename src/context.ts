@@ -92,7 +92,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     getImports: () => ctx.imports,
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
-    toExports: () => toExports(ctx.imports),
+    toExports: (filepath?: string) => toExports(ctx.imports, filepath),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations
   }
