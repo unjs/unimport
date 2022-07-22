@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/unjs/unimport/compare/v0.6.1...v0.6.2) (2022-07-22)
+
+
+### Features
+
+* `toExports` support relative path ([c34f027](https://github.com/unjs/unimport/commit/c34f027b32d5efd0bc0270783c59b13c813d7a44))
+
 ### [0.6.1](https://github.com/unjs/unimport/compare/v0.6.0...v0.6.1) (2022-07-21)
 
 
