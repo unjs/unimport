@@ -6,7 +6,7 @@ import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
 
 export async function scanDirExports (dir: string | string[], options?: ScanDirExportsOptions) {
-  const dirs = Array.isArray(dir) ? dir : [dir]
+  const dirs = (Array.isArray(dir) ? dir : [dir]).map(d => normalize(d))
 
   const fileFilter = options?.fileFilter || (() => true)
   const filePatterns = options?.filePatterns || ['*.{ts,js,mjs,cjs,mts,cts}']
@@ -21,7 +21,7 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
       onlyFiles: true,
       followSymbolicLinks: true
     }
-  ).then(r => r.map(normalize).sort().filter(fileFilter))
+  ).then(r => r.map(f => normalize(f)).sort().filter(fileFilter))
 
   const imports: Import[] = []
 
