@@ -10,7 +10,13 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node: [16.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +24,7 @@ jobs:
         uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install
       - run: pnpm lint
