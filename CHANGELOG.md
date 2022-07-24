@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.3](https://github.com/unjs/unimport/compare/v0.6.2...v0.6.3) (2022-07-24)
+
+
+### Bug Fixes
+
+* normalize path for windows ([4849f77](https://github.com/unjs/unimport/commit/4849f77a14f50d2afbebdd264166ee5efaf0aade))
+* **scan:** normlaize directories ([aa5a354](https://github.com/unjs/unimport/commit/aa5a354f918707368e82f8f54a5836c2d7d4d7fb))
+
 ### [0.6.2](https://github.com/unjs/unimport/compare/v0.6.1...v0.6.2) (2022-07-22)
 
 
