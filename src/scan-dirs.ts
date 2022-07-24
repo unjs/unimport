@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 import fg from 'fast-glob'
-import { parse as parsePath, join } from 'pathe'
+import { parse as parsePath, join, normalize } from 'pathe'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
@@ -21,7 +21,7 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
       onlyFiles: true,
       followSymbolicLinks: true
     }
-  ).then(r => r.sort().filter(fileFilter))
+  ).then(r => r.map(normalize).sort().filter(fileFilter))
 
   const imports: Import[] = []
 
