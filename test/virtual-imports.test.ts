@@ -54,7 +54,7 @@ describe('virtual imports', () => {
 import { ref } from '#imports'
 const a = computed()
 `.trim()
-    expect((await ctx.injectImports(fixture, null, { autoImport: false })).code)
+    expect((await ctx.injectImports(fixture, undefined, { autoImport: false })).code)
       .toMatchInlineSnapshot(`
         "import { ref } from 'vue';
         const a = computed()"
