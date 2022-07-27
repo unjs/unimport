@@ -14,7 +14,7 @@ importers:
       magic-string: ^0.26.2
       mlly: ^0.5.5
       pathe: ^0.3.2
-      scule: ^0.2.1
+      scule: ^0.3.2
       standard-version: latest
       strip-literal: ^0.4.0
       typescript: latest
@@ -30,7 +30,7 @@ importers:
       magic-string: 0.26.2
       mlly: 0.5.5
       pathe: 0.3.2
-      scule: 0.2.1
+      scule: 0.3.2
       strip-literal: 0.4.0
       unplugin: 0.8.0
     devDependencies:
@@ -3370,6 +3370,11 @@ packages:
 
   /scule/0.2.1:
     resolution: {integrity: sha512-M9gnWtn3J0W+UhJOHmBxBTwv8mZCan5i1Himp60t6vvZcor0wr+IM0URKmIglsWJ7bRujNAVVN77fp+uZaWoKg==}
+    dev: true
+
+  /scule/0.3.2:
+    resolution: {integrity: sha512-zIvPdjOH8fv8CgrPT5eqtxHQXmPNnV/vHJYffZhE43KZkvULvpCTvOt1HPlFaCZx287INL9qaqrZg34e8NgI4g==}
+    dev: false
 
   /semver/5.7.1:
     resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
