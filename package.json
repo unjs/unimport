@@ -62,7 +62,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.39.0"
+    "vue-tsc": "^0.39.2"
   },
   "packageManager": "pnpm@7.6.0"
 }
