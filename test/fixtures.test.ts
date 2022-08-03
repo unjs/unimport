@@ -1,12 +1,12 @@
-import { resolve } from 'path'
-import { promises as fs } from 'fs'
-import fg from 'fast-glob'
+/// <reference types="vite/client" />
+
+import { basename } from 'path'
 import { describe, it, expect } from 'vitest'
 import { createUnimport } from '../src/context'
 
 const UNMODIFIED_MARK = '@test-unmodified'
 
-describe('fixtures', async () => {
+describe('fixtures', () => {
   const { injectImports } = createUnimport({
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
@@ -38,15 +38,13 @@ describe('fixtures', async () => {
     ]
   })
 
-  const root = resolve(__dirname, 'fixtures')
-  const files = await fg('*', {
-    cwd: root,
-    onlyFiles: true
+  const files = import.meta.glob('./fixtures/*', {
+    as: 'raw',
+    eager: true
   })
 
-  for (const file of files) {
-    it(file, async () => {
-      const code = await fs.readFile(resolve(root, file), 'utf-8')
+  for (const [file, code] of Object.entries(files)) {
+    it(basename(file), async () => {
       const pass1 = (await injectImports(code))?.code ?? code
       if (code.includes(UNMODIFIED_MARK)) {
         expect(pass1).toBe(code)
