@@ -123,7 +123,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
     const identifiers = new Set(
       Array.from(strippedCode.matchAll(matchRE))
         .map((i) => {
-        // Remove dot access, but keep destructuring
+          // Remove dot access, but keep destructuring
           if (i[1] === '.') {
             return ''
           }
