@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.5](https://github.com/unjs/unimport/compare/v0.6.4...v0.6.5) (2022-08-04)
+
+
+### Bug Fixes
+
+* supports more syntaxes ([#102](https://github.com/unjs/unimport/issues/102)) ([05648f5](https://github.com/unjs/unimport/commit/05648f5fa49c7325d0c313a05000d9f2c5ba5615))
+
 ### [0.6.4](https://github.com/unjs/unimport/compare/v0.6.3...v0.6.4) (2022-07-27)
 
 ### [0.6.3](https://github.com/unjs/unimport/compare/v0.6.2...v0.6.3) (2022-07-24)
