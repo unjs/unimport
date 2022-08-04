@@ -48,11 +48,11 @@
     "fast-glob": "^3.2.11",
     "local-pkg": "^0.4.2",
     "magic-string": "^0.26.2",
-    "mlly": "^0.5.5",
-    "pathe": "^0.3.2",
+    "mlly": "^0.5.7",
+    "pathe": "^0.3.3",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.0",
-    "unplugin": "^0.8.0"
+    "unplugin": "^0.8.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
@@ -62,7 +62,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.39.2"
+    "vue-tsc": "^0.39.4"
   },
-  "packageManager": "pnpm@7.6.0"
+  "packageManager": "pnpm@7.8.0"
 }
