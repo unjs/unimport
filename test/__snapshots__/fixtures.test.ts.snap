@@ -79,6 +79,24 @@ const scene = new THREE.Scene()
 "
 `;
 
+exports[`fixtures > in.js 1`] = `
+"import { Foo, Bar } from 'foobar';
+Foo instanceof Bar
+"
+`;
+
+exports[`fixtures > instanceof.js 1`] = `
+"import { Foo, Bar } from 'foobar';
+// Foo instanceof Bar
+Foo instanceof Bar
+"
+`;
+
+exports[`fixtures > no-eol.js 1`] = `
+"import { Foo } from 'foobar';
+Foo"
+`;
+
 exports[`fixtures > props.ts 1`] = `
 "import { toRefs } from 'vue';
 const a = z.ref(0)
@@ -154,6 +172,12 @@ const divRef = ref(null)
 exports[`fixtures > template-tag.ts 1`] = `
 "import { ref } from 'vue';
 const z = ref\`barfoo\`
+"
+`;
+
+exports[`fixtures > ternary.js 1`] = `
+"import { Foo, Bar } from 'foobar';
+Foo instanceof Bar ? true : false
 "
 `;
 
