@@ -26,15 +26,22 @@ export interface Import extends ImportCommon {
 
 export type PresetImport = ImportName | [name: ImportName, as?: ImportName, from?: ModuleId] | Exclude<Import, 'from'>
 
-export interface Preset extends ImportCommon {
-  imports: (PresetImport | Preset)[]
+export interface InlinePreset extends ImportCommon {
+  imports: (PresetImport | InlinePreset)[]
 }
 
+export interface PackagePreset {
+  package: string
+  ignore?: (string | RegExp | ((name: string) => boolean))[]
+}
+
+export type Preset = InlinePreset | PackagePreset
+
 export interface UnimportContext {
-  readonly imports: Import[]
   staticImports: Import[]
   dynamicImports: Import[]
-  map: Map<string, Import>
+  getImports(): Promise<Import[]>
+  getImportMap(): Promise<Map<string, Import>>
   addons: Addon[]
   invalidate(): void
   resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
@@ -122,6 +129,6 @@ export type Thenable<T> = Promise<T> | T
 
 export interface Addon {
   transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
-  declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => string
+  declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>
 }
