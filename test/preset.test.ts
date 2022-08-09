@@ -3,9 +3,9 @@ import { resolvePreset, resolveBuiltinPresets } from '../src/preset'
 import { defineUnimportPreset } from '../src/utils'
 
 describe('preset', () => {
-  it('resolve', () => {
+  it('resolve', async () => {
     expect(
-      resolvePreset(defineUnimportPreset({
+      await resolvePreset(defineUnimportPreset({
         from: 'vue',
         imports: [
           'ref',
@@ -64,9 +64,9 @@ describe('preset', () => {
     `)
   })
 
-  it('built-in presets', () => {
+  it('built-in presets', async () => {
     expect(
-      resolveBuiltinPresets([
+      await resolveBuiltinPresets([
         'vue-router'
       ])
     ).toMatchInlineSnapshot(`

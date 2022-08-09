@@ -43,6 +43,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   const resolvePromise = resolveBuiltinPresets(opts.presets || [])
     .then((r) => {
       ctx.staticImports.unshift(...r)
+      _combinedImports = undefined
       updateImports()
     })
 
@@ -88,8 +89,6 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     }
     return dts
   }
-
-  updateImports()
 
   return {
     clearDynamicImports,

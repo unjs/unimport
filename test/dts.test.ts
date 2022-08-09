@@ -2,7 +2,7 @@
 import { expect, test } from 'vitest'
 import { createUnimport } from '../src'
 
-test('dts', () => {
+test('dts', async () => {
   const { generateTypeDeclarations } = createUnimport({
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
@@ -28,11 +28,11 @@ test('dts', () => {
     ]
   })
 
-  expect(generateTypeDeclarations())
+  expect(await generateTypeDeclarations())
     .toMatchInlineSnapshot(`
       "export {}
       declare global {
-        const \$: typeof import('jquery')['\$']
+        const $: typeof import('jquery')['$']
         const THREE: typeof import('three')
         const computed: typeof import('vue')['computed']
         const customDefault: typeof import('default')['default']
