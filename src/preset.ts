@@ -1,29 +1,11 @@
-import { resolveModuleExportNames } from 'mlly'
 import { BuiltinPresetName, builtinPresets } from './presets'
-import type { Preset, Import, ImportCommon, PackagePreset, InlinePreset } from './types'
-const commonProps: (keyof ImportCommon)[] = ['from', 'priority', 'disabled']
+import type { Preset, Import, ImportCommon, InlinePreset } from './types'
+import { resolvePackagePreset } from './extract'
 
-export async function resolvePackagePreset (preset: PackagePreset): Promise<Import[]> {
-  const scanned = await resolveModuleExportNames(preset.package)
-  const filtered = scanned.filter((name) => {
-    for (const item of preset.ignore || []) {
-      if (typeof item === 'string' && item === name) {
-        return false
-      }
-      if (item instanceof RegExp && item.test(name)) {
-        return false
-      }
-      if (typeof item === 'function' && item(name) === false) {
-        return false
-      }
-    }
-    return true
-  })
-  return filtered.map(name => (<Import>{
-    from: preset.package,
-    name
-  }))
-}
+/**
+ * Common propreties for import item and preset
+ */
+const commonProps: (keyof ImportCommon)[] = ['from', 'priority', 'disabled']
 
 export async function resolvePreset (preset: Preset): Promise<Import[]> {
   const imports: Import[] = []

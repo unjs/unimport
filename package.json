@@ -59,6 +59,7 @@
     "c8": "latest",
     "eslint": "latest",
     "h3": "^0.7.14",
+    "pkg-types": "^0.3.3",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",

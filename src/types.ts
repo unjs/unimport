@@ -30,9 +30,31 @@ export interface InlinePreset extends ImportCommon {
   imports: (PresetImport | InlinePreset)[]
 }
 
+/**
+ * Auto extract exports from a package for auto import
+ */
 export interface PackagePreset {
+  /**
+   * Name of the package
+   */
   package: string
+
+  /**
+   * Path of the importer
+   * @default process.cwd()
+   */
+  url?: string
+
+  /**
+   * RegExp, string, or custom function to exclude names of the extracted imports
+   */
   ignore?: (string | RegExp | ((name: string) => boolean))[]
+
+  /**
+   * Use local cache if exits
+   * @default true
+   */
+  cache?: boolean
 }
 
 export type Preset = InlinePreset | PackagePreset
