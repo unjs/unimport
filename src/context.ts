@@ -158,7 +158,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   }
 
   // Transform virtual imports like `import { foo } from '#imports'`
-  if (options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
+  if (options?.transformVirtualImports !== false && options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
     const virtualImports = parseVirtualImports(original, ctx)
     virtualImports.forEach((i) => {
       s.remove(i.start, i.end)
