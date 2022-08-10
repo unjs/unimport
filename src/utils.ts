@@ -6,7 +6,7 @@ import type { Import, Preset, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
   // imported/exported from other module
-  /\b(import|export)\s*(.+?)\s*from\b/gs,
+  /\b(import|export)\b(.+?)\bfrom\b/gs,
   // defined as function
   /\bfunction\s*([\w_$]+?)\s*\(/gs,
   // defined as class
