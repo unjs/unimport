@@ -139,13 +139,13 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
 
     // Remove those already defined
     for (const regex of excludeRE) {
-      Array.from(strippedCode.matchAll(regex))
-        .flatMap(i => [
-          ...(i[1]?.split(separatorRE) || []),
-          ...(i[2]?.split(separatorRE) || [])
-        ])
-        .map(i => i.replace(importAsRE, '').trim())
-        .forEach(i => identifiers.delete(i))
+      for (const match of strippedCode.matchAll(regex)) {
+        const segments = [...match[1]?.split(separatorRE) || [], ...match[2]?.split(separatorRE) || []]
+        for (const segment of segments) {
+          const identifier = segment.replace(importAsRE, '').trim()
+          identifiers.delete(identifier)
+        }
+      }
     }
 
     matchedImports = Array.from(identifiers)
