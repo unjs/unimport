@@ -46,16 +46,17 @@ async function extractExports (name: string, url?: string, cache = true) {
   const version = packageJson.version
   const cachePath = join(CACHE_PATH, name + '@' + version, 'exports.json')
 
-  const hasCache = cache && existsSync(cachePath)
-  const scanned: string[] = hasCache
-    ? JSON.parse(await fsp.readFile(cachePath, 'utf-8'))
-    : await resolveModuleExportNames(name, { url })
+  const useCache = cache && version && CACHE_WRITEABLE
 
-  if (!hasCache) {
+  if (useCache && existsSync(cachePath)) {
+    return JSON.parse(await fsp.readFile(cachePath, 'utf-8'))
+  }
+
+  const scanned = await resolveModuleExportNames(name, { url })
+  if (useCache) {
     await fsp.mkdir(dirname(cachePath), { recursive: true })
     await fsp.writeFile(cachePath, JSON.stringify(scanned), 'utf-8')
   }
-
   return scanned
 }
 
