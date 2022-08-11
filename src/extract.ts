@@ -1,11 +1,22 @@
 import os from 'os'
-import { promises as fsp, existsSync } from 'fs'
+import { promises as fsp, existsSync, accessSync, constants } from 'fs'
 import { resolveModuleExportNames } from 'mlly'
 import { resolvePackageJSON, readPackageJSON } from 'pkg-types'
 import { dirname, join } from 'pathe'
 import { Import, PackagePreset } from './types'
 
+// eslint-disable-next-line spaced-comment
+const CACHE_PATH = /*#__PURE__*/ join(os.tmpdir(), 'unimport')
+let CACHE_WRITEABLE: boolean | undefined
+
 export async function resolvePackagePreset (preset: PackagePreset): Promise<Import[]> {
+  if (preset.cache && CACHE_WRITEABLE == null) {
+    try {
+      CACHE_WRITEABLE = isWritable(CACHE_PATH)
+    } catch {
+      CACHE_WRITEABLE = false
+    }
+  }
   const scanned: string[] = await extractExports(preset.package, preset.url, preset.cache)
 
   const filtered = scanned.filter((name) => {
@@ -28,11 +39,12 @@ export async function resolvePackagePreset (preset: PackagePreset): Promise<Impo
     name
   }))
 }
+
 async function extractExports (name: string, url?: string, cache = true) {
   const packageJsonPath = await resolvePackageJSON(name, { url })
   const packageJson = await readPackageJSON(packageJsonPath)
   const version = packageJson.version
-  const cachePath = join(os.tmpdir(), 'unimport', name + '@' + version, 'exports.json')
+  const cachePath = join(CACHE_PATH, name + '@' + version, 'exports.json')
 
   const hasCache = cache && existsSync(cachePath)
   const scanned: string[] = hasCache
@@ -45,4 +57,13 @@ async function extractExports (name: string, url?: string, cache = true) {
   }
 
   return scanned
+}
+
+function isWritable (filename: string): boolean {
+  try {
+    accessSync(filename, constants.W_OK)
+    return true
+  } catch (e) {
+    return false
+  }
 }
