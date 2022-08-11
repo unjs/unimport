@@ -1,6 +1,6 @@
 {
   "name": "unimport",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "Unified utils for auto importing APIs in modules",
   "repository": "unjs/unimport",
   "license": "MIT",
@@ -66,5 +66,5 @@
     "vitest": "latest",
     "vue-tsc": "^0.39.5"
   },
-  "packageManager": "pnpm@7.8.0"
+  "packageManager": "pnpm@7.9.0"
 }

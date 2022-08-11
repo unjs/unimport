@@ -144,6 +144,8 @@ export interface InjectImportsOptions {
    *
    * @default true
    */
+  transformVirtualImports?: boolean
+  /** @deprecated */
   transformVirtualImoports?: boolean
 }
 

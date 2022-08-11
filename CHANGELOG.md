@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.6](https://github.com/unjs/unimport/compare/v0.6.5...v0.6.6) (2022-08-10)
+
+
+### Bug Fixes
+
+* rename `transformVirtualImoports` to `transformVirtualImports` ([#106](https://github.com/unjs/unimport/issues/106)) ([9e72ffc](https://github.com/unjs/unimport/commit/9e72ffcb8ea2254104bf837b8b21bea1165cab07))
+
 ### [0.6.5](https://github.com/unjs/unimport/compare/v0.6.4...v0.6.5) (2022-08-04)
 
 
