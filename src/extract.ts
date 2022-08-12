@@ -10,13 +10,6 @@ const CACHE_PATH = /*#__PURE__*/ join(os.tmpdir(), 'unimport')
 let CACHE_WRITEABLE: boolean | undefined
 
 export async function resolvePackagePreset (preset: PackagePreset): Promise<Import[]> {
-  if (preset.cache && CACHE_WRITEABLE == null) {
-    try {
-      CACHE_WRITEABLE = isWritable(CACHE_PATH)
-    } catch {
-      CACHE_WRITEABLE = false
-    }
-  }
   const scanned: string[] = await extractExports(preset.package, preset.url, preset.cache)
 
   const filtered = scanned.filter((name) => {
@@ -46,13 +39,22 @@ async function extractExports (name: string, url?: string, cache = true) {
   const version = packageJson.version
   const cachePath = join(CACHE_PATH, name + '@' + version, 'exports.json')
 
-  const useCache = cache && version && CACHE_WRITEABLE
+  /* c8 ignore next 8 */
+  if (cache && CACHE_WRITEABLE === undefined) {
+    try {
+      CACHE_WRITEABLE = isWritable(CACHE_PATH)
+    } catch {
+      CACHE_WRITEABLE = false
+    }
+  }
 
+  const useCache = cache && version && CACHE_WRITEABLE
   if (useCache && existsSync(cachePath)) {
     return JSON.parse(await fsp.readFile(cachePath, 'utf-8'))
   }
 
   const scanned = await resolveModuleExportNames(name, { url })
+  /* c8 ignore next 4 */
   if (useCache) {
     await fsp.mkdir(dirname(cachePath), { recursive: true })
     await fsp.writeFile(cachePath, JSON.stringify(scanned), 'utf-8')
@@ -61,6 +63,7 @@ async function extractExports (name: string, url?: string, cache = true) {
 }
 
 function isWritable (filename: string): boolean {
+  /* c8 ignore next 7 */
   try {
     accessSync(filename, constants.W_OK)
     return true
