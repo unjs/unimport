@@ -12,7 +12,7 @@ importers:
       fast-glob: ^3.2.11
       local-pkg: ^0.4.2
       magic-string: ^0.26.2
-      mlly: ^0.5.9
+      mlly: ^0.5.11
       pathe: ^0.3.4
       scule: ^0.3.2
       standard-version: latest
@@ -28,7 +28,7 @@ importers:
       fast-glob: 3.2.11
       local-pkg: 0.4.2
       magic-string: 0.26.2
-      mlly: 0.5.9
+      mlly: 0.5.11
       pathe: 0.3.4
       scule: 0.3.2
       strip-literal: 0.4.0
@@ -39,24 +39,24 @@ importers:
       eslint: 8.21.0
       standard-version: 9.5.0
       typescript: 4.7.4
-      unbuild: 0.8.7
+      unbuild: 0.8.8
       vitest: 0.21.1_c8@7.12.0
       vue-tsc: 0.40.1_typescript@4.7.4
 
   playground:
     specifiers:
-      '@vitejs/plugin-vue': ^3.0.1
+      '@vitejs/plugin-vue': ^3.0.2
       typescript: ^4.7.4
-      vite: ^3.0.5
+      vite: ^3.0.6
       vite-plugin-inspect: ^0.6.0
       vue: ^3.2.37
     dependencies:
       vue: 3.2.37
     devDependencies:
-      '@vitejs/plugin-vue': 3.0.1_vite@3.0.5+vue@3.2.37
+      '@vitejs/plugin-vue': 3.0.2_vite@3.0.6+vue@3.2.37
       typescript: 4.7.4
-      vite: 3.0.5
-      vite-plugin-inspect: 0.6.0_vite@3.0.5
+      vite: 3.0.6
+      vite-plugin-inspect: 0.6.0_vite@3.0.6
 
 packages:
 
@@ -680,14 +680,14 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-vue/3.0.1_vite@3.0.5+vue@3.2.37:
-    resolution: {integrity: sha512-Ll9JgxG7ONIz/XZv3dssfoMUDu9qAnlJ+km+pBA0teYSXzwPCIzS/e1bmwNYl5dcQGs677D21amgfYAnzMl17A==}
+  /@vitejs/plugin-vue/3.0.2_vite@3.0.6+vue@3.2.37:
+    resolution: {integrity: sha512-LAqb+tibmsKmSbxBzsMqWVJe6gDE4BDmFLjIzk4YdHgeiRCTokPbK8yRB3dRxDRwNk4IFwCFVE6+WP+YM0mbJg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^3.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 3.0.5
+      vite: 3.0.6
       vue: 3.2.37
     dev: true
 
@@ -3148,8 +3148,8 @@ packages:
       typescript: 4.7.4
     dev: true
 
-  /mlly/0.5.9:
-    resolution: {integrity: sha512-OsbZUJVn5Z79gEEALFpSKjk99AZdXaNG8zaJvpKFtMXcjYASIQX34yVJwIXMwOYM8yVOqhL4tPgtKaHI8s5tLA==}
+  /mlly/0.5.11:
+    resolution: {integrity: sha512-sfiyMZPbHG0y4I4t2Zj8FI5k89oNmwpEgKkbi9d4V2iNIvNAHQHgQxOeMyW3bS3c5hGEfovXHVbOAG5eVITzOQ==}
     dependencies:
       acorn: 8.8.0
       pathe: 0.3.4
@@ -3428,7 +3428,7 @@ packages:
     resolution: {integrity: sha512-6AJcCMnjUQPQv/Wk960w0TOmjhdjbeaQJoSKWRQv9N3rgkessCu6J0Ydsog/nw1MbpnxHuPzYbfOn2KmlZO1FA==}
     dependencies:
       jsonc-parser: 3.1.0
-      mlly: 0.5.9
+      mlly: 0.5.11
       pathe: 0.3.4
 
   /pluralize/8.0.0:
@@ -4034,8 +4034,8 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
-  /unbuild/0.8.7:
-    resolution: {integrity: sha512-zfmMCqaDW3IekoiqDxrMjNkaiU1kC89jX3nZki2l5jr5xWaptF0FGxswKINcuM4YRd3oNTNRkAHPuIBabJPCcw==}
+  /unbuild/0.8.8:
+    resolution: {integrity: sha512-BGDDh3BmM+B0Mc1sVSeUDXKykH3h73V7LcGLM2D3v4Tv5Pr3vgxEwxCkxNw1mZlW71sQX/yxMAoBIxnpmr55Tg==}
     hasBin: true
     dependencies:
       '@rollup/plugin-alias': 3.1.9_rollup@2.77.2
@@ -4054,7 +4054,7 @@ packages:
       magic-string: 0.26.2
       mkdirp: 1.0.4
       mkdist: 0.3.13_typescript@4.7.4
-      mlly: 0.5.9
+      mlly: 0.5.11
       mri: 1.2.0
       pathe: 0.3.4
       pkg-types: 0.3.3
@@ -4150,7 +4150,7 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-inspect/0.6.0_vite@3.0.5:
+  /vite-plugin-inspect/0.6.0_vite@3.0.6:
     resolution: {integrity: sha512-p2Ti5z+AscXx7JAW1nkU4bgiyKWW3O6D9UbaOEk+yz0v6R2E452OSukYhbs1zhqRnHL0W6ZsmG/lwz8aSQpSjg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4161,13 +4161,40 @@ packages:
       kolorist: 1.5.1
       sirv: 2.0.2
       ufo: 0.8.5
-      vite: 3.0.5
+      vite: 3.0.6
     transitivePeerDependencies:
       - supports-color
     dev: true
 
   /vite/3.0.5:
     resolution: {integrity: sha512-bRvrt9Tw8EGW4jj64aYFTnVg134E8hgDxyl/eEHnxiGqYk7/pTPss6CWlurqPOUzqvEoZkZ58Ws+Iu8MB87iMA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.14.53
+      postcss: 8.4.16
+      resolve: 1.22.1
+      rollup: 2.77.2
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vite/3.0.6:
+    resolution: {integrity: sha512-pjfsWIzfUlQME/VAmU6SsjdHkTt6WAHysuqPkHDcjzNu6IGtxDSZ/VfRYOwHaCqX4M3Ivz0kxuSfAPM6gAIX+w==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
