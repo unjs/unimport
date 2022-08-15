@@ -52,7 +52,7 @@
     "pathe": "^0.3.4",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.0",
-    "unplugin": "^0.9.1"
+    "unplugin": "^0.9.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
