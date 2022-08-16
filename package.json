@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "c8": "latest",
+    "@vitest/coverage-istanbul": "latest",
     "eslint": "latest",
     "standard-version": "latest",
     "typescript": "latest",
