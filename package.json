@@ -64,5 +64,5 @@
     "vitest": "latest",
     "vue-tsc": "^0.40.1"
   },
-  "packageManager": "pnpm@7.9.0"
+  "packageManager": "pnpm@7.9.3"
 }
