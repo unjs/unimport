@@ -47,9 +47,9 @@
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.2.11",
     "local-pkg": "^0.4.2",
-    "magic-string": "^0.26.2",
+    "magic-string": "^0.26.3",
     "mlly": "^0.5.14",
-    "pathe": "^0.3.5",
+    "pathe": "^0.3.7",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.0",
     "unplugin": "^0.9.5"
@@ -62,7 +62,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.40.1"
+    "vue-tsc": "^0.40.10"
   },
-  "packageManager": "pnpm@7.9.5"
+  "packageManager": "pnpm@7.11.0"
 }
