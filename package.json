@@ -48,10 +48,10 @@
     "fast-glob": "^3.2.12",
     "local-pkg": "^0.4.2",
     "magic-string": "^0.26.3",
-    "mlly": "^0.5.14",
-    "pathe": "^0.3.7",
+    "mlly": "^0.5.15",
+    "pathe": "^0.3.8",
     "scule": "^0.3.2",
-    "strip-literal": "^0.4.1",
+    "strip-literal": "^0.4.2",
     "unplugin": "^0.9.5"
   },
   "devDependencies": {
@@ -64,5 +64,5 @@
     "vitest": "latest",
     "vue-tsc": "^0.40.13"
   },
-  "packageManager": "pnpm@7.11.0"
+  "packageManager": "pnpm@7.12.1"
 }
