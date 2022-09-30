@@ -16,7 +16,7 @@ export const excludeRE = [
 ]
 
 export const importAsRE = /^.*\sas\s+/
-export const separatorRE = /[,[\]{}\n]/g
+export const separatorRE = /[,[\]{}\n]|\bimport\b/g
 export const matchRE = /(^|\.\.\.|[^\w_$\/)]|\bcase\s+)([\w_$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n]|\b(instanceof|in)\b|$)/g
 const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
