@@ -47,16 +47,16 @@
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.2.12",
     "local-pkg": "^0.4.2",
-    "magic-string": "^0.26.3",
-    "mlly": "^0.5.15",
+    "magic-string": "^0.26.4",
+    "mlly": "^0.5.16",
     "pathe": "^0.3.8",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.2",
-    "unplugin": "^0.9.5"
+    "unplugin": "^0.9.6"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@vitest/coverage-istanbul": "latest",
+    "@vitest/coverage-c8": "latest",
     "eslint": "latest",
     "standard-version": "latest",
     "typescript": "latest",
