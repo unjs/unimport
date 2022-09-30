@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.8](https://github.com/unjs/unimport/compare/v0.6.7...v0.6.8) (2022-09-30)
+
+
+### Bug Fixes
+
+* improve exsiting identifier detection ([#123](https://github.com/unjs/unimport/issues/123)) ([3fb5274](https://github.com/unjs/unimport/commit/3fb5274d8d7e4fc1a9204ac2dfb23cc34851b62b))
+
 ### [0.6.7](https://github.com/unjs/unimport/compare/v0.6.6...v0.6.7) (2022-08-10)
 
 ### [0.6.6](https://github.com/unjs/unimport/compare/v0.6.5...v0.6.6) (2022-08-10)
