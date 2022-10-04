@@ -122,7 +122,7 @@ export function toExports (imports: Import[], fileDir?: string) {
       const entries: string[] = []
       const filtered = Array.from(imports).filter((i) => {
         if (i.name === '*') {
-          entries.push(`export * as ${i.as} from '${name}';`)
+          entries.push(i.as ? `export * as ${i.as} from '${name}';` : `export * from '${name}';`)
           return false
         }
         return true

@@ -37,6 +37,14 @@ describe('toExports', () => {
       .toMatchInlineSnapshot('"export { default as foo } from \'test1\';"')
   })
 
+  it('import all', () => {
+    const imports: Import[] = [
+      { from: 'test1', name: '*' }
+    ]
+    expect(toExports(imports))
+      .toMatchInlineSnapshot('"export * from \'test1\';"')
+  })
+
   it('import all as', () => {
     const imports: Import[] = [
       { from: 'test1', name: '*', as: 'foo' }
