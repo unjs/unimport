@@ -11,7 +11,7 @@ importers:
       eslint: latest
       fast-glob: ^3.2.12
       local-pkg: ^0.4.2
-      magic-string: ^0.26.6
+      magic-string: ^0.26.7
       mlly: ^0.5.16
       pathe: ^0.3.9
       scule: ^0.3.2
@@ -27,7 +27,7 @@ importers:
       escape-string-regexp: 5.0.0
       fast-glob: 3.2.12
       local-pkg: 0.4.2
-      magic-string: 0.26.6
+      magic-string: 0.26.7
       mlly: 0.5.16
       pathe: 0.3.9
       scule: 0.3.2
@@ -3201,8 +3201,8 @@ packages:
     dependencies:
       sourcemap-codec: 1.4.8
 
-  /magic-string/0.26.6:
-    resolution: {integrity: sha512-6d+3bFybzyQFJYSoRsl9ZC0wheze8M1LrQC7tNMRqXR4izUTDOLMd9BtSuExK9iAukFh+s5K0WAhc/dlQ+HKYA==}
+  /magic-string/0.26.7:
+    resolution: {integrity: sha512-hX9XH3ziStPoPhJxLq1syWuZMxbDvGNbVchfrdCtanC7D13888bMFow61x8axrx+GfHLtVeAx2kxL7tTGRl+Ow==}
     engines: {node: '>=12'}
     dependencies:
       sourcemap-codec: 1.4.8
@@ -3774,7 +3774,7 @@ packages:
       rollup: ^2.55
       typescript: ^4.1
     dependencies:
-      magic-string: 0.26.6
+      magic-string: 0.26.7
       rollup: 2.79.0
       typescript: 4.8.4
     optionalDependencies:
@@ -4248,7 +4248,7 @@ packages:
       globby: 13.1.2
       hookable: 5.3.0
       jiti: 1.14.0
-      magic-string: 0.26.6
+      magic-string: 0.26.7
       mkdirp: 1.0.4
       mkdist: 0.3.13_typescript@4.8.4
       mlly: 0.5.16
