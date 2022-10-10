@@ -77,7 +77,7 @@ describe('vue-template', () => {
       }
       // for vue template auto import
       import { UnwrapRef } from 'vue'
-      declare module '@vue/runtime-core' {
+      declare module 'vue' {
         interface ComponentCustomProperties {
           readonly foo: UnwrapRef<typeof import('foo')['foo']>
         }
