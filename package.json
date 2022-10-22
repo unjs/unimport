@@ -43,7 +43,7 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@rollup/pluginutils": "^4.2.1",
+    "@rollup/pluginutils": "^5.0.2",
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.2.12",
     "local-pkg": "^0.4.2",
