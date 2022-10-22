@@ -23,11 +23,12 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
-    get imports () {
+    async getImports () {
+      await resolvePromise
       return updateImports()
     },
-    get map () {
-      updateImports()
+    async getImportMap () {
+      await ctx.getImports()
       return _map
     },
     invalidate () {
@@ -39,7 +40,12 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   // Resolve presets
-  ctx.staticImports.push(...resolveBuiltinPresets(opts.presets || []))
+  const resolvePromise = resolveBuiltinPresets(opts.presets || [])
+    .then((r) => {
+      ctx.staticImports.unshift(...r)
+      _combinedImports = undefined
+      updateImports()
+    })
 
   function updateImports () {
     if (!_combinedImports) {
@@ -72,27 +78,25 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     ctx.invalidate()
   }
 
-  function generateTypeDeclarations (options?: TypeDeclarationOptions) {
+  async function generateTypeDeclarations (options?: TypeDeclarationOptions) {
     const opts: TypeDeclarationOptions = {
       resolvePath: i => i.from.replace(/\.ts$/, ''),
       ...options
     }
-    let dts = toTypeDeclarationFile(ctx.imports, opts)
+    let dts = toTypeDeclarationFile(await ctx.getImports(), opts)
     for (const addon of ctx.addons) {
-      dts = addon.declaration?.call(ctx, dts, opts) ?? dts
+      dts = await addon.declaration?.call(ctx, dts, opts) ?? dts
     }
     return dts
   }
 
-  updateImports()
-
   return {
     clearDynamicImports,
     modifyDynamicImports,
-    getImports: () => ctx.imports,
+    getImports: () => ctx.getImports(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
-    toExports: (filepath?: string) => toExports(ctx.imports, filepath),
+    toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations
   }
@@ -117,6 +121,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
 
+  const map = await ctx.getImportMap()
   // Auto import, search for unreferenced usages
   if (options?.autoImport !== false) {
     // Find all possible injection
@@ -149,7 +154,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
     }
 
     matchedImports = Array.from(identifiers)
-      .map(name => ctx.map.get(name))
+      .map(name => map.get(name))
       .filter(i => i && !i.disabled) as Import[]
 
     for (const addon of ctx.addons) {
@@ -164,7 +169,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
       s.remove(i.start, i.end)
       Object.entries(i.namedImports || {})
         .forEach(([name, as]) => {
-          const original = ctx.map.get(name)
+          const original = map.get(name)
           if (!original) {
             throw new Error(`[unimport] failed to find "${name}" imported from "${i.specifier}"`)
           }

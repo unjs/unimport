@@ -2,7 +2,7 @@ import { isAbsolute, relative } from 'pathe'
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
-import type { Import, Preset, TypeDeclarationOptions } from './types'
+import type { Import, InlinePreset, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
   // imported/exported from other module
@@ -25,7 +25,7 @@ export function stripCommentsAndStrings (code: string) {
     .replace(regexRE, 'new RegExp("")')
 }
 
-export function defineUnimportPreset (preset: Preset): Preset {
+export function defineUnimportPreset (preset: InlinePreset): InlinePreset {
   return preset
 }
 

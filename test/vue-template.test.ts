@@ -69,8 +69,8 @@ describe('vue-template', () => {
     `)
   })
 
-  test('dts', () => {
-    expect(ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
+  test('dts', async () => {
+    expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
       "export {}
       declare global {
         const foo: typeof import('foo')['foo']

@@ -5,12 +5,12 @@ const contextRE = /\b_ctx\.([\w_]+)\b/g
 const UNREF_KEY = '_unimport_unref_'
 
 export const vueTemplateAddon = (): Addon => ({
-  transform (s) {
+  async transform (s) {
     if (!s.original.includes('_ctx.')) {
       return s
     }
     const matches = Array.from(s.original.matchAll(contextRE))
-    const imports = this.imports
+    const imports = await this.getImports()
     const targets: Import[] = []
 
     for (const match of matches) {
@@ -44,8 +44,9 @@ export const vueTemplateAddon = (): Addon => ({
 
     return s
   },
-  declaration (dts, options) {
-    const items = this.imports
+  async declaration (dts, options) {
+    const imports = await this.getImports()
+    const items = imports
       .map((i) => {
         const from = options?.resolvePath?.(i) || i.from
         return `readonly ${i.as}: UnwrapRef<typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}>`

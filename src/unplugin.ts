@@ -57,7 +57,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
       }
 
       if (dts) {
-        return fs.writeFile(dts, ctx.generateTypeDeclarations(), 'utf-8')
+        return fs.writeFile(dts, await ctx.generateTypeDeclarations(), 'utf-8')
       }
     }
   }
