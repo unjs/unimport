@@ -19,9 +19,9 @@ export async function installGlobalAutoImports (
       if (i.disabled) {
         return
       }
-      const module = await import(i.from)
       const as = i.as || i.name
       if (overrides || !(as in globalObject)) {
+        const module = await import(i.from)
         globalObject[as] = module[i.name]
       }
     })
