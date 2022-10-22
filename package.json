@@ -47,13 +47,13 @@
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.2.12",
     "local-pkg": "^0.4.2",
+    "magic-string": "^0.26.7",
     "mlly": "^0.5.16",
-    "pathe": "^0.3.8",
     "pkg-types": "^0.3.3",
-    "magic-string": "^0.26.4",
+    "pathe": "^0.3.9",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.2",
-    "unplugin": "^0.9.6"
+    "unplugin": "^0.10.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
@@ -64,7 +64,7 @@
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^0.40.13"
+    "vue-tsc": "^1.0.8"
   },
-  "packageManager": "pnpm@7.12.1"
+  "packageManager": "pnpm@7.13.6"
 }

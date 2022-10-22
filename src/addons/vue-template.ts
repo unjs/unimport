@@ -56,7 +56,7 @@ export const vueTemplateAddon = (): Addon => ({
 `
 // for vue template auto import
 import { UnwrapRef } from 'vue'
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
 ${items.map(i => '    ' + i).join('\n')}
   }
