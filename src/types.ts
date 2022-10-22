@@ -156,16 +156,3 @@ export interface Addon {
   declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>
 }
-
-export interface InstallGlobalOptions {
-  /**
-   * @default globalThis
-   */
-  globalObject?: any
-
-  /**
-   * Overrides the existing property
-   * @default false
-   */
-  overrides?: boolean
-}
