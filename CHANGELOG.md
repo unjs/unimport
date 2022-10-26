@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/unjs/unimport/compare/v0.6.8...v0.7.0) (2022-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* auto extract exports (#104)
+
+### Features
+
+* auto extract exports ([#104](https://github.com/unjs/unimport/issues/104)) ([8ea82f1](https://github.com/unjs/unimport/commit/8ea82f1d2d4b1afda53d7ebdb22852d9d03c7856))
+* new `installGlobalAutoImports` util ([93b0cb2](https://github.com/unjs/unimport/commit/93b0cb28b131f5af2a75b6ad03eecdcd4e83631f))
+* new `installGlobalAutoImports` util ([#135](https://github.com/unjs/unimport/issues/135)) ([fc4ad9d](https://github.com/unjs/unimport/commit/fc4ad9d91bda989929f1958c9f72977af1a21274))
+
+
+### Bug Fixes
+
+* ternary match ([5a62a5d](https://github.com/unjs/unimport/commit/5a62a5d0190f7f7a6acee3c342a2c5d3f8fc0a7f))
+* vue template ComponentCustomProperties interface ([#126](https://github.com/unjs/unimport/issues/126)) ([726d12c](https://github.com/unjs/unimport/commit/726d12ce723fd98d82d1935b4f364d1028b79adb))
+
 ### [0.6.8](https://github.com/unjs/unimport/compare/v0.6.7...v0.6.8) (2022-09-30)
 
 
