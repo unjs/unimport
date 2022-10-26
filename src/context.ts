@@ -132,9 +132,9 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
           if (i[1] === '.') {
             return ''
           }
-          // Remove property, but keep `switch case`
+          // Remove property, but keep `case x:` and `? x :`
           const end = strippedCode[i.index! + i[0].length]
-          if (end === ':' && i[1].trim() !== 'case') {
+          if (end === ':' && !['?', 'case'].includes(i[1].trim())) {
             return ''
           }
           return i[2]
