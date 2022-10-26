@@ -80,6 +80,117 @@ console.log(injectImports('console.log(fooBar())'))
 
 ## Configurations
 
+### Imports Item
+
+###### Named import
+
+```ts
+imports: [
+  { name: 'ref', from: 'vue' },
+  { name: 'useState', as: 'useSignal', from: 'react' },
+]
+```
+
+Will be injected as:
+
+```ts
+import { ref } from 'vue'
+import { useState as useSignal } from 'react'
+```
+
+###### Default import
+
+```ts
+imports: [
+  { name: 'default', as: '_', from: 'lodash' }
+]
+```
+
+Will be injected as:
+
+```ts
+import _ from 'lodash'
+```
+
+###### Custom Presets
+
+Presets are provides as a shorthand for declaring imports from the same package:
+
+```ts
+imports: [
+  {
+    from: 'vue',
+    imports: [
+      'ref',
+      'reactive',
+      // ...
+    ]
+  }
+]
+```
+
+Will be equivalent as:
+
+```ts
+imports: [
+  { name: 'ref', from: 'vue' },
+  { name: 'reactive', from: 'vue' },
+  // ...
+]
+```
+
+###### Built-in Presets
+
+`unimport` also provides some builtin presets for common libraries:
+
+```ts
+imports: [
+  'vue',
+  'pinia',
+  'vue-i18n',
+  // ...
+]
+```
+
+You can check out [`src/presets`](./src/presets/) for all the options avaliable or refer to the type declration.
+
+###### Exports Auto Scan
+
+Since `unimport` v0.7.0, we also support auto scanning the examples from a local installed package, for example:
+
+```ts
+imports: [
+  {
+    package: 'h3',
+    ignore: ['isStream', /^[A-Z]/, /^[a-z]*$/, r => r.length > 8]
+  }
+]
+```
+
+This will be expanded into:
+
+```ts
+imports: [
+  {
+    "from": "h3",
+    "name": "appendHeader",
+  },
+  {
+    "from": "h3",
+    "name": "appendHeaders",
+  },
+  {
+    "from": "h3",
+    "name": "appendResponseHeader",
+  },
+  // ...
+]
+```
+
+The `ignore` option is used to filter out the exports, it can be a string, regex or a function that returns a boolean.
+
+By default, the result is strongly cached by the version of the package. You can disable this by setting `cache: false`.
+
 ### Type Declarations
 
 ```ts
@@ -91,15 +202,14 @@ Unimport.vite({
 ### Directory Auto Import
 
 ```ts
-Unimport.vite({
+{
   dirs: [
-    './composables'
+    './composables/*'
   ]
-})
+}
 ```
 
-Exported APIs for modules under `./composables` will be auto imported.
-
+Named exports for modules under `./composables/*` will be registered for auto imports.
 
 ### Vue Template Auto Import
 
