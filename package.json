@@ -50,22 +50,22 @@
     "magic-string": "^0.26.7",
     "mlly": "^0.5.16",
     "pathe": "^0.3.9",
-    "pkg-types": "^0.3.3",
+    "pkg-types": "^0.3.5",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.2",
-    "unplugin": "^0.10.0"
+    "unplugin": "^0.10.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
-    "h3": "^0.7.14",
+    "h3": "^0.8.5",
     "jquery": "^3.6.1",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest",
-    "vue-tsc": "^1.0.8"
+    "vue-tsc": "^1.0.9"
   },
-  "packageManager": "pnpm@7.13.6"
+  "packageManager": "pnpm@7.14.0"
 }
