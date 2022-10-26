@@ -49,8 +49,8 @@
     "local-pkg": "^0.4.2",
     "magic-string": "^0.26.7",
     "mlly": "^0.5.16",
-    "pkg-types": "^0.3.3",
     "pathe": "^0.3.9",
+    "pkg-types": "^0.3.3",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.2",
     "unplugin": "^0.10.0"
@@ -60,6 +60,7 @@
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
     "h3": "^0.7.14",
+    "jquery": "^3.6.1",
     "standard-version": "latest",
     "typescript": "latest",
     "unbuild": "latest",
