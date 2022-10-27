@@ -117,7 +117,7 @@ import _ from 'lodash'
 Presets are provides as a shorthand for declaring imports from the same package:
 
 ```ts
-imports: [
+presets: [
   {
     from: 'vue',
     imports: [
@@ -144,7 +144,7 @@ imports: [
 `unimport` also provides some builtin presets for common libraries:
 
 ```ts
-imports: [
+presets: [
   'vue',
   'pinia',
   'vue-i18n',
@@ -159,7 +159,7 @@ You can check out [`src/presets`](./src/presets/) for all the options avaliable 
 Since `unimport` v0.7.0, we also support auto scanning the examples from a local installed package, for example:
 
 ```ts
-imports: [
+presets: [
   {
     package: 'h3',
     ignore: ['isStream', /^[A-Z]/, /^[a-z]*$/, r => r.length > 8]
