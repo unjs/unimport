@@ -11,7 +11,10 @@ export default (): Preset => {
 
   if (!_cache) {
     try {
-      const path = resolveModule('@vueuse/core/indexes.json')
+      const corePath = resolveModule('@vueuse/core') || process.cwd()
+      const path = resolveModule('@vueuse/core/indexes.json') ||
+          resolveModule('@vueuse/metadata/index.json') ||
+          resolveModule('@vueuse/metadata/index.json', { paths: [corePath] })
       const indexesJson = JSON.parse(readFileSync(path!, 'utf-8'))
       _cache = defineUnimportPreset({
         from: '@vueuse/core',
