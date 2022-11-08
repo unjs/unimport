@@ -8,6 +8,8 @@ const result = compileTemplate({
   source: `
     <div>{{ foo }}</div>
     <div>{{ foo + 1 }}</div>
+    <div>{{ $foo }}</div>
+    <div>{{ _foo }}</div>
     <div v-if="foo"></div>
     <div v-if="foo === 1"></div>
     <div @click="foo"></div>
@@ -20,7 +22,9 @@ const result = compileTemplate({
 describe('vue-template', () => {
   const ctx = createUnimport({
     imports: [
-      { name: 'foo', from: 'foo', as: 'foo' }
+      { name: 'foo', from: 'foo', as: 'foo' },
+      { name: '_foo', from: 'foo', as: '_foo' },
+      { name: '$foo', from: 'foo', as: '$foo' }
     ],
     addons: {
       vueTemplate: true
@@ -35,6 +39,8 @@ describe('vue-template', () => {
         return (_openBlock(), _createElementBlock(_Fragment, null, [
           _createElementVNode(\\"div\\", null, _toDisplayString(_ctx.foo), 1 /* TEXT */),
           _createElementVNode(\\"div\\", null, _toDisplayString(_ctx.foo + 1), 1 /* TEXT */),
+          _createElementVNode(\\"div\\", null, _toDisplayString(_ctx.$foo), 1 /* TEXT */),
+          _createElementVNode(\\"div\\", null, _toDisplayString(_ctx._foo), 1 /* TEXT */),
           (_ctx.foo)
             ? (_openBlock(), _createElementBlock(\\"div\\", { key: 0 }))
             : _createCommentVNode(\\"v-if\\", true),
@@ -48,13 +54,15 @@ describe('vue-template', () => {
       }"
     `)
     expect((await ctx.injectImports(result.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-      "import { foo as _unimport_foo } from 'foo';
+      "import { foo as _unimport_foo, $foo as _unimport_$foo, _foo as _unimport__foo } from 'foo';
       import { unref as _unimport_unref_ } from 'vue';import { toDisplayString as _toDisplayString, createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock, createCommentVNode as _createCommentVNode, Fragment as _Fragment } from \\"vue\\"
 
       export function render(_ctx, _cache) {
         return (_openBlock(), _createElementBlock(_Fragment, null, [
           _createElementVNode(\\"div\\", null, _toDisplayString(_unimport_unref_(_unimport_foo)), 1 /* TEXT */),
           _createElementVNode(\\"div\\", null, _toDisplayString(_unimport_unref_(_unimport_foo) + 1), 1 /* TEXT */),
+          _createElementVNode(\\"div\\", null, _toDisplayString(_unimport_unref_(_unimport_$foo)), 1 /* TEXT */),
+          _createElementVNode(\\"div\\", null, _toDisplayString(_unimport_unref_(_unimport__foo)), 1 /* TEXT */),
           (_unimport_unref_(_unimport_foo))
             ? (_openBlock(), _createElementBlock(\\"div\\", { key: 0 }))
             : _createCommentVNode(\\"v-if\\", true),
@@ -73,12 +81,16 @@ describe('vue-template', () => {
     expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
       "export {}
       declare global {
+        const $foo: typeof import('foo')['$foo']
+        const _foo: typeof import('foo')['_foo']
         const foo: typeof import('foo')['foo']
       }
       // for vue template auto import
       import { UnwrapRef } from 'vue'
       declare module 'vue' {
         interface ComponentCustomProperties {
+          readonly $foo: UnwrapRef<typeof import('foo')['$foo']>
+          readonly _foo: UnwrapRef<typeof import('foo')['_foo']>
           readonly foo: UnwrapRef<typeof import('foo')['foo']>
         }
       }

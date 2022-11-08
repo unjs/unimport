@@ -1,7 +1,7 @@
 import { Import, Addon } from '../types'
 import { toImports } from '../utils'
 
-const contextRE = /\b_ctx\.([\w_]+)\b/g
+const contextRE = /\b_ctx\.([\w_$]+)\b/g
 const UNREF_KEY = '_unimport_unref_'
 
 export const vueTemplateAddon = (): Addon => ({
