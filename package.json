@@ -53,7 +53,7 @@
     "pkg-types": "^0.3.6",
     "scule": "^0.3.2",
     "strip-literal": "^0.4.2",
-    "unplugin": "^0.10.2"
+    "unplugin": "^1.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
