@@ -61,4 +61,23 @@ describe('scan-dirs', () => {
     )
       .toContain('nested/index.ts')
   })
+
+  test('scanDirs should respect dirs order', async () => {
+    const firstFolder = join(__dirname, '../playground/composables')
+    const secondFolder = join(__dirname, '../playground/composables-override')
+    const options = {
+      filePatterns: [
+        '*.{ts,js,mjs,cjs,mts,cts}',
+        '*/index.{ts,js,mjs,cjs,mts,cts}'
+      ]
+    }
+
+    const [result1, result2] = await Promise.all([
+      scanDirExports([firstFolder, secondFolder], options),
+      scanDirExports([secondFolder, firstFolder], options)
+    ])
+
+    expect(result1.at(-1)?.from).toBe(join(secondFolder, 'foo.ts'))
+    expect(result2.at(0)?.from).toBe(join(secondFolder, 'foo.ts'))
+  })
 })
