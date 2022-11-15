@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/unjs/unimport/compare/v0.7.0...v0.7.1) (2022-11-15)
+
+
+### Features
+
+* scanDirs respects input dirs order ([#148](https://github.com/unjs/unimport/issues/148)) ([25543d5](https://github.com/unjs/unimport/commit/25543d518900fb56709bd28a1746c2b8e0fb7d43))
+
+
+### Bug Fixes
+
+* **presets:** path resolveModule on vueuse preset ([#138](https://github.com/unjs/unimport/issues/138)) ([d1e0c4b](https://github.com/unjs/unimport/commit/d1e0c4b84b5c5a28e78b2e5454049cfabad2bdc0))
+
 ## [0.7.0](https://github.com/unjs/unimport/compare/v0.6.8...v0.7.0) (2022-10-26)
 
 
