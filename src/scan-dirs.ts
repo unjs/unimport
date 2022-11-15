@@ -11,20 +11,26 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
   const fileFilter = options?.fileFilter || (() => true)
   const filePatterns = options?.filePatterns || ['*.{ts,js,mjs,cjs,mts,cts}']
 
-  const scanDirs = dirs.map((i) => {
-    return fg([i].concat(filePatterns.map(p => join(i, p))), {
-      absolute: true,
-      cwd: options?.cwd || process.cwd(),
-      onlyFiles: true,
-      followSymbolicLinks: true
-    })
-  })
-
-  const result = await Promise.all(scanDirs)
-  const files = result.flatMap(f => f.map(f => normalize(f)).sort()).filter(fileFilter)
-  const fileExports = await Promise.all(
-    files.map(scanExports)
+  const result = await Promise.all(
+    // Do multiple glob searches to persist the order of input dirs
+    dirs.map(async i => await fg(
+      [i, ...filePatterns].map(p => join(i, p)),
+      {
+        absolute: true,
+        cwd: options?.cwd || process.cwd(),
+        onlyFiles: true,
+        followSymbolicLinks: true
+      })
+      .then(r => r
+        .map(f => normalize(f))
+        .filter(fileFilter)
+        .sort()
+      )
+    )
   )
+
+  const files = Array.from(new Set(result.flat())).filter(fileFilter)
+  const fileExports = await Promise.all(files.map(scanExports))
 
   return fileExports.flat()
 }
