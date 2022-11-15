@@ -59,7 +59,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
-    "h3": "^0.8.6",
+    "h3": "^1.0.1",
     "jquery": "^3.6.1",
     "standard-version": "latest",
     "typescript": "latest",
