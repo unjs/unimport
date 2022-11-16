@@ -14,7 +14,7 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
   const result = await Promise.all(
     // Do multiple glob searches to persist the order of input dirs
     dirs.map(async i => await fg(
-      [i, ...filePatterns].map(p => join(i, p)),
+      [i, ...filePatterns.map(p => join(i, p))],
       {
         absolute: true,
         cwd: options?.cwd || process.cwd(),
@@ -23,7 +23,6 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
       })
       .then(r => r
         .map(f => normalize(f))
-        .filter(fileFilter)
         .sort()
       )
     )
