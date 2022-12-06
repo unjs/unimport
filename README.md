@@ -152,7 +152,7 @@ presets: [
 ]
 ```
 
-You can check out [`src/presets`](./src/presets/) for all the options avaliable or refer to the type declration.
+You can check out [`src/presets`](./src/presets/) for all the options available or refer to the type declaration.
 
 ###### Exports Auto Scan
 
