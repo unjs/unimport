@@ -9,7 +9,7 @@
 
 ## Features
 
-- Auto import registed APIs for Vite, Webpack or esbuild powered by [unplugin](https://github.com/unjs/unplugin)
+- Auto import register APIs for Vite, Webpack or esbuild powered by [unplugin](https://github.com/unjs/unplugin)
 - TypeScript declaration file generation
 - Auto import for custom APIs defined under specific directories
 - Auto import for Vue template
@@ -213,7 +213,7 @@ Named exports for modules under `./composables/*` will be registered for auto im
 
 ### Vue Template Auto Import
 
-In Vue's template, usage of APIs are in different context than plain modules. Thus some custom transformation are required. To enable it, set `addons.vueTemplate` to `true`:
+In Vue's template, the usage of API is in a different context than plain modules. Thus some custom transformations are required. To enable it, set `addons.vueTemplate` to `true`:
 
 ```ts
 Unimport.vite({
@@ -225,7 +225,7 @@ Unimport.vite({
 
 #### Caveats
 
-When auto-import a ref, inline operations won't be auto unwrapped.
+When auto-import a ref, inline operations won't be auto-unwrapped.
 
 ```ts
 export const counter = ref(0)
