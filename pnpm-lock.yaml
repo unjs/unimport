@@ -6,12 +6,12 @@ importers:
     specifiers:
       '@nuxtjs/eslint-config-typescript': ^12.0.0
       '@rollup/pluginutils': ^5.0.2
-      '@vitest/coverage-c8': ^0.25.7
+      '@vitest/coverage-c8': ^0.25.8
       escape-string-regexp: ^5.0.0
       eslint: ^8.29.0
       fast-glob: ^3.2.12
-      h3: ^1.0.1
-      jquery: ^3.6.1
+      h3: ^1.0.2
+      jquery: ^3.6.2
       local-pkg: ^0.4.2
       magic-string: ^0.27.0
       mlly: ^1.0.0
@@ -23,7 +23,7 @@ importers:
       typescript: ^4.9.4
       unbuild: ^1.0.2
       unplugin: ^1.0.1
-      vitest: ^0.25.7
+      vitest: ^0.25.8
       vue-tsc: ^1.0.13
     dependencies:
       '@rollup/pluginutils': 5.0.2
@@ -39,14 +39,14 @@ importers:
       unplugin: 1.0.1
     devDependencies:
       '@nuxtjs/eslint-config-typescript': 12.0.0_ha6vam6werchizxrnqvarmz2zu
-      '@vitest/coverage-c8': 0.25.7
+      '@vitest/coverage-c8': 0.25.8
       eslint: 8.29.0
-      h3: 1.0.1
-      jquery: 3.6.1
+      h3: 1.0.2
+      jquery: 3.6.2
       standard-version: 9.5.0
       typescript: 4.9.4
       unbuild: 1.0.2
-      vitest: 0.25.7
+      vitest: 0.25.8
       vue-tsc: 1.0.13_typescript@4.9.4
 
   playground:
@@ -934,11 +934,11 @@ packages:
       vue: 3.2.45
     dev: true
 
-  /@vitest/coverage-c8/0.25.7:
-    resolution: {integrity: sha512-TEoYjW4YIDXKCMmLqduIGpIq2JmlhE3M0Q68apjNM0ljrJyEvYpaDI5b7OyfXbAJjhmZvIlfEZfZnmhbExHLHg==}
+  /@vitest/coverage-c8/0.25.8:
+    resolution: {integrity: sha512-fWgzQoK2KNzTTNnDcLCyibfO9/pbcpPOMtZ9Yvq/Eggpi2X8lewx/OcKZkO5ba5q9dl6+BBn6d5hTcS1709rZw==}
     dependencies:
       c8: 7.12.0
-      vitest: 0.25.7
+      vitest: 0.25.8
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitest/browser'
@@ -1694,8 +1694,8 @@ packages:
     resolution: {integrity: sha512-aA964RUCsBt0FGoNIlA3uFgo2hO+WWC0fiC6DBps/0SFzkKcYoM/3CzVLIa5xSsrFjdioMdYgAIbwo80qp2MoA==}
     dev: true
 
-  /destr/1.2.1:
-    resolution: {integrity: sha512-ud8w0qMLlci6iFG7CNgeRr8OcbUWMsbfjtWft1eJ5Luqrz/M8Ebqk/KCzne8rKUlIQWWfLv0wD6QHrqOf4GshA==}
+  /destr/1.2.2:
+    resolution: {integrity: sha512-lrbCJwD9saUQrqUfXvl6qoM+QN3W7tLV5pAOs+OqOmopCCz/JkE05MHedJR1xfk4IAnZuJXPVuN5+7jNA2ZCiA==}
     dev: true
 
   /detect-indent/6.1.0:
@@ -2726,13 +2726,13 @@ packages:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
 
-  /h3/1.0.1:
-    resolution: {integrity: sha512-gDCGpRvjchZW2JBlTqbJ9IOs+mdkXXuwSQkSye+jubHAv/UhdamKqoQvd4RFgyBNjHSId8Y+b10UdTcPlP/V+w==}
+  /h3/1.0.2:
+    resolution: {integrity: sha512-25QqjQMz8pX1NI2rZ/ziNT9B8Aog7jmu2a0o8Qm9kKoH3zOhE+2icVs069h6DEp0g1Dst1+zKfRdRYcK0MogJA==}
     dependencies:
       cookie-es: 0.5.0
-      destr: 1.2.1
+      destr: 1.2.2
       radix3: 1.0.0
-      ufo: 1.0.0
+      ufo: 1.0.1
     dev: true
 
   /handlebars/4.7.7:
@@ -3058,8 +3058,8 @@ packages:
     hasBin: true
     dev: true
 
-  /jquery/3.6.1:
-    resolution: {integrity: sha512-opJeO4nCucVnsjiXOE+/PcCgYw9Gwpvs/a6B1LL/lQhwWwpbVEVYDZ1FokFr8PRc7ghYlrFPuyHuiiDNTQxmcw==}
+  /jquery/3.6.2:
+    resolution: {integrity: sha512-/e7ulNIEEYk1Z/l4X0vpxGt+B/dNsV8ghOPAWZaJs8pkGvsSC0tm33aMGylXcj/U7y4IcvwtMXPMyBFZn/gK9A==}
     dev: true
 
   /js-sdsl/4.1.5:
@@ -4460,8 +4460,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.25.7:
-    resolution: {integrity: sha512-lJ+Ue+v8kHl2JzjaKHJ9u5Yo/loU7zrWK2/Whn8OKQjtq5G7nkeWfXuq3elZaC8xKdkdIuWiiIicaNBG1F5yzg==}
+  /vitest/0.25.8:
+    resolution: {integrity: sha512-X75TApG2wZTJn299E/TIYevr4E9/nBo1sUtZzn0Ci5oK8qnpZAZyhwg0qCeMSakGIWtc6oRwcQFyFfW14aOFWg==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
