@@ -65,4 +65,25 @@ const path = resolvePath()
     expect(transformed).toContain('node_modules/vue')
     expect(transformed).toContain('node_modules/mlly')
   })
+
+  test('exclude self', async () => {
+    const calls: (string| undefined)[][] = []
+    const ctx = createUnimport({
+      presets: [{
+        from: 'a.vue',
+        imports: ['foo']
+      }]
+    })
+
+    expect((await ctx.injectImports('console.log(foo)', 'a.vue')).code.toString())
+      .toMatchInlineSnapshot('"console.log(foo)"')
+
+    expect((await ctx.injectImports('console.log(foo)', 'b.vue')).code.toString())
+      .toMatchInlineSnapshot(`
+        "import { foo } from 'a.vue';
+        console.log(foo)"
+      `)
+
+    expect(calls).toMatchInlineSnapshot('[]')
+  })
 })

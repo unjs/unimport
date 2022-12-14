@@ -111,7 +111,6 @@ function parseVirtualImports (code: string, ctx: UnimportContext) {
   return []
 }
 
-// eslint-disable-next-line require-await
 async function detectImports (code: string | MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
   const s = getMagicString(code)
   // Strip comments so we don't match on them
@@ -206,13 +205,22 @@ async function injectImports (code: string | MagicString, id: string | undefined
 async function resolveImports (ctx: UnimportContext, imports: Import[], id: string | undefined) {
   const resolveCache = new Map<string, string>()
 
-  return await Promise.all(imports.map(async (i) => {
+  const _imports = await Promise.all(imports.map(async (i) => {
     if (!resolveCache.has(i.from)) {
       resolveCache.set(i.from, await ctx.resolveId(i.from, id) || i.from)
     }
+    const from = resolveCache.get(i.from)!
+
+    // reference to self
+    if (i.from === id || !from || from === '.' || from === id) {
+      return
+    }
+
     return <Import>{
       ...i,
-      from: resolveCache.get(i.from)!
+      from
     }
   }))
+
+  return _imports.filter(Boolean) as Import[]
 }
