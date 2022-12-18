@@ -53,16 +53,16 @@ importers:
     specifiers:
       '@vitejs/plugin-vue': ^4.0.0
       typescript: ^4.9.4
-      vite: ^4.0.1
+      vite: ^4.0.2
       vite-plugin-inspect: ^0.7.10
       vue: ^3.2.45
     dependencies:
       vue: 3.2.45
     devDependencies:
-      '@vitejs/plugin-vue': 4.0.0_vite@4.0.1+vue@3.2.45
+      '@vitejs/plugin-vue': 4.0.0_vite@4.0.2+vue@3.2.45
       typescript: 4.9.4
-      vite: 4.0.1
-      vite-plugin-inspect: 0.7.10_vite@4.0.1
+      vite: 4.0.2
+      vite-plugin-inspect: 0.7.10_vite@4.0.2
 
 packages:
 
@@ -923,14 +923,14 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-vue/4.0.0_vite@4.0.1+vue@3.2.45:
+  /@vitejs/plugin-vue/4.0.0_vite@4.0.2+vue@3.2.45:
     resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.0.1
+      vite: 4.0.2
       vue: 3.2.45
     dev: true
 
@@ -4375,7 +4375,7 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-inspect/0.7.10_vite@4.0.1:
+  /vite-plugin-inspect/0.7.10_vite@4.0.2:
     resolution: {integrity: sha512-E4r1tDNMw9XLBXk+3lWBQ5N4GfMQHjm5pzcs4SIATAgnEiGTDE9AlYQ9R6gmRmzFoUH7B5SK9Z5s3o0+LfRsDw==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4387,14 +4387,14 @@ packages:
       kolorist: 1.6.0
       sirv: 2.0.2
       ufo: 1.0.1
-      vite: 4.0.1
+      vite: 4.0.2
     transitivePeerDependencies:
       - rollup
       - supports-color
     dev: true
 
-  /vite/4.0.1:
-    resolution: {integrity: sha512-kZQPzbDau35iWOhy3CpkrRC7It+HIHtulAzBhMqzGHKRf/4+vmh8rPDDdv98SWQrFWo6//3ozwsRmwQIPZsK9g==}
+  /vite/4.0.2:
+    resolution: {integrity: sha512-QJaY3R+tFlTagH0exVqbgkkw45B+/bXVBzF2ZD1KB5Z8RiAoiKo60vSUf6/r4c2Vh9jfGBKM4oBI9b4/1ZJYng==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -4426,8 +4426,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite/4.0.1_@types+node@18.11.9:
-    resolution: {integrity: sha512-kZQPzbDau35iWOhy3CpkrRC7It+HIHtulAzBhMqzGHKRf/4+vmh8rPDDdv98SWQrFWo6//3ozwsRmwQIPZsK9g==}
+  /vite/4.0.2_@types+node@18.11.9:
+    resolution: {integrity: sha512-QJaY3R+tFlTagH0exVqbgkkw45B+/bXVBzF2ZD1KB5Z8RiAoiKo60vSUf6/r4c2Vh9jfGBKM4oBI9b4/1ZJYng==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -4495,7 +4495,7 @@ packages:
       tinybench: 2.3.1
       tinypool: 0.3.0
       tinyspy: 1.0.2
-      vite: 4.0.1_@types+node@18.11.9
+      vite: 4.0.2_@types+node@18.11.9
     transitivePeerDependencies:
       - less
       - sass
