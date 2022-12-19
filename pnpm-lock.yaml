@@ -54,7 +54,7 @@ importers:
       '@vitejs/plugin-vue': ^4.0.0
       typescript: ^4.9.4
       vite: ^4.0.2
-      vite-plugin-inspect: ^0.7.10
+      vite-plugin-inspect: ^0.7.11
       vue: ^3.2.45
     dependencies:
       vue: 3.2.45
@@ -62,7 +62,7 @@ importers:
       '@vitejs/plugin-vue': 4.0.0_vite@4.0.2+vue@3.2.45
       typescript: 4.9.4
       vite: 4.0.2
-      vite-plugin-inspect: 0.7.10_vite@4.0.2
+      vite-plugin-inspect: 0.7.11_vite@4.0.2
 
 packages:
 
@@ -4407,8 +4407,8 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-inspect/0.7.10_vite@4.0.2:
-    resolution: {integrity: sha512-E4r1tDNMw9XLBXk+3lWBQ5N4GfMQHjm5pzcs4SIATAgnEiGTDE9AlYQ9R6gmRmzFoUH7B5SK9Z5s3o0+LfRsDw==}
+  /vite-plugin-inspect/0.7.11_vite@4.0.2:
+    resolution: {integrity: sha512-mpNsux1BBu0CoI5E0rFseaExHAfq8mtkuDJpQWnB5RBafyNT3bQMlRPWbVZrBXYZHJL7ruqApd4EFvxeXKZu7Q==}
     engines: {node: '>=14'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0
