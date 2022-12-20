@@ -80,15 +80,50 @@ export interface AddonsOptions {
 }
 
 export interface UnimportOptions {
+  /**
+   * Auto import items
+   */
   imports: Import[]
+
+  /**
+   * Auto import preset
+   */
   presets: (Preset | BuiltinPresetName)[]
+
+  /**
+   * Custom warning function
+   * @default console.warn
+   */
   warn: (msg: string) => void
+
+  /**
+   * Unimport Addons
+   * To use built-in addons, use `addons: { vueTemplate: true }`
+   *
+   * Built-in addons:
+   * - vueTemplate: enable auto import inside for Vue's <template>
+   *
+   * @default {}
+   */
   addons: AddonsOptions | Addon[]
+
+  /**
+   * Name of virtual modules that exposed all the registed auto-imports
+   * @default []
+   */
   virtualImports: string[]
+
   /**
    * Custom resolver to auto import id
    */
   resolveId?: (id: string, importee?:string) => Thenable<string | void>
+
+  /**
+   * Custom magic comments to be opt-out for auto import, per file/module
+   *
+   * @default ['@unimport-disable', '@imports-disable']
+   */
+  optOutComments?: string[]
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined
@@ -100,10 +135,12 @@ export interface ScanDirExportsOptions {
    * @default ['*.{ts,js,mjs,cjs,mts,cts}']
    */
   filePatterns?: string[]
+
   /**
    * Custom function to filter scanned files
    */
   fileFilter?: (file: string) => boolean
+
   /**
    * Current working directory
    *
@@ -127,6 +164,8 @@ export interface TypeDeclarationOptions {
 
 export interface InjectImportsOptions {
   /**
+   * Merge the existing imports
+   *
    * @default false
    */
   mergeExisting?: boolean
@@ -145,7 +184,8 @@ export interface InjectImportsOptions {
    * @default true
    */
   transformVirtualImports?: boolean
-  /** @deprecated */
+
+  /** @deprecated use `virtualImports` instead */
   transformVirtualImoports?: boolean
 }
 
