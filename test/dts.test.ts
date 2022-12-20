@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-escape */
+
 import { expect, test } from 'vitest'
 import { createUnimport } from '../src'
 

@@ -211,8 +211,9 @@ async function injectImports (code: string | MagicString, id: string | undefined
   const imports = await resolveImports(ctx, matchedImports, id)
 
   if (ctx.options.commentsDebug?.some(c => s.original.includes(c))) {
+    // eslint-disable-next-line no-console
     const log = ctx.options.debugLog || console.log
-    log(`[unimport] ${imports.length} imports detected in "${id}"${imports.length ? ': ' +imports.map(i => i.name).join(', ') : ''}`)
+    log(`[unimport] ${imports.length} imports detected in "${id}"${imports.length ? ': ' + imports.map(i => i.name).join(', ') : ''}`)
   }
 
   return addImportToCode(s, imports, isCJSContext, options?.mergeExisting)
