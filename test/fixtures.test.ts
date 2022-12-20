@@ -35,6 +35,11 @@ describe('fixtures', () => {
         from: 'jquery',
         imports: ['$']
       }
+    ],
+    commentsDisable: [
+      '@unimport-disable',
+      '@imports-disable',
+      '@custom-imports-disable'
     ]
   })
 

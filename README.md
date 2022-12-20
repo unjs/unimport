@@ -211,6 +211,25 @@ Unimport.vite({
 
 Named exports for modules under `./composables/*` will be registered for auto imports.
 
+### Opt-out Auto Import
+
+You can opt-out auto import for specific modules by adding a comment:
+
+```ts
+// @unimport-disable
+```
+
+It's can be customized by setting `commentsDisable`:
+
+```ts
+Unimport.vite({
+  commentsDisable: [
+    '@unimport-disable',
+    '@custom-imports-disable',
+  ]
+})
+```
+
 ### Vue Template Auto Import
 
 In Vue's template, the usage of API is in a different context than plain modules. Thus some custom transformations are required. To enable it, set `addons.vueTemplate` to `true`:
