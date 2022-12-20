@@ -1,6 +1,6 @@
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import type { Addon, Import, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportOptions } from './types'
+import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
@@ -19,6 +19,9 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   } else if (opts.addons?.vueTemplate) {
     addons.push(vueTemplateAddon())
   }
+
+  opts.addons = addons
+  opts.commentsDisable = opts.commentsDisable ?? ['@unimport-disable', '@imports-disable']
 
   const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
@@ -189,8 +192,15 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   }
 }
 
-async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions) {
+async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions): Promise<ImportInjectionResult> {
   const s = getMagicString(code)
+
+  if (ctx.options.commentsDisable?.some(c => s.original.includes(c))) {
+    return {
+      s,
+      get code () { return s.toString() }
+    }
+  }
 
   for (const addon of ctx.addons) {
     await addon.transform?.call(ctx, s, id)

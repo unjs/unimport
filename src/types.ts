@@ -123,7 +123,7 @@ export interface UnimportOptions {
    *
    * @default ['@unimport-disable', '@imports-disable']
    */
-  optOutComments?: string[]
+  commentsDisable?: string[]
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined
@@ -208,4 +208,9 @@ export interface InstallGlobalOptions {
    * @default false
    */
   overrides?: boolean
+}
+
+export interface ImportInjectionResult {
+  s: MagicString
+  code: string
 }
