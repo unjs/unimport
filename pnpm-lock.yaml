@@ -11,7 +11,7 @@ importers:
       eslint: ^8.30.0
       fast-glob: ^3.2.12
       h3: ^1.0.2
-      jquery: ^3.6.2
+      jquery: ^3.6.3
       local-pkg: ^0.4.2
       magic-string: ^0.27.0
       mlly: ^1.0.0
@@ -42,7 +42,7 @@ importers:
       '@vitest/coverage-c8': 0.26.0
       eslint: 8.30.0
       h3: 1.0.2
-      jquery: 3.6.2
+      jquery: 3.6.3
       standard-version: 9.5.0
       typescript: 4.9.4
       unbuild: 1.0.2
@@ -3058,8 +3058,8 @@ packages:
     hasBin: true
     dev: true
 
-  /jquery/3.6.2:
-    resolution: {integrity: sha512-/e7ulNIEEYk1Z/l4X0vpxGt+B/dNsV8ghOPAWZaJs8pkGvsSC0tm33aMGylXcj/U7y4IcvwtMXPMyBFZn/gK9A==}
+  /jquery/3.6.3:
+    resolution: {integrity: sha512-bZ5Sy3YzKo9Fyc8wH2iIQK4JImJ6R0GWI9kL1/k7Z91ZBNgkRXE6U0JfHIizZbort8ZunhSI3jw9I6253ahKfg==}
     dev: true
 
   /js-sdsl/4.1.5:
