@@ -50,13 +50,13 @@ describe('fixtures', () => {
 
   for (const [file, code] of Object.entries(files)) {
     it(basename(file), async () => {
-      const pass1 = (await injectImports(code))?.code ?? code
+      const pass1 = (await injectImports(code, file))?.code ?? code
       if (code.includes(UNMODIFIED_MARK)) {
         expect(pass1).toBe(code)
       } else {
         expect(pass1).toMatchSnapshot()
         expect(pass1).not.toEqual(code)
-        const pass2 = (await injectImports(pass1))?.code ?? pass1
+        const pass2 = (await injectImports(pass1, file))?.code ?? pass1
         expect(pass2).toBe(pass1)
       }
     })

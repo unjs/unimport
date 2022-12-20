@@ -22,6 +22,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   opts.addons = addons
   opts.commentsDisable = opts.commentsDisable ?? ['@unimport-disable', '@imports-disable']
+  opts.commentsDebug = opts.commentsDebug ?? ['@unimport-debug', '@imports-debug']
 
   const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
@@ -208,6 +209,11 @@ async function injectImports (code: string | MagicString, id: string | undefined
 
   const { isCJSContext, matchedImports } = await detectImports(s, ctx, options)
   const imports = await resolveImports(ctx, matchedImports, id)
+
+  if (ctx.options.commentsDebug?.some(c => s.original.includes(c))) {
+    const log = ctx.options.debugLog || console.log
+    log(`[unimport] ${imports.length} imports detected in "${id}"${imports.length ? ': ' +imports.map(i => i.name).join(', ') : ''}`)
+  }
 
   return addImportToCode(s, imports, isCJSContext, options?.mergeExisting)
 }

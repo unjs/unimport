@@ -97,6 +97,12 @@ export interface UnimportOptions {
   warn: (msg: string) => void
 
   /**
+   * Custom debug log function
+   * @default console.log
+   */
+  debugLog: (msg: string) => void
+
+  /**
    * Unimport Addons
    * To use built-in addons, use `addons: { vueTemplate: true }`
    *
@@ -124,6 +130,13 @@ export interface UnimportOptions {
    * @default ['@unimport-disable', '@imports-disable']
    */
   commentsDisable?: string[]
+
+  /**
+   * Custom magic comments to debug auto import, printed to console
+   *
+   * @default ['@unimport-debug', '@imports-debug']
+   */
+  commentsDebug?: string[]
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined

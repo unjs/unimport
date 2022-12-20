@@ -120,6 +120,8 @@ export function Component() {
 
   return <div>{ count }</div>
 }
+
+// @unimport-debug
 "
 `;
 
