@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/unjs/unimport/compare/v1.0.2...v1.1.0) (2022-12-20)
+
+
+### Features
+
+* `commentsDebug` option ([0d8b023](https://github.com/unjs/unimport/commit/0d8b02390a7e85b4b0668f4113f9f89dc0b12f65))
+* opt-out auto import by magic comments, [#176](https://github.com/unjs/unimport/issues/176) ([#184](https://github.com/unjs/unimport/issues/184)) ([9848faf](https://github.com/unjs/unimport/commit/9848faf9f2c2ed833738f9ac146b320339bacf92))
+
+
+### Bug Fixes
+
+* do not auto import referencing to self ([de820c3](https://github.com/unjs/unimport/commit/de820c3fddc79e1ed1f611079df511a4a1988fe0))
+
 ### [1.0.2](https://github.com/unjs/unimport/compare/v1.0.1...v1.0.2) (2022-12-12)
 
 ### [1.0.1](https://github.com/unjs/unimport/compare/v1.0.0...v1.0.1) (2022-11-16)
