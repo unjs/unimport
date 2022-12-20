@@ -30,6 +30,6 @@ jobs:
       - run: pnpm lint
       - run: pnpm build
       - run: pnpm test
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
       - run: pnpm play:build
       - run: pnpm typecheck
