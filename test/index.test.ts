@@ -12,11 +12,60 @@ describe('inject import', () => {
         console.log(fooBar())"
       `)
   })
+
   test('should not match export', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }]
     })
     expect((await injectImports('export { fooBar } from "test-id"')).code)
       .toMatchInlineSnapshot('"export { fooBar } from \\"test-id\\""')
+  })
+
+  test('metadata', async () => {
+    const ctx = createUnimport({
+      imports: [
+        { name: 'import1', from: 'specifier1' },
+        { name: 'import2', from: 'specifier2' },
+        { name: 'import3', from: 'specifier3' },
+        { name: 'import4', from: 'specifier4' },
+        { name: 'foo', as: 'import5', from: 'specifier5' },
+        { name: 'import10', from: 'specifier10' }
+      ],
+      collectMeta: true
+    })
+    await ctx.injectImports('console.log(import1())', 'foo')
+    await ctx.injectImports('console.log(import1())', 'foo')
+    await ctx.injectImports('console.log(import2())', 'bar')
+    await ctx.injectImports('console.log(import1())', 'gar')
+
+    expect(ctx.getMetadata()).toMatchInlineSnapshot(`
+      {
+        "injectionUsage": {
+          "import1": {
+            "count": 3,
+            "import": {
+              "as": "import1",
+              "from": "specifier1",
+              "name": "import1",
+            },
+            "moduleIds": [
+              "foo",
+              "gar",
+            ],
+          },
+          "import2": {
+            "count": 1,
+            "import": {
+              "as": "import2",
+              "from": "specifier2",
+              "name": "import2",
+            },
+            "moduleIds": [
+              "bar",
+            ],
+          },
+        },
+      }
+    `)
   })
 })

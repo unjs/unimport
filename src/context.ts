@@ -1,6 +1,6 @@
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
-import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportOptions } from './types'
+import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportMeta, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
@@ -24,6 +24,14 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   opts.commentsDisable = opts.commentsDisable ?? ['@unimport-disable', '@imports-disable']
   opts.commentsDebug = opts.commentsDebug ?? ['@unimport-debug', '@imports-debug']
 
+  let metadata: UnimportMeta | undefined
+
+  if (opts.collectMeta) {
+    metadata = {
+      injectionUsage: {}
+    }
+  }
+
   const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
@@ -37,6 +45,9 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     },
     invalidate () {
       _combinedImports = undefined
+    },
+    getMetadata () {
+      return metadata
     },
     resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
     addons,
@@ -99,10 +110,26 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     modifyDynamicImports,
     getImports: () => ctx.getImports(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
-    injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => injectImports(code, id, ctx, options),
+    injectImports: async (code: string | MagicString, id?: string, options?: InjectImportsOptions) => {
+      const result = await injectImports(code, id, ctx, options)
+
+      // Collect metadata
+      if (metadata) {
+        result.imports.forEach((i) => {
+          metadata!.injectionUsage[i.name] = metadata!.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
+          metadata!.injectionUsage[i.name].count++
+          if (id && !metadata!.injectionUsage[i.name].moduleIds.includes(id)) {
+            metadata!.injectionUsage[i.name].moduleIds.push(id)
+          }
+        })
+      }
+
+      return result
+    },
     toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
-    generateTypeDeclarations
+    generateTypeDeclarations,
+    getMetadata: () => ctx.getMetadata()
   }
 }
 
@@ -193,13 +220,19 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   }
 }
 
-async function injectImports (code: string | MagicString, id: string | undefined, ctx: UnimportContext, options?: InjectImportsOptions): Promise<ImportInjectionResult> {
+async function injectImports (
+  code: string | MagicString,
+  id: string | undefined,
+  ctx: UnimportContext,
+  options?: InjectImportsOptions
+): Promise<ImportInjectionResult> {
   const s = getMagicString(code)
 
   if (ctx.options.commentsDisable?.some(c => s.original.includes(c))) {
     return {
       s,
-      get code () { return s.toString() }
+      get code () { return s.toString() },
+      imports: []
     }
   }
 
@@ -216,7 +249,10 @@ async function injectImports (code: string | MagicString, id: string | undefined
     log(`[unimport] ${imports.length} imports detected in "${id}"${imports.length ? ': ' + imports.map(i => i.name).join(', ') : ''}`)
   }
 
-  return addImportToCode(s, imports, isCJSContext, options?.mergeExisting)
+  return {
+    ...addImportToCode(s, imports, isCJSContext, options?.mergeExisting),
+    imports
+  }
 }
 
 async function resolveImports (ctx: UnimportContext, imports: Import[], id: string | undefined) {

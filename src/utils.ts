@@ -3,7 +3,7 @@ import { isAbsolute, relative } from 'pathe'
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
-import type { Import, ImportInjectionResult, InlinePreset, TypeDeclarationOptions } from './types'
+import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
   // imported/exported from other module
@@ -197,7 +197,12 @@ export function getMagicString (code:string | MagicString) {
   return code
 }
 
-export function addImportToCode (code: string | MagicString, imports: Import[], isCJS = false, mergeExisting = false): ImportInjectionResult {
+export function addImportToCode (
+  code: string | MagicString,
+  imports: Import[],
+  isCJS = false,
+  mergeExisting = false
+): MagicStringResult {
   let newImports: Import[] = []
   const s = getMagicString(code)
 

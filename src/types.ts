@@ -68,6 +68,17 @@ export interface UnimportContext {
   invalidate(): void
   resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
   options: Partial<UnimportOptions>
+  getMetadata(): UnimportMeta | undefined
+}
+
+export interface InjectionUsageRecord {
+  import: Import,
+  count: number
+  moduleIds: string[]
+}
+
+export interface UnimportMeta {
+  injectionUsage: Record<string, InjectionUsageRecord>
 }
 
 export interface AddonsOptions {
@@ -137,6 +148,11 @@ export interface UnimportOptions {
    * @default ['@unimport-debug', '@imports-debug']
    */
   commentsDebug?: string[]
+
+  /**
+   * Collect meta data for each auto import. Accessible via `ctx.meta`
+   */
+  collectMeta?: boolean
 }
 
 export type PathFromResolver = (_import: Import) => string | undefined
@@ -223,7 +239,11 @@ export interface InstallGlobalOptions {
   overrides?: boolean
 }
 
-export interface ImportInjectionResult {
+export interface MagicStringResult {
   s: MagicString
   code: string
+}
+
+export interface ImportInjectionResult extends MagicStringResult {
+  imports: Import[]
 }
