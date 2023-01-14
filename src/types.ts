@@ -62,6 +62,7 @@ export type Preset = InlinePreset | PackagePreset
 export interface UnimportContext {
   staticImports: Import[]
   dynamicImports: Import[]
+  cacheImports: Import[]
   getImports(): Promise<Import[]>
   getImportMap(): Promise<Map<string, Import>>
   addons: Addon[]
@@ -100,6 +101,11 @@ export interface UnimportOptions {
    * Auto import preset
    */
   presets: (Preset | BuiltinPresetName)[]
+
+  /**
+   * cache imports
+   */
+  cache: string | false
 
   /**
    * Custom warning function

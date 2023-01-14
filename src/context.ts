@@ -1,7 +1,9 @@
+import { readFile, access } from 'fs/promises'
+import { normalize } from 'path'
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
 import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportMeta, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, writeFile } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
 
@@ -35,6 +37,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   const ctx: UnimportContext = {
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
+    cacheImports: [],
     async getImports () {
       await resolvePromise
       return updateImports()
@@ -56,17 +59,48 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   // Resolve presets
   const resolvePromise = resolveBuiltinPresets(opts.presets || [])
-    .then((r) => {
+    .then(async (r) => {
+      await generateCache()
+      await updateCacheImports()
       ctx.staticImports.unshift(...r)
       _combinedImports = undefined
       updateImports()
     })
 
+  async function generateCache () {
+    if (!opts.cache) { return }
+
+    try {
+      await access(opts.cache)
+    } catch {
+      await writeFile(opts.cache, '{}')
+    }
+  }
+
+  let isInitialCache = false
+  async function updateCacheImports (id?: string, imports?: Import[]) {
+    if (!opts.cache || (isInitialCache && !id)) { return ctx.cacheImports }
+
+    isInitialCache = true
+    const cacheContent = (await readFile(opts.cache, 'utf-8')).trim()
+    const cacheData: { [prop: string]: Import[] } = JSON.parse(cacheContent || '{}')
+
+    if (id && imports) {
+      imports = imports.filter(i => (i.name ?? i.as) && i.name !== 'default')
+      const root = normalize(process.cwd())
+      const filePath = normalize(id).replace(root, '')
+      imports.length ? (cacheData[filePath] = imports) : Reflect.deleteProperty(cacheData, filePath)
+      await writeFile(opts.cache, JSON.stringify(cacheData, null, 2))
+    }
+
+    return (ctx.cacheImports = Object.values(cacheData).reduce((p, n) => p.concat(n), []))
+  }
+
   function updateImports () {
     if (!_combinedImports) {
       // Combine static and dynamic imports
       // eslint-disable-next-line no-console
-      const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
+      const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports, ...ctx.cacheImports], opts.warn || console.warn))
         .filter(i => !i.disabled)
 
       // Create map
@@ -112,6 +146,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: async (code: string | MagicString, id?: string, options?: InjectImportsOptions) => {
       const result = await injectImports(code, id, ctx, options)
+      await updateCacheImports(id, result.imports)
 
       // Collect metadata
       if (metadata) {

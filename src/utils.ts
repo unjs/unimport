@@ -1,5 +1,6 @@
 /* eslint-disable spaced-comment */
-import { isAbsolute, relative } from 'pathe'
+import { writeFile as writeFile_, mkdir } from 'fs/promises'
+import { isAbsolute, relative, dirname } from 'pathe'
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
@@ -254,4 +255,9 @@ export function resolveIdAbsolute (id: string, parentId?: string) {
   return resolvePath(id, {
     url: parentId
   })
+}
+
+export async function writeFile (filePath: string, content = '') {
+  await mkdir(dirname(filePath), { recursive: true })
+  return await writeFile_(filePath, content, 'utf-8')
 }
