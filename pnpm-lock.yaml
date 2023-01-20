@@ -12,7 +12,7 @@ importers:
       fast-glob: ^3.2.12
       h3: ^1.0.2
       jquery: ^3.6.3
-      local-pkg: ^0.4.2
+      local-pkg: ^0.4.3
       magic-string: ^0.27.0
       mlly: ^1.1.0
       pathe: ^1.0.0
@@ -29,7 +29,7 @@ importers:
       '@rollup/pluginutils': 5.0.2
       escape-string-regexp: 5.0.0
       fast-glob: 3.2.12
-      local-pkg: 0.4.2
+      local-pkg: 0.4.3
       magic-string: 0.27.0
       mlly: 1.1.0
       pathe: 1.0.0
@@ -813,7 +813,7 @@ packages:
       eslint-plugin-promise: 6.1.1_eslint@8.32.0
       eslint-plugin-unicorn: 44.0.2_eslint@8.32.0
       eslint-plugin-vue: 9.7.0_eslint@8.32.0
-      local-pkg: 0.4.2
+      local-pkg: 0.4.3
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
       - eslint-import-resolver-typescript
@@ -3181,8 +3181,8 @@ packages:
       strip-bom: 3.0.0
     dev: true
 
-  /local-pkg/0.4.2:
-    resolution: {integrity: sha512-mlERgSPrbxU3BP4qBqAvvwlgW4MTg78iwJdGGnv7kibKjWcJksrG3t6LB5lXI93wXRDvG4NpUgJFmTG4T6rdrg==}
+  /local-pkg/0.4.3:
+    resolution: {integrity: sha512-SFppqq5p42fe2qcZQqqEOiVRXl+WCP1MdT6k7BDEW1j++sp5fIY+/fdRQitvKgB5BrBcmrs5m/L0v2FrU5MY1g==}
     engines: {node: '>=14'}
 
   /locate-path/2.0.0:
@@ -4546,7 +4546,7 @@ packages:
       cac: 6.7.14
       chai: 4.3.7
       debug: 4.3.4
-      local-pkg: 0.4.2
+      local-pkg: 0.4.3
       picocolors: 1.0.0
       source-map: 0.6.1
       strip-literal: 1.0.0

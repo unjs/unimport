@@ -46,7 +46,7 @@
     "@rollup/pluginutils": "^5.0.2",
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.2.12",
-    "local-pkg": "^0.4.2",
+    "local-pkg": "^0.4.3",
     "magic-string": "^0.27.0",
     "mlly": "^1.1.0",
     "pathe": "^1.0.0",
