@@ -84,4 +84,43 @@ describe('preset', () => {
       ]
     `)
   })
+
+  it('resolve with meta', async () => {
+    expect(
+      await resolvePreset(defineUnimportPreset({
+        from: 'vue',
+        imports: [
+          'ref',
+          {
+            name: 'toRefs',
+            from: 'vue-alias',
+            meta: {
+              docsUrl: 'https://vuejs.org/api/reactivity-utilities.html#torefs'
+            }
+          }
+        ],
+        meta: {
+          docsUrl: 'https://vuejs.org'
+        }
+      }))
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "as": "ref",
+          "from": "vue",
+          "meta": {
+            "docsUrl": "https://vuejs.org",
+          },
+          "name": "ref",
+        },
+        {
+          "from": "vue-alias",
+          "meta": {
+            "docsUrl": "https://vuejs.org/api/reactivity-utilities.html#torefs",
+          },
+          "name": "toRefs",
+        },
+      ]
+    `)
+  })
 })
