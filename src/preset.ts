@@ -5,7 +5,7 @@ import { resolvePackagePreset } from './extract'
 /**
  * Common propreties for import item and preset
  */
-const commonProps: (keyof ImportCommon)[] = ['from', 'priority', 'disabled']
+const commonProps: (keyof ImportCommon)[] = ['from', 'priority', 'disabled', 'meta']
 
 export async function resolvePreset (preset: Preset): Promise<Import[]> {
   const imports: Import[] = []
