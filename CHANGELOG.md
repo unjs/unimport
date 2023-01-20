@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/unjs/unimport/compare/v1.2.0...v1.3.0) (2023-01-20)
+
+
+### Features
+
+* custom metadata for imports ([#211](https://github.com/unjs/unimport/issues/211)) ([050d0d7](https://github.com/unjs/unimport/commit/050d0d72a2d451867cb2ad4d304b529ea7db800f))
+
 ## [1.2.0](https://github.com/unjs/unimport/compare/v1.1.0...v1.2.0) (2023-01-06)
 
 
