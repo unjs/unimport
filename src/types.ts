@@ -15,6 +15,17 @@ export interface ImportCommon {
   priority?: number
   /** If this import is disabled */
   disabled?: boolean
+  /**
+   * Metadata of the import
+   */
+  meta?: {
+    /** Short description of the import */
+    description?: string
+    /** URL to the documentation */
+    docsUrl?: string
+    /** Additional metadata */
+    [key: string]: any
+  }
 }
 
 export interface Import extends ImportCommon {
