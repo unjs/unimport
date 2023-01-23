@@ -1,24 +1,14 @@
 <script setup lang="ts">
-const count = ref(1)
-
-function inc () {
-  count.value += 1
-}
-
+import Setup from './Setup.vue'
+import Options from './Options.vue'
 </script>
 
 <template>
   <div>
-    <h1>{{ count }} x {{ multiplier }} = {{ count * multiplier }}</h1>
-    <button @click="inc">
-      Inc
-    </button>
-    <button @click="bump">
-      x1
-    </button>
-    <div>
-      {{ nested() }}
-    </div>
+    <h1>Setup API (auto imported)</h1>
+    <Setup />
+    <h1>Options API</h1>
+    <Options />
   </div>
 </template>
 
