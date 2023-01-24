@@ -3,7 +3,7 @@ import { expect, test } from 'vitest'
 import { createUnimport } from '../src'
 
 test('dts', async () => {
-  const cwd = process.cwd()
+  const cwd = process.cwd().replace(/\\/g, '/')
   const { generateTypeDeclarations, init } = createUnimport({
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
