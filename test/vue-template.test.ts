@@ -53,16 +53,16 @@ describe('vue-template', () => {
 
       export function render(_ctx, _cache) {
         return (_openBlock(), _createElementBlock(_Fragment, null, [
-          _createElementVNode(\\"div\\", null, _toDisplayString(_unimport_unref_(_unimport_foo)), 1 /* TEXT */),
-          _createElementVNode(\\"div\\", null, _toDisplayString(_unimport_unref_(_unimport_foo) + 1), 1 /* TEXT */),
-          (_unimport_unref_(_unimport_foo))
+          _createElementVNode(\\"div\\", null, _toDisplayString((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo))), 1 /* TEXT */),
+          _createElementVNode(\\"div\\", null, _toDisplayString((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)) + 1), 1 /* TEXT */),
+          ((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)))
             ? (_openBlock(), _createElementBlock(\\"div\\", { key: 0 }))
             : _createCommentVNode(\\"v-if\\", true),
-          (_unimport_unref_(_unimport_foo) === 1)
+          ((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)) === 1)
             ? (_openBlock(), _createElementBlock(\\"div\\", { key: 1 }))
             : _createCommentVNode(\\"v-if\\", true),
           _createElementVNode(\\"div\\", {
-            onClick: _cache[0] || (_cache[0] = (...args) => (_unimport_unref_(_unimport_foo) && _unimport_unref_(_unimport_foo)(...args)))
+            onClick: _cache[0] || (_cache[0] = (...args) => ((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)) && (\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo))(...args)))
           })
         ], 64 /* STABLE_FRAGMENT */))
       }"
