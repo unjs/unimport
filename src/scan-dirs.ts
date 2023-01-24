@@ -5,7 +5,7 @@ import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
 
-export async function scanDirExports (dir: string | string[], options?: ScanDirExportsOptions) {
+export async function scanFilesFromDir (dir: string | string[], options?: ScanDirExportsOptions) {
   const dirs = (Array.isArray(dir) ? dir : [dir]).map(d => normalize(d))
 
   const fileFilter = options?.fileFilter || (() => true)
@@ -28,7 +28,11 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
     )
   )
 
-  const files = Array.from(new Set(result.flat())).filter(fileFilter)
+  return Array.from(new Set(result.flat())).filter(fileFilter)
+}
+
+export async function scanDirExports (dir: string | string[], options?: ScanDirExportsOptions) {
+  const files = await scanFilesFromDir(dir, options)
   const fileExports = await Promise.all(files.map(scanExports))
 
   return fileExports.flat()

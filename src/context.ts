@@ -4,6 +4,7 @@ import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenab
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
+import { scanExports, scanFilesFromDir } from './scan-dirs'
 
 export type Unimport = ReturnType<typeof createUnimport>
 
@@ -33,6 +34,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   const ctx: UnimportContext = {
+    options: opts,
+    addons,
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
     async getImports () {
@@ -43,15 +46,14 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       await ctx.getImports()
       return _map
     },
-    invalidate () {
-      _combinedImports = undefined
-    },
     getMetadata () {
       return metadata
     },
-    resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
-    addons,
-    options: opts
+
+    invalidate () {
+      _combinedImports = undefined
+    },
+    resolveId: (id, parentId) => opts.resolveId?.(id, parentId)
   }
 
   // Resolve presets
@@ -105,27 +107,51 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return dts
   }
 
+  async function scanImportsFromFile (filepath: string) {
+    const additions = await scanExports(filepath)
+    await modifyDynamicImports(imports => imports.filter(i => i.from !== filepath).concat(additions))
+    return additions
+  }
+
+  async function scanImportsFromDir () {
+    if (!ctx.options.dirs?.length) { return }
+    const files = await scanFilesFromDir(ctx.options.dirs || [], {})
+    await Promise.all(files.map(scanImportsFromFile))
+  }
+
+  async function injectImportsWithContext (code: string | MagicString, id?: string, options?: InjectImportsOptions) {
+    const result = await injectImports(code, id, ctx, options)
+
+    // Collect metadata
+    if (metadata) {
+      result.imports.forEach((i) => {
+        metadata!.injectionUsage[i.name] = metadata!.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
+        metadata!.injectionUsage[i.name].count++
+        if (id && !metadata!.injectionUsage[i.name].moduleIds.includes(id)) {
+          metadata!.injectionUsage[i.name].moduleIds.push(id)
+        }
+      })
+    }
+
+    return result
+  }
+
+  async function init () {
+    if (ctx.options.dirs) {
+      await scanImportsFromDir()
+    }
+  }
+
+  // Public API
   return {
+    init,
     clearDynamicImports,
     modifyDynamicImports,
+    scanImportsFromDir,
+    scanImportsFromFile,
     getImports: () => ctx.getImports(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
-    injectImports: async (code: string | MagicString, id?: string, options?: InjectImportsOptions) => {
-      const result = await injectImports(code, id, ctx, options)
-
-      // Collect metadata
-      if (metadata) {
-        result.imports.forEach((i) => {
-          metadata!.injectionUsage[i.name] = metadata!.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
-          metadata!.injectionUsage[i.name].count++
-          if (id && !metadata!.injectionUsage[i.name].moduleIds.includes(id)) {
-            metadata!.injectionUsage[i.name].moduleIds.push(id)
-          }
-        })
-      }
-
-      return result
-    },
+    injectImports: injectImportsWithContext,
     toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations,

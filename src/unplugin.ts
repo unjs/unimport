@@ -5,13 +5,11 @@ import { createFilter } from '@rollup/pluginutils'
 import MagicString from 'magic-string'
 import { UnimportOptions } from './types'
 import { createUnimport } from './context'
-import { scanDirExports } from './scan-dirs'
 
 export interface UnimportPluginOptions extends UnimportOptions {
   include: FilterPattern
   exclude: FilterPattern
   dts: boolean | string
-  dirs: string[]
 }
 
 export const defaultIncludes = [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/]
@@ -30,6 +28,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
   const dts = options.dts === true
     ? 'unimport.d.ts'
     : options.dts
+
   return {
     name: 'unimport',
     enforce: 'post',
@@ -50,11 +49,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
       }
     },
     async buildStart () {
-      if (options.dirs?.length) {
-        await ctx.modifyDynamicImports(async (imports) => {
-          imports.push(...await scanDirExports(options.dirs!))
-        })
-      }
+      await ctx.init()
 
       if (dts) {
         return fs.writeFile(dts, await ctx.generateTypeDeclarations(), 'utf-8')

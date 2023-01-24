@@ -71,15 +71,17 @@ export interface PackagePreset {
 export type Preset = InlinePreset | PackagePreset
 
 export interface UnimportContext {
+  options: Partial<UnimportOptions>
   staticImports: Import[]
   dynamicImports: Import[]
+  addons: Addon[]
+
   getImports(): Promise<Import[]>
   getImportMap(): Promise<Map<string, Import>>
-  addons: Addon[]
+  getMetadata(): UnimportMeta | undefined
+
   invalidate(): void
   resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
-  options: Partial<UnimportOptions>
-  getMetadata(): UnimportMeta | undefined
 }
 
 export interface InjectionUsageRecord {
@@ -140,6 +142,12 @@ export interface UnimportOptions {
    * @default []
    */
   virtualImports: string[]
+
+  /**
+   * Directories to scan for auto import
+   * @default []
+   */
+  dirs?: string[]
 
   /**
    * Custom resolver to auto import id
