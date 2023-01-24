@@ -112,10 +112,9 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return additions
   }
 
-  async function scanImportsFromDir () {
-    if (!ctx.options.dirs?.length) { return }
-    const files = await scanFilesFromDir(ctx.options.dirs || [], ctx.options.dirsScanOptions)
-    await Promise.all(files.map(scanImportsFromFile))
+  async function scanImportsFromDir (dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
+    const files = await scanFilesFromDir(dirs, options)
+    return (await Promise.all(files.map(scanImportsFromFile))).flat()
   }
 
   async function injectImportsWithContext (code: string | MagicString, id?: string, options?: InjectImportsOptions) {
