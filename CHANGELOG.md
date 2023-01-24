@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/unjs/unimport/compare/v1.3.0...v2.0.0) (2023-01-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **vue-template:** prioritize local variable over auto import (#214)
+
+### Features
+
+* integrate `dirs` option to core, close [#213](https://github.com/unjs/unimport/issues/213) ([6716a97](https://github.com/unjs/unimport/commit/6716a975c05e8d9a29f8c4f5455adc1a30823e83))
+
+
+### Bug Fixes
+
+* **vue-template:** prioritize local variable over auto import ([#214](https://github.com/unjs/unimport/issues/214)) ([446f0bf](https://github.com/unjs/unimport/commit/446f0bf11520cba16536b1c1002312e1b9caf9e7))
+
 ## [1.3.0](https://github.com/unjs/unimport/compare/v1.2.0...v1.3.0) (2023-01-20)
 
 
