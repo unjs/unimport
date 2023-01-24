@@ -150,6 +150,11 @@ export interface UnimportOptions {
   dirs?: string[]
 
   /**
+   * Options for scanning directories for auto import
+   */
+  dirsScanOptions?: ScanDirExportsOptions
+
+  /**
    * Custom resolver to auto import id
    */
   resolveId?: (id: string, importee?:string) => Thenable<string | void>

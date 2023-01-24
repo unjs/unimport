@@ -49,7 +49,6 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     getMetadata () {
       return metadata
     },
-
     invalidate () {
       _combinedImports = undefined
     },
@@ -115,7 +114,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   async function scanImportsFromDir () {
     if (!ctx.options.dirs?.length) { return }
-    const files = await scanFilesFromDir(ctx.options.dirs || [], {})
+    const files = await scanFilesFromDir(ctx.options.dirs || [], ctx.options.dirsScanOptions)
     await Promise.all(files.map(scanImportsFromFile))
   }
 
@@ -136,8 +135,12 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return result
   }
 
+  /**
+   * Initialize unimport:
+   * - scan imports from dirs
+   */
   async function init () {
-    if (ctx.options.dirs) {
+    if (ctx.options.dirs?.length) {
       await scanImportsFromDir()
     }
   }
