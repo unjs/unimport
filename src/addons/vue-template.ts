@@ -2,11 +2,11 @@ import { Import, Addon } from '../types'
 import { toImports } from '../utils'
 
 const contextRE = /\b_ctx\.([\w_]+)\b/g
-const UNREF_KEY = '_unimport_unref_'
+const UNREF_KEY = '__unimport_unref_'
 
 export const vueTemplateAddon = (): Addon => ({
   async transform (s) {
-    if (!s.original.includes('_ctx.')) {
+    if (!s.original.includes('_ctx.') || s.original.includes(UNREF_KEY)) {
       return s
     }
     const matches = Array.from(s.original.matchAll(contextRE))
@@ -23,7 +23,7 @@ export const vueTemplateAddon = (): Addon => ({
       const start = match.index!
       const end = start + match[0].length
 
-      const tempName = `_unimport_${name}`
+      const tempName = `__unimport_${name}`
       s.overwrite(start, end, `(${JSON.stringify(name)} in _ctx ? _ctx.${name} : ${UNREF_KEY}(${tempName}))`)
       if (!targets.find(i => i.as === tempName)) {
         targets.push({

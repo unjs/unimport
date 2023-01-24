@@ -48,21 +48,21 @@ describe('vue-template', () => {
       }"
     `)
     expect((await ctx.injectImports(result.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-      "import { foo as _unimport_foo } from 'foo';
-      import { unref as _unimport_unref_ } from 'vue';import { toDisplayString as _toDisplayString, createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock, createCommentVNode as _createCommentVNode, Fragment as _Fragment } from \\"vue\\"
+      "import { foo as __unimport_foo } from 'foo';
+      import { unref as __unimport_unref_ } from 'vue';import { toDisplayString as _toDisplayString, createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock, createCommentVNode as _createCommentVNode, Fragment as _Fragment } from \\"vue\\"
 
       export function render(_ctx, _cache) {
         return (_openBlock(), _createElementBlock(_Fragment, null, [
-          _createElementVNode(\\"div\\", null, _toDisplayString((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo))), 1 /* TEXT */),
-          _createElementVNode(\\"div\\", null, _toDisplayString((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)) + 1), 1 /* TEXT */),
-          ((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)))
+          _createElementVNode(\\"div\\", null, _toDisplayString((\\"foo\\" in _ctx ? _ctx.foo : __unimport_unref_(__unimport_foo))), 1 /* TEXT */),
+          _createElementVNode(\\"div\\", null, _toDisplayString((\\"foo\\" in _ctx ? _ctx.foo : __unimport_unref_(__unimport_foo)) + 1), 1 /* TEXT */),
+          ((\\"foo\\" in _ctx ? _ctx.foo : __unimport_unref_(__unimport_foo)))
             ? (_openBlock(), _createElementBlock(\\"div\\", { key: 0 }))
             : _createCommentVNode(\\"v-if\\", true),
-          ((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)) === 1)
+          ((\\"foo\\" in _ctx ? _ctx.foo : __unimport_unref_(__unimport_foo)) === 1)
             ? (_openBlock(), _createElementBlock(\\"div\\", { key: 1 }))
             : _createCommentVNode(\\"v-if\\", true),
           _createElementVNode(\\"div\\", {
-            onClick: _cache[0] || (_cache[0] = (...args) => ((\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo)) && (\\"foo\\" in _ctx ? _ctx.foo : _unimport_unref_(_unimport_foo))(...args)))
+            onClick: _cache[0] || (_cache[0] = (...args) => ((\\"foo\\" in _ctx ? _ctx.foo : __unimport_unref_(__unimport_foo)) && (\\"foo\\" in _ctx ? _ctx.foo : __unimport_unref_(__unimport_foo))(...args)))
           })
         ], 64 /* STABLE_FRAGMENT */))
       }"
