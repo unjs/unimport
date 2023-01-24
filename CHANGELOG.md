@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/unjs/unimport/compare/v2.0.0...v2.0.1) (2023-01-24)
+
+
+### Bug Fixes
+
+* expose imports from `scanImportsFromDir` ([e09252a](https://github.com/unjs/unimport/commit/e09252a4deb3d8abc0ff9ee91e1375377f2819b4))
+* **vue-template:** stable transform across multiple pass ([46f314f](https://github.com/unjs/unimport/commit/46f314f2b0844ebf9e8613cd4d35e4ddb1c4dd16))
+
 ## [2.0.0](https://github.com/unjs/unimport/compare/v1.3.0...v2.0.0) (2023-01-24)
 
 
