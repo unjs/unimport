@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 import fg from 'fast-glob'
-import { parse as parsePath, join, normalize } from 'pathe'
+import { parse as parsePath, join, normalize, dirname, extname } from 'pathe'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
@@ -60,6 +60,19 @@ export async function scanExports (filepath: string) {
     } else if (exp.type === 'declaration') {
       if (exp.name) {
         imports.push({ name: exp.name, as: exp.name, from: filepath })
+      }
+    } else if (exp.type === 'star' && exp.specifier) {
+      let subfile = exp.specifier
+      if (!extname(subfile)) {
+        subfile = `${subfile}.ts` // this is not ideal
+      }
+      const subfilepath = join(dirname(filepath), subfile)
+      const subimports = await scanExports(subfilepath)
+
+      if (exp.name) {
+        imports.push({ name: '*', as: exp.name, from: subfilepath })
+      } else {
+        imports.push(...subimports)
       }
     }
   }

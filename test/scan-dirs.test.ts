@@ -62,6 +62,21 @@ describe('scan-dirs', () => {
       .toContain('nested/index.ts')
   })
 
+  test('scanDirExports star', async () => {
+    const dir = join(__dirname, '../playground/composables')
+    const importsResult = (await scanDirExports(dir, {
+      filePatterns: [
+        '*.{ts,js,mjs,cjs,mts,cts}',
+        '**/*/index.{ts,js,mjs,cjs,mts,cts}'
+      ]
+    }))
+      .map(i => relative(dir, i.from))
+      .sort()
+
+    expect(importsResult).toContain('nested/bar/baz.ts')
+    expect(importsResult).toContain('nested/bar/named.ts')
+  })
+
   test('scanDirs should respect dirs order', async () => {
     const firstFolder = join(__dirname, '../playground/composables')
     const secondFolder = join(__dirname, '../playground/composables-override')
