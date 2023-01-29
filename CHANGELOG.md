@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/unjs/unimport/compare/v2.0.1...v2.1.0) (2023-01-29)
+
+
+### Features
+
+* support `injectAtLast` option ([6b1ba91](https://github.com/unjs/unimport/commit/6b1ba9149f519742ffafe91497bc3feec905b1b7))
+
 ### [2.0.1](https://github.com/unjs/unimport/compare/v2.0.0...v2.0.1) (2023-01-24)
 
 
