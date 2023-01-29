@@ -68,4 +68,59 @@ describe('inject import', () => {
       }
     `)
   })
+
+  test('mergeExisting', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+      mergeExisting: true
+    })
+    expect((await injectImports(`
+import { foo } from 'test-id'
+console.log(fooBar())
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { fooBar, foo } from 'test-id'
+        console.log(fooBar())"
+      `)
+  })
+
+  test('injection at end', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+      injectAtEnd: true
+    })
+    expect((await injectImports(`
+import { foo } from 'foo'
+console.log(fooBar())
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { foo } from 'foo'
+
+        import { fooBar } from 'test-id';
+        console.log(fooBar())"
+      `)
+  })
+
+  test('injection at end with mixed imports', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+      injectAtEnd: true
+    })
+    expect((await injectImports(`
+import { foo } from 'foo'
+console.log(nonAutoImport())
+import { bar } from 'bar'
+console.log(fooBar())
+import { baz } from 'baz'
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { foo } from 'foo'
+        console.log(nonAutoImport())
+        import { bar } from 'bar'
+
+        import { fooBar } from 'test-id';
+        console.log(fooBar())
+        import { baz } from 'baz'"
+      `)
+  })
 })

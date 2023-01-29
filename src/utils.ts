@@ -201,17 +201,27 @@ export function addImportToCode (
   code: string | MagicString,
   imports: Import[],
   isCJS = false,
-  mergeExisting = false
+  mergeExisting = false,
+  injectAtLast = false,
+  firstOccurrence = Infinity
 ): MagicStringResult {
   let newImports: Import[] = []
   const s = getMagicString(code)
 
+  let _staticImports: StaticImport[] | undefined
+  function findStaticImportsLazy () {
+    if (!_staticImports) {
+      _staticImports = findStaticImports(s.original).map(i => parseStaticImport(i))
+    }
+    return _staticImports
+  }
+
   if (mergeExisting && !isCJS) {
-    const existing = findStaticImports(s.original).map(i => parseStaticImport(i))
+    const existingImports = findStaticImportsLazy()
     const map = new Map<StaticImport, Import[]>()
 
     imports.forEach((i) => {
-      const target = existing.find(e => e.specifier === i.from && e.imports.startsWith('{'))
+      const target = existingImports.find(e => e.specifier === i.from && e.imports.startsWith('{'))
       if (!target) {
         return newImports.push(i)
       }
@@ -234,7 +244,15 @@ export function addImportToCode (
 
   const newEntries = toImports(newImports, isCJS)
   if (newEntries) {
-    s.prepend(newEntries + '\n')
+    const insertionIndex = injectAtLast
+      ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0
+      : 0
+
+    if (insertionIndex === 0) {
+      s.prepend(newEntries + '\n')
+    } else {
+      s.appendRight(insertionIndex, '\n' + newEntries + '\n')
+    }
   }
 
   return {

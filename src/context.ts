@@ -118,7 +118,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   async function injectImportsWithContext (code: string | MagicString, id?: string, options?: InjectImportsOptions) {
-    const result = await injectImports(code, id, ctx, options)
+    const result = await injectImports(code, id, ctx, {
+      ...opts,
+      ...options
+    })
 
     // Collect metadata
     if (metadata) {
@@ -179,26 +182,29 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
 
+  const occurrenceMap = new Map<string, number>()
+
   const map = await ctx.getImportMap()
   // Auto import, search for unreferenced usages
   if (options?.autoImport !== false) {
     // Find all possible injection
-    const identifiers = new Set(
-      Array.from(strippedCode.matchAll(matchRE))
-        .map((i) => {
-          // Remove dot access, but keep destructuring
-          if (i[1] === '.') {
-            return ''
-          }
-          // Remove property, but keep `case x:` and `? x :`
-          const end = strippedCode[i.index! + i[0].length]
-          if (end === ':' && !['?', 'case'].includes(i[1].trim())) {
-            return ''
-          }
-          return i[2]
-        })
-        .filter(Boolean)
-    )
+    Array.from(strippedCode.matchAll(matchRE))
+      .forEach((i) => {
+        // Remove dot access, but keep destructuring
+        if (i[1] === '.') {
+          return null
+        }
+        // Remove property, but keep `case x:` and `? x :`
+        const end = strippedCode[i.index! + i[0].length]
+        if (end === ':' && !['?', 'case'].includes(i[1].trim())) {
+          return null
+        }
+        const name = i[2]
+        const occurrence = i.index! + i[1].length
+        if (occurrenceMap.get(name) || Infinity > occurrence) {
+          occurrenceMap.set(name, occurrence)
+        }
+      })
 
     // Remove those already defined
     for (const regex of excludeRE) {
@@ -206,14 +212,22 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
         const segments = [...match[1]?.split(separatorRE) || [], ...match[2]?.split(separatorRE) || []]
         for (const segment of segments) {
           const identifier = segment.replace(importAsRE, '').trim()
-          identifiers.delete(identifier)
+          occurrenceMap.delete(identifier)
         }
       }
     }
 
+    const identifiers = new Set(occurrenceMap.keys())
     matchedImports = Array.from(identifiers)
-      .map(name => map.get(name))
-      .filter(i => i && !i.disabled) as Import[]
+      .map((name) => {
+        const item = map.get(name)
+        if (item && !item.disabled) {
+          return item
+        }
+        occurrenceMap.delete(name)
+        return null
+      })
+      .filter(Boolean) as Import[]
 
     for (const addon of ctx.addons) {
       matchedImports = await addon.matchImports?.call(ctx, identifiers, matchedImports) || matchedImports
@@ -240,11 +254,14 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
     })
   }
 
+  const firstOccurrence = Math.min(...Array.from(occurrenceMap.entries()).map(i => i[1]))
+
   return {
     s,
     strippedCode,
     isCJSContext,
-    matchedImports
+    matchedImports,
+    firstOccurrence
   }
 }
 
@@ -268,7 +285,7 @@ async function injectImports (
     await addon.transform?.call(ctx, s, id)
   }
 
-  const { isCJSContext, matchedImports } = await detectImports(s, ctx, options)
+  const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options)
   const imports = await resolveImports(ctx, matchedImports, id)
 
   if (ctx.options.commentsDebug?.some(c => s.original.includes(c))) {
@@ -278,7 +295,7 @@ async function injectImports (
   }
 
   return {
-    ...addImportToCode(s, imports, isCJSContext, options?.mergeExisting),
+    ...addImportToCode(s, imports, isCJSContext, options?.mergeExisting, options?.injectAtEnd, firstOccurrence),
     imports
   }
 }

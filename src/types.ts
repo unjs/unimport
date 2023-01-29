@@ -103,7 +103,7 @@ export interface AddonsOptions {
   vueTemplate?: boolean
 }
 
-export interface UnimportOptions {
+export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting'> {
   /**
    * Auto import items
    */
@@ -240,6 +240,13 @@ export interface InjectImportsOptions {
 
   /** @deprecated use `virtualImports` instead */
   transformVirtualImoports?: boolean
+
+  /**
+   * Inject the imports at the end of other imports
+   *
+   * @default false
+   */
+  injectAtEnd?: boolean
 }
 
 export type Thenable<T> = Promise<T> | T
