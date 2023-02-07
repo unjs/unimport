@@ -84,7 +84,7 @@ test('dts', async () => {
       // for type re-export
       declare global {
         // @ts-ignore
-        export type { Ref,ComputedRef } from 'vue'
+        export type { Ref, ComputedRef } from 'vue'
         // @ts-ignore
         export type { JQuery } from 'jquery'
       }"

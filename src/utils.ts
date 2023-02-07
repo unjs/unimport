@@ -183,7 +183,7 @@ export function toTypeReExports (imports: Import[], options?: TypeDeclarationOpt
     })
     return [
       '// @ts-ignore',
-      `export type { ${names.join(',')} } from '${from}'`
+      `export type { ${names.join(', ')} } from '${from}'`
     ]
   })
   return '// for type re-export\ndeclare global {\n' + code.map(i => '  ' + i).join('\n') + '\n}'
