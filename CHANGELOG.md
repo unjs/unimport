@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/unjs/unimport/compare/v2.2.1...v2.2.2) (2023-02-07)
+
+
+### Features
+
+* expose `getInternalContext` ([17bb37f](https://github.com/unjs/unimport/commit/17bb37fea35a90d34a5fd8e2cf74e18bb18117b3))
+
 ### [2.2.1](https://github.com/unjs/unimport/compare/v2.2.0...v2.2.1) (2023-02-07)
 
 
