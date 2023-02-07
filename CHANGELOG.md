@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/unjs/unimport/compare/v2.2.0...v2.2.1) (2023-02-07)
+
+
+### Features
+
+* add vue-router composables preset ([5a6f36f](https://github.com/unjs/unimport/commit/5a6f36ff41d4b319284a08caae7e42b363fbd96c))
+* expose `replaceImports` method ([6ae3952](https://github.com/unjs/unimport/commit/6ae3952c26b8621f9554ce0dc66dbf040ee1b2e8))
+
 ## [2.2.0](https://github.com/unjs/unimport/compare/v2.1.0...v2.2.0) (2023-02-07)
 
 
