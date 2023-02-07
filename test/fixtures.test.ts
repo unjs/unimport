@@ -21,7 +21,16 @@ describe('fixtures', () => {
     presets: [
       {
         from: 'vue',
-        imports: ['ref', 'reactive', 'computed', 'toRefs']
+        imports: [
+          'ref',
+          'reactive',
+          'computed',
+          'toRefs',
+          {
+            name: 'Ref',
+            type: true
+          }
+        ]
       },
       {
         from: 'three',

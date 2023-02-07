@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const count = ref(1)
+const count: Ref<number> = ref(1)
 
 function inc () {
   count.value += 1

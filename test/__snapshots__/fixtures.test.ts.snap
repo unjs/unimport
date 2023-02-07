@@ -97,6 +97,12 @@ exports[`fixtures > no-eol.js 1`] = `
 Foo"
 `;
 
+exports[`fixtures > no-type.ts 1`] = `
+"import { ref } from 'vue';
+const a: Ref<string | number> = ref(0)
+"
+`;
+
 exports[`fixtures > props.ts 1`] = `
 "import { toRefs } from 'vue';
 const a = z.ref(0)

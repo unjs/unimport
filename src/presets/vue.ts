@@ -1,6 +1,7 @@
+import { InlinePreset } from '../types'
 import { defineUnimportPreset } from '../utils'
 
-export const CommonCompositionAPI = [
+export const CommonCompositionAPI: InlinePreset['imports'] = [
   // lifecycle
   'onActivated',
   'onBeforeMount',
@@ -52,7 +53,18 @@ export const CommonCompositionAPI = [
   'effectScope',
   'EffectScope',
   'getCurrentScope',
-  'onScopeDispose'
+  'onScopeDispose',
+
+  // types
+  ...[
+    'Component',
+    'ComponentPublicInstance',
+    'ComputedRef',
+    'InjectionKey',
+    'PropType',
+    'Ref',
+    'VNode'
+  ].map(name => ({ name, type: true }))
 ]
 
 export default defineUnimportPreset({

@@ -12,7 +12,16 @@ test('dts', async () => {
     presets: [
       {
         from: 'vue',
-        imports: ['ref', 'reactive', 'computed', 'toRefs']
+        imports: [
+          'ref',
+          'reactive',
+          'computed',
+          'toRefs',
+          {
+            name: 'Ref',
+            type: true
+          }
+        ]
       },
       {
         from: 'three',
@@ -37,7 +46,9 @@ test('dts', async () => {
 
   await init()
 
-  expect((await generateTypeDeclarations()).replaceAll(cwd, '<root>'))
+  expect(
+    (await generateTypeDeclarations()).replaceAll(cwd, '<root>')
+  )
     .toMatchInlineSnapshot(`
       "export {}
       declare global {
@@ -59,6 +70,10 @@ test('dts', async () => {
         const useEffect: typeof import('react')['useEffect']
         const useRef: typeof import('react')['useRef']
         const useState: typeof import('react')['useState']
+      }
+      // for type re-export
+      declare global {
+        export type { Ref } from 'vue'
       }"
     `)
 })
