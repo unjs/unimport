@@ -26,6 +26,10 @@ export interface ImportCommon {
     /** Additional metadata */
     [key: string]: any
   }
+  /**
+   * If this import is a type import
+   */
+  type?: boolean
 }
 
 export interface Import extends ImportCommon {
@@ -35,7 +39,7 @@ export interface Import extends ImportCommon {
   as?: ImportName
 }
 
-export type PresetImport = ImportName | [name: ImportName, as?: ImportName, from?: ModuleId] | Exclude<Import, 'from'>
+export type PresetImport = Omit<Import, 'from'> | ImportName | [name: ImportName, as?: ImportName, from?: ModuleId]
 
 export interface InlinePreset extends ImportCommon {
   imports: (PresetImport | InlinePreset)[]
@@ -213,6 +217,12 @@ export interface TypeDeclarationOptions {
    * @default true
    */
   exportHelper?: boolean
+  /**
+   * Auto-import for type exports
+   *
+   * @default true
+   */
+  typeReExports?: boolean
 }
 
 export interface InjectImportsOptions {

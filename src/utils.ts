@@ -164,6 +164,24 @@ export function toTypeDeclarationFile (imports: Import[], options?: TypeDeclarat
   return declaration
 }
 
+export function toTypeReExportItems (imports: Import[], options?: TypeDeclarationOptions) {
+  return imports
+    .map((i) => {
+      const from = options?.resolvePath?.(i) || i.from
+      let name = i.name === '*' ? 'default' : i.name
+      if (i.as && i.as !== name) {
+        name += ` as ${i.as}`
+      }
+      return `export type { ${name} } from '${from}'`
+    })
+    .sort()
+}
+
+export function toTypeReExport (imports: Import[], options?: TypeDeclarationOptions) {
+  const items = toTypeReExportItems(imports, options)
+  return '// for type re-export\ndeclare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
+}
+
 function stringifyImportAlias (item: Import, isCJS = false) {
   return (item.as === undefined || item.name === item.as)
     ? item.name

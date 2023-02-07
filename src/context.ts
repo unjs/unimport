@@ -1,7 +1,7 @@
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
 import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportMeta, UnimportOptions } from './types'
-import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString } from './utils'
+import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, toTypeReExport } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
 import { scanExports, scanFilesFromDir } from './scan-dirs'
@@ -99,7 +99,14 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       resolvePath: i => i.from.replace(/\.ts$/, ''),
       ...options
     }
-    let dts = toTypeDeclarationFile(await ctx.getImports(), opts)
+    const {
+      typeReExports = true
+    } = opts
+    const imports = await ctx.getImports()
+    let dts = toTypeDeclarationFile(imports.filter(i => !i.type), opts)
+    if (typeReExports) {
+      dts += '\n' + toTypeReExport(imports.filter(i => i.type), opts)
+    }
     for (const addon of ctx.addons) {
       dts = await addon.declaration?.call(ctx, dts, opts) ?? dts
     }
@@ -159,7 +166,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     injectImports: injectImportsWithContext,
     toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
-    generateTypeDeclarations,
+    generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
     getMetadata: () => ctx.getMetadata()
   }
 }
