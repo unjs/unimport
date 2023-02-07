@@ -20,6 +20,10 @@ test('dts', async () => {
           {
             name: 'Ref',
             type: true
+          },
+          {
+            name: 'ComputedRef',
+            type: true
           }
         ]
       },
@@ -33,7 +37,13 @@ test('dts', async () => {
       },
       {
         from: 'jquery',
-        imports: ['$']
+        imports: [
+          '$',
+          {
+            name: 'JQuery',
+            type: true
+          }
+        ]
       }
     ],
     dirs: [
@@ -73,7 +83,10 @@ test('dts', async () => {
       }
       // for type re-export
       declare global {
-        export type { Ref } from 'vue'
+        // @ts-ignore
+        export type { Ref,ComputedRef } from 'vue'
+        // @ts-ignore
+        export type { JQuery } from 'jquery'
       }"
     `)
 })

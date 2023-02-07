@@ -165,16 +165,28 @@ export function toTypeDeclarationFile (imports: Import[], options?: TypeDeclarat
 }
 
 export function toTypeReExports (imports: Import[], options?: TypeDeclarationOptions) {
-  const items = imports.map((i) => {
+  const importsMap = new Map<string, Import[]>()
+  imports.forEach((i) => {
     const from = options?.resolvePath?.(i) || i.from
-    let name = i.name === '*' ? 'default' : i.name
-    if (i.as && i.as !== name) {
-      name += ` as ${i.as}`
-    }
-    return `export type { ${name} } from '${from}'`
+    const list = importsMap.get(from) || []
+    list.push(i)
+    importsMap.set(from, list)
   })
-    .sort()
-  return '// for type re-export\ndeclare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
+
+  const code = Array.from(importsMap.entries()).flatMap(([from, imports]) => {
+    const names = imports.map((i) => {
+      let name = i.name === '*' ? 'default' : i.name
+      if (i.as && i.as !== name) {
+        name += ` as ${i.as}`
+      }
+      return name
+    })
+    return [
+      '// @ts-ignore',
+      `export type { ${names.join(',')} } from '${from}'`
+    ]
+  })
+  return '// for type re-export\ndeclare global {\n' + code.map(i => '  ' + i).join('\n') + '\n}'
 }
 
 function stringifyImportAlias (item: Import, isCJS = false) {
