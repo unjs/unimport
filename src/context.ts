@@ -176,7 +176,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
-    getMetadata: () => ctx.getMetadata()
+    getMetadata: () => ctx.getMetadata(),
+    getInternalContext: () => ctx
   }
 }
 
