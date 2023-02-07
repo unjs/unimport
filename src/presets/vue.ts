@@ -23,6 +23,8 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   'customRef',
   'isReadonly',
   'isRef',
+  'isProxy',
+  'isReactive',
   'markRaw',
   'reactive',
   'readonly',
@@ -37,6 +39,8 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   'unref',
   'watch',
   'watchEffect',
+  'watchPostEffect',
+  'watchSyncEffect',
 
   // component
   'defineComponent',
