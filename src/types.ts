@@ -84,6 +84,8 @@ export interface UnimportContext {
   getImportMap(): Promise<Map<string, Import>>
   getMetadata(): UnimportMeta | undefined
 
+  replaceImports(imports: UnimportOptions['imports']): Promise<Import[]>
+
   invalidate(): void
   resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
 }

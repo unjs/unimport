@@ -42,6 +42,12 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       await resolvePromise
       return updateImports()
     },
+    async replaceImports (imports: UnimportOptions['imports']) {
+      ctx.staticImports = [...(imports || [])].filter(Boolean)
+      ctx.invalidate()
+      await resolvePromise
+      return updateImports()
+    },
     async getImportMap () {
       await ctx.getImports()
       return _map
