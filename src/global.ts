@@ -16,7 +16,7 @@ export async function installGlobalAutoImports (
 
   await Promise.all(
     imports.map(async (i) => {
-      if (i.disabled) {
+      if (i.disabled || i.type) {
         return
       }
       const as = i.as || i.name
