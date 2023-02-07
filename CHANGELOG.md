@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.4](https://github.com/unjs/unimport/compare/v2.2.3...v2.2.4) (2023-02-07)
+
+
+### Bug Fixes
+
+* do not generate type only exports in vue template ([9146e97](https://github.com/unjs/unimport/commit/9146e97c0a49056075433bcff1aa981f19bd5ad1))
+* improve type export compatibility ([8ee5a1d](https://github.com/unjs/unimport/commit/8ee5a1d8411d3f3a9c2cbc2e6e04c4cc9c8425c8))
+
 ### [2.2.3](https://github.com/unjs/unimport/compare/v2.2.2...v2.2.3) (2023-02-07)
 
 
