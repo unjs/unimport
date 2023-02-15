@@ -81,11 +81,11 @@ test('dts', async () => {
         const useRef: typeof import('react')['useRef']
         const useState: typeof import('react')['useState']
       }
+      /* eslint-disable @typescript-eslint/ban-ts-comment */
+      // @ts-nocheck
       // for type re-export
       declare global {
-        // @ts-ignore
         export type { Ref, ComputedRef } from 'vue'
-        // @ts-ignore
         export type { JQuery } from 'jquery'
       }"
     `)

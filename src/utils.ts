@@ -181,12 +181,16 @@ export function toTypeReExports (imports: Import[], options?: TypeDeclarationOpt
       }
       return name
     })
-    return [
-      '// @ts-ignore',
-      `export type { ${names.join(', ')} } from '${from}'`
-    ]
+    return `export type { ${names.join(', ')} } from '${from}'`
   })
-  return '// for type re-export\ndeclare global {\n' + code.map(i => '  ' + i).join('\n') + '\n}'
+  return [
+    '/* eslint-disable @typescript-eslint/ban-ts-comment */',
+    '// @ts-nocheck',
+    '// for type re-export',
+    'declare global {',
+    code.map(i => '  ' + i),
+    '}'
+  ].join('\n')
 }
 
 function stringifyImportAlias (item: Import, isCJS = false) {
