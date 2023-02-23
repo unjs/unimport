@@ -1,4 +1,4 @@
 export * from './baz'
 export * as named from './named'
 
-export const foo = 1
+export const bar = 1

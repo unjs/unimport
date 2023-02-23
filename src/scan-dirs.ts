@@ -78,27 +78,29 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
         imports.push({ name: exp.name, as: exp.name, from: filepath })
       }
     } else if (exp.type === 'star' && exp.specifier) {
-      const subfile = exp.specifier
-      let subfilepath = resolve(dirname(filepath), subfile)
+      if (exp.name) {
+        // export * as foo from './foo'
+        imports.push({ name: exp.name, as: exp.name, from: filepath })
+      } else {
+        // export * from './foo', scan deeper
+        const subfile = exp.specifier
+        let subfilepath = resolve(dirname(filepath), subfile)
 
-      if (!extname(subfilepath)) {
-        for (const ext of FileExtensionLookup) {
-          if (existsSync(`${subfilepath}${ext}`)) {
-            subfilepath = `${subfilepath}${ext}`
-            break
+        if (!extname(subfilepath)) {
+          for (const ext of FileExtensionLookup) {
+            if (existsSync(`${subfilepath}${ext}`)) {
+              subfilepath = `${subfilepath}${ext}`
+              break
+            }
           }
         }
-      }
 
-      if (!existsSync(subfilepath)) {
-        // eslint-disable-next-line no-console
-        console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
-        continue
-      }
+        if (!existsSync(subfilepath)) {
+          // eslint-disable-next-line no-console
+          console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
+          continue
+        }
 
-      if (exp.name) {
-        imports.push({ name: '*', as: exp.name, from: subfilepath })
-      } else {
         imports.push(...await scanExports(subfilepath, seen))
       }
     }

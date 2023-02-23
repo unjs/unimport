@@ -75,9 +75,8 @@ describe('scan-dirs', () => {
       })
 
     expect(toImports(importsResult)).toMatchInlineSnapshot(`
-      "import { foo } from 'nested/bar/index.ts';
+      "import { bar, named } from 'nested/bar/index.ts';
       import { myBazFunction } from 'nested/bar/baz.ts';
-      import * as named from 'nested/bar/named.ts';
       import nested from 'nested/index.ts';"
     `)
   })
