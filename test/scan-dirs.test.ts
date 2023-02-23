@@ -1,6 +1,6 @@
 import { join, relative } from 'pathe'
 import { describe, expect, test } from 'vitest'
-import { scanDirExports } from '../src'
+import { scanDirExports, toImports } from '../src'
 
 describe('scan-dirs', () => {
   test('scanDirExports', async () => {
@@ -66,15 +66,20 @@ describe('scan-dirs', () => {
     const dir = join(__dirname, '../playground/composables')
     const importsResult = (await scanDirExports(dir, {
       filePatterns: [
-        '*.{ts,js,mjs,cjs,mts,cts}',
         '**/*/index.{ts,js,mjs,cjs,mts,cts}'
       ]
     }))
-      .map(i => relative(dir, i.from))
-      .sort()
+      .map((i) => {
+        i.from = relative(dir, i.from)
+        return i
+      })
 
-    expect(importsResult).toContain('nested/bar/baz.ts')
-    expect(importsResult).toContain('nested/bar/named.ts')
+    expect(toImports(importsResult)).toMatchInlineSnapshot(`
+      "import { foo } from 'nested/bar/index.ts';
+      import { myBazFunction } from 'nested/bar/baz.ts';
+      import * as named from 'nested/bar/named.ts';
+      import nested from 'nested/index.ts';"
+    `)
   })
 
   test('scanDirs should respect dirs order', async () => {

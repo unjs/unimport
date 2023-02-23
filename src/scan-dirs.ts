@@ -1,6 +1,7 @@
-import { promises as fs } from 'fs'
+import { readFile } from 'fs/promises'
+import { existsSync } from 'fs'
 import fg from 'fast-glob'
-import { parse as parsePath, join, normalize, dirname, extname } from 'pathe'
+import { parse as parsePath, join, normalize, resolve, extname, dirname } from 'pathe'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
@@ -33,14 +34,28 @@ export async function scanFilesFromDir (dir: string | string[], options?: ScanDi
 
 export async function scanDirExports (dir: string | string[], options?: ScanDirExportsOptions) {
   const files = await scanFilesFromDir(dir, options)
-  const fileExports = await Promise.all(files.map(scanExports))
-
+  const fileExports = await Promise.all(files.map(i => scanExports(i)))
   return fileExports.flat()
 }
 
-export async function scanExports (filepath: string) {
+const FileExtensionLookup = [
+  '.mts',
+  '.cts',
+  '.ts',
+  '.mjs',
+  '.cjs',
+  '.js'
+]
+
+export async function scanExports (filepath: string, seen = new Set<string>()): Promise<Import[]> {
+  if (seen.has(filepath)) {
+    console.warn(`[unimport] "${filepath}" is already scanned, skipping`)
+    return []
+  }
+
+  seen.add(filepath)
   const imports: Import[] = []
-  const code = await fs.readFile(filepath, 'utf-8')
+  const code = await readFile(filepath, 'utf-8')
   const exports = findExports(code)
   const defaultExport = exports.find(i => i.type === 'default')
 
@@ -62,12 +77,24 @@ export async function scanExports (filepath: string) {
         imports.push({ name: exp.name, as: exp.name, from: filepath })
       }
     } else if (exp.type === 'star' && exp.specifier) {
-      let subfile = exp.specifier
-      if (!extname(subfile)) {
-        subfile = `${subfile}.ts` // this is not ideal
+      const subfile = exp.specifier
+      let subfilepath = resolve(dirname(filepath), subfile)
+
+      if (!extname(subfilepath)) {
+        for (const ext of FileExtensionLookup) {
+          if (existsSync(`${subfilepath}${ext}`)) {
+            subfilepath = `${subfilepath}${ext}`
+            break
+          }
+        }
       }
-      const subfilepath = join(dirname(filepath), subfile)
-      const subimports = await scanExports(subfilepath)
+
+      if (!existsSync(subfilepath)) {
+        console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
+        continue
+      }
+
+      const subimports = await scanExports(subfilepath, seen)
 
       if (exp.name) {
         imports.push({ name: '*', as: exp.name, from: subfilepath })
