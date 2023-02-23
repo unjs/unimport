@@ -1,3 +1,12 @@
+## [3.0.1](https://github.com/unjs/unimport/compare/v3.0.0...v3.0.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* do not resolve named namespace exports ([8bf58b8](https://github.com/unjs/unimport/commit/8bf58b8905588a54130e418354f952de916a6a0b))
+
+
+
 # [3.0.0](https://github.com/unjs/unimport/compare/v2.2.4...v3.0.0) (2023-02-23)
 
 
