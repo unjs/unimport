@@ -94,12 +94,10 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
         continue
       }
 
-      const subimports = await scanExports(subfilepath, seen)
-
       if (exp.name) {
         imports.push({ name: '*', as: exp.name, from: subfilepath })
       } else {
-        imports.push(...subimports)
+        imports.push(...await scanExports(subfilepath, seen))
       }
     }
   }
