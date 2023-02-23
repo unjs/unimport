@@ -164,6 +164,31 @@ export function toTypeDeclarationFile (imports: Import[], options?: TypeDeclarat
   return declaration
 }
 
+export function toTypeReExports (imports: Import[], options?: TypeDeclarationOptions) {
+  const importsMap = new Map<string, Import[]>()
+  imports.forEach((i) => {
+    const from = options?.resolvePath?.(i) || i.from
+    const list = importsMap.get(from) || []
+    list.push(i)
+    importsMap.set(from, list)
+  })
+
+  const code = Array.from(importsMap.entries()).flatMap(([from, imports]) => {
+    const names = imports.map((i) => {
+      let name = i.name === '*' ? 'default' : i.name
+      if (i.as && i.as !== name) {
+        name += ` as ${i.as}`
+      }
+      return name
+    })
+    return [
+      '// @ts-ignore',
+      `export type { ${names.join(', ')} } from '${from}'`
+    ]
+  })
+  return '// for type re-export\ndeclare global {\n' + code.map(i => '  ' + i).join('\n') + '\n}'
+}
+
 function stringifyImportAlias (item: Import, isCJS = false) {
   return (item.as === undefined || item.name === item.as)
     ? item.name
@@ -201,17 +226,27 @@ export function addImportToCode (
   code: string | MagicString,
   imports: Import[],
   isCJS = false,
-  mergeExisting = false
+  mergeExisting = false,
+  injectAtLast = false,
+  firstOccurrence = Infinity
 ): MagicStringResult {
   let newImports: Import[] = []
   const s = getMagicString(code)
 
+  let _staticImports: StaticImport[] | undefined
+  function findStaticImportsLazy () {
+    if (!_staticImports) {
+      _staticImports = findStaticImports(s.original).map(i => parseStaticImport(i))
+    }
+    return _staticImports
+  }
+
   if (mergeExisting && !isCJS) {
-    const existing = findStaticImports(s.original).map(i => parseStaticImport(i))
+    const existingImports = findStaticImportsLazy()
     const map = new Map<StaticImport, Import[]>()
 
     imports.forEach((i) => {
-      const target = existing.find(e => e.specifier === i.from && e.imports.startsWith('{'))
+      const target = existingImports.find(e => e.specifier === i.from && e.imports.startsWith('{'))
       if (!target) {
         return newImports.push(i)
       }
@@ -234,7 +269,15 @@ export function addImportToCode (
 
   const newEntries = toImports(newImports, isCJS)
   if (newEntries) {
-    s.prepend(newEntries + '\n')
+    const insertionIndex = injectAtLast
+      ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0
+      : 0
+
+    if (insertionIndex === 0) {
+      s.prepend(newEntries + '\n')
+    } else {
+      s.appendRight(insertionIndex, '\n' + newEntries + '\n')
+    }
   }
 
   return {

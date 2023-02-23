@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.4](https://github.com/unjs/unimport/compare/v2.2.3...v2.2.4) (2023-02-07)
+
+
+### Bug Fixes
+
+* do not generate type only exports in vue template ([9146e97](https://github.com/unjs/unimport/commit/9146e97c0a49056075433bcff1aa981f19bd5ad1))
+* improve type export compatibility ([8ee5a1d](https://github.com/unjs/unimport/commit/8ee5a1d8411d3f3a9c2cbc2e6e04c4cc9c8425c8))
+
+### [2.2.3](https://github.com/unjs/unimport/compare/v2.2.2...v2.2.3) (2023-02-07)
+
+
+### Bug Fixes
+
+* add missing vue exports ([05ee56c](https://github.com/unjs/unimport/commit/05ee56cd788f9a259f621cb1997765318e2f1db2))
+
+### [2.2.2](https://github.com/unjs/unimport/compare/v2.2.1...v2.2.2) (2023-02-07)
+
+
+### Features
+
+* expose `getInternalContext` ([17bb37f](https://github.com/unjs/unimport/commit/17bb37fea35a90d34a5fd8e2cf74e18bb18117b3))
+
+### [2.2.1](https://github.com/unjs/unimport/compare/v2.2.0...v2.2.1) (2023-02-07)
+
+
+### Features
+
+* add vue-router composables preset ([5a6f36f](https://github.com/unjs/unimport/commit/5a6f36ff41d4b319284a08caae7e42b363fbd96c))
+* expose `replaceImports` method ([6ae3952](https://github.com/unjs/unimport/commit/6ae3952c26b8621f9554ce0dc66dbf040ee1b2e8))
+
+## [2.2.0](https://github.com/unjs/unimport/compare/v2.1.0...v2.2.0) (2023-02-07)
+
+
+### Features
+
+* types auto import ([#218](https://github.com/unjs/unimport/issues/218)) ([f33f085](https://github.com/unjs/unimport/commit/f33f085ae02052a12c17261e94480094db12ce9a))
+
+## [2.1.0](https://github.com/unjs/unimport/compare/v2.0.1...v2.1.0) (2023-01-29)
+
+
+### Features
+
+* support `injectAtLast` option ([6b1ba91](https://github.com/unjs/unimport/commit/6b1ba9149f519742ffafe91497bc3feec905b1b7))
+
 ### [2.0.1](https://github.com/unjs/unimport/compare/v2.0.0...v2.0.1) (2023-01-24)
 
 
