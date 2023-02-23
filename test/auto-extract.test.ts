@@ -21,6 +21,14 @@ describe('auto-extract', () => {
       [
         {
           "from": "h3",
+          "name": "appendCorsHeaders",
+        },
+        {
+          "from": "h3",
+          "name": "appendCorsPreflightHeaders",
+        },
+        {
+          "from": "h3",
           "name": "appendHeader",
         },
         {
@@ -30,14 +38,6 @@ describe('auto-extract', () => {
         {
           "from": "h3",
           "name": "appendResponseHeader",
-        },
-        {
-          "from": "h3",
-          "name": "appendResponseHeaders",
-        },
-        {
-          "from": "h3",
-          "name": "assertMethod",
         },
       ]
     `)
