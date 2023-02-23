@@ -49,6 +49,7 @@ const FileExtensionLookup = [
 
 export async function scanExports (filepath: string, seen = new Set<string>()): Promise<Import[]> {
   if (seen.has(filepath)) {
+    // eslint-disable-next-line no-console
     console.warn(`[unimport] "${filepath}" is already scanned, skipping`)
     return []
   }
@@ -90,6 +91,7 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
       }
 
       if (!existsSync(subfilepath)) {
+        // eslint-disable-next-line no-console
         console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
         continue
       }
