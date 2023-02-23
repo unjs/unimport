@@ -1,6 +1,10 @@
-# Changelog
+# [3.0.0](https://github.com/unjs/unimport/compare/v2.2.4...v3.0.0) (2023-02-23)
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### Features
+
+* **scan:** support scanning star imports ([#216](https://github.com/unjs/unimport/issues/216)) ([ae31dba](https://github.com/unjs/unimport/commit/ae31dbab17f763a11bcf7d3459baab676736e5ec))
+
 
 ### [2.2.4](https://github.com/unjs/unimport/compare/v2.2.3...v2.2.4) (2023-02-07)
 

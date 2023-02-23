@@ -40,7 +40,7 @@
     "play:build": "pnpm -C playground run build",
     "typecheck": "vue-tsc --noEmit",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "release": "pnpm run test --run && bumpp -x \"pnpm run changelog\" && npm publish",
+    "release": "pnpm run test --run && bumpp -x \"pnpm run changelog\" --all && npm publish",
     "test": "vitest --coverage"
   },
   "dependencies": {
