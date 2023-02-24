@@ -144,7 +144,7 @@ export function toExports (imports: Import[], fileDir?: string) {
 export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
   return imports
     .map((i) => {
-      const from = options?.resolvePath?.(i) || i.from
+      const from = (options?.resolvePath?.(i) || i.from).replace(/\.ts$/, '')
       return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
     })
     .sort()

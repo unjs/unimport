@@ -104,7 +104,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   async function generateTypeDeclarations (options?: TypeDeclarationOptions) {
     const opts: TypeDeclarationOptions = {
-      resolvePath: i => i.from.replace(/\.ts$/, ''),
+      resolvePath: i => i.from,
       ...options
     }
     const {
