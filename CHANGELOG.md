@@ -1,3 +1,12 @@
+## [3.0.2](https://github.com/unjs/unimport/compare/v3.0.1...v3.0.2) (2023-02-24)
+
+
+### Bug Fixes
+
+* **dts:** always remove `.ts` extension in dts ([03288a9](https://github.com/unjs/unimport/commit/03288a976d8f51da1e8bb22e58cde2df6184bd3f))
+
+
+
 ## [3.0.1](https://github.com/unjs/unimport/compare/v3.0.0...v3.0.1) (2023-02-23)
 
 
