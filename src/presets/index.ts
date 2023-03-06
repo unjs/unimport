@@ -29,6 +29,7 @@ import uniApp from './uni-app'
 import solid from './solid'
 import solidAppRouter from './solid-app-router'
 import vueRouterComposables from './vue-router-composables'
+import vuetify from './vuetify'
 
 export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
@@ -55,6 +56,7 @@ export const builtinPresets = {
   vue: vue,
   'vue/macros': vueMacros,
   vuex: vuex,
+  vuetify: vuetify,
   vitest: vitest,
   'uni-app': uniApp,
   'solid-js': solid,
