@@ -4,6 +4,9 @@ export default defineUnimportPreset({
   from: 'vue-router',
   imports: [
     'useRouter',
-    'useRoute'
+    'useRoute',
+    'useLink',
+    'onBeforeRouteLeave',
+    'onBeforeRouteUpdate',
   ]
 })
