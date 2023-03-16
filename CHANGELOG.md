@@ -1,3 +1,17 @@
+## [3.0.3](https://github.com/unjs/unimport/compare/v3.0.2...v3.0.3) (2023-03-16)
+
+
+### Bug Fixes
+
+* **scan-dir:** handle re-export from folder index ([#229](https://github.com/unjs/unimport/issues/229)) ([7d0c4e2](https://github.com/unjs/unimport/commit/7d0c4e27532b86481a1405eb33b2881b31168e2e))
+
+
+### Features
+
+* **presets:** add missing vue-router api ([#224](https://github.com/unjs/unimport/issues/224)) ([1be4b7b](https://github.com/unjs/unimport/commit/1be4b7baba7af772ea863f2bfe529daa2830bc12))
+
+
+
 ## [3.0.2](https://github.com/unjs/unimport/compare/v3.0.1...v3.0.2) (2023-02-24)
 
 
