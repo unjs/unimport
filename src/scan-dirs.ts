@@ -91,6 +91,10 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
             if (existsSync(`${subfilepath}${ext}`)) {
               subfilepath = `${subfilepath}${ext}`
               break
+            } else if (existsSync(`${subfilepath}/index${ext}`)) {
+              // 'foo' is a directory
+              subfilepath = `${subfilepath}/index${ext}`
+              break
             }
           }
         }
