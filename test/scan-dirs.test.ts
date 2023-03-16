@@ -66,7 +66,7 @@ describe('scan-dirs', () => {
     const dir = join(__dirname, '../playground/composables')
     const importsResult = (await scanDirExports(dir, {
       filePatterns: [
-        '**/*/index.{ts,js,mjs,cjs,mts,cts}'
+        'nested/bar/index.ts'
       ]
     }))
       .map((i) => {
@@ -77,7 +77,7 @@ describe('scan-dirs', () => {
     expect(toImports(importsResult)).toMatchInlineSnapshot(`
       "import { bar, named } from 'nested/bar/index.ts';
       import { myBazFunction } from 'nested/bar/baz.ts';
-      import nested from 'nested/index.ts';"
+      import { subFoo } from 'nested/bar/sub/index.ts';"
     `)
   })
 

@@ -80,6 +80,7 @@ test('dts', async () => {
         const nested: typeof import('<root>/playground/composables/nested/index')['default']
         const reactive: typeof import('vue')['reactive']
         const ref: typeof import('vue')['ref']
+        const subFoo: typeof import('<root>/playground/composables/nested/bar/sub/index')['subFoo']
         const toRefs: typeof import('vue')['toRefs']
         const useDoubled: typeof import('<root>/playground/composables/index')['useDoubled']
         const useEffect: typeof import('react')['useEffect']
