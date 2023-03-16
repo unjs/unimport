@@ -101,7 +101,7 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
           continue
         }
 
-        imports.push(...await scanExports(subfilepath, seen))
+        imports.push({ name: '*', from: subfilepath })
       }
     }
   }
