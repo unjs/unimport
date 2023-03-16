@@ -81,6 +81,21 @@ describe('preset', () => {
           "from": "vue-router",
           "name": "useRoute",
         },
+        {
+          "as": "useLink",
+          "from": "vue-router",
+          "name": "useLink",
+        },
+        {
+          "as": "onBeforeRouteLeave",
+          "from": "vue-router",
+          "name": "onBeforeRouteLeave",
+        },
+        {
+          "as": "onBeforeRouteUpdate",
+          "from": "vue-router",
+          "name": "onBeforeRouteUpdate",
+        },
       ]
     `)
   })
