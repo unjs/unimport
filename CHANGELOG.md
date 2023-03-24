@@ -1,3 +1,12 @@
+## [3.0.4](https://github.com/unjs/unimport/compare/v3.0.3...v3.0.4) (2023-03-24)
+
+
+### Bug Fixes
+
+* regexp matching imports/exports ([#232](https://github.com/unjs/unimport/issues/232)) ([661c153](https://github.com/unjs/unimport/commit/661c15366fa346ffa9d1d9cbae30bfeda4cef4f0))
+
+
+
 ## [3.0.3](https://github.com/unjs/unimport/compare/v3.0.2...v3.0.3) (2023-03-16)
 
 
