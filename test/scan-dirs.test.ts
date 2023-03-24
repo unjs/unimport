@@ -40,6 +40,11 @@ describe('scan-dirs', () => {
             "name": "multiplier",
           },
           {
+            "as": "PascalCased",
+            "from": "PascalCased.ts",
+            "name": "PascalCased",
+          },
+          {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",

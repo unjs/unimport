@@ -63,6 +63,7 @@ test('dts', async () => {
       "export {}
       declare global {
         const $: typeof import('jquery')['$']
+        const PascalCased: typeof import('<root>/playground/composables/PascalCased')['PascalCased']
         const THREE: typeof import('three')
         const bar: typeof import('<root>/playground/composables/nested/bar/index')['bar']
         const bump: typeof import('<root>/playground/composables/index')['bump']
