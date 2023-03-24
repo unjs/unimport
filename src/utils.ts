@@ -7,7 +7,7 @@ import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } 
 
 export const excludeRE = [
   // imported/exported from other module
-  /\b(import|export)\b(.+?)\bfrom\b/gs,
+  /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
   // defined as function
   /\bfunction\s*([\w_$]+?)\s*\(/gs,
   // defined as class

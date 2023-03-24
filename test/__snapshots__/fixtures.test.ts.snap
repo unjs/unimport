@@ -92,6 +92,17 @@ Foo instanceof Bar
 "
 `;
 
+exports[`fixtures > mixin.js 1`] = `
+"import { Mixin } from './Mixin';
+export const TestMixin = {
+  mixins: [Mixin],
+  watch: {
+    myValue(to, from) {}
+  }
+}
+"
+`;
+
 exports[`fixtures > no-eol.js 1`] = `
 "import { Foo } from 'foobar';
 Foo"
