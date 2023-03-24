@@ -16,7 +16,8 @@ describe('fixtures', () => {
       { name: 'Foo', from: 'foobar', as: 'Foo' },
       { name: 'Bar', from: 'foobar', as: 'Bar' },
       { name: 'it', from: 'it', as: 'it' },
-      { name: 'fit', from: 'fit', as: 'fit' }
+      { name: 'fit', from: 'fit', as: 'fit' },
+      { name: 'Mixin', from: './Mixin', as: 'Mixin' }
     ],
     presets: [
       {
