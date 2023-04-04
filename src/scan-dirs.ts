@@ -65,7 +65,10 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
     if (name === 'index') {
       name = parsePath(filepath.split('/').slice(0, -1).join('/')).name
     }
-    imports.push({ name: 'default', as: camelCase(name), from: filepath })
+    // Only camel-case name if it contains separators by which scule would split,
+    // see STR_SPLITTERS: https://github.com/unjs/scule/blob/main/src/index.ts
+    const as = /[-_.]/.test(name) ? camelCase(name) : name
+    imports.push({ name: 'default', as, from: filepath })
   }
 
   for (const exp of exports) {
