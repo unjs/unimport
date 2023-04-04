@@ -171,6 +171,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     scanImportsFromDir,
     scanImportsFromFile,
     getImports: () => ctx.getImports(),
+    getImportMap: () => ctx.getImportMap(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: injectImportsWithContext,
     toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
