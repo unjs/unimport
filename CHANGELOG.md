@@ -1,3 +1,13 @@
+## [3.0.5](https://github.com/unjs/unimport/compare/v3.0.4...v3.0.5) (2023-04-04)
+
+
+### Bug Fixes
+
+* expose getImportMap ([#237](https://github.com/unjs/unimport/issues/237)) ([4bd5ee0](https://github.com/unjs/unimport/commit/4bd5ee09a4b2cf99370448b3aef48ed9db2598eb))
+* only camel-case default exports if they're transformable ([#234](https://github.com/unjs/unimport/issues/234)) ([96146d4](https://github.com/unjs/unimport/commit/96146d4b32015925554149c7d6ffa4687954d502))
+
+
+
 ## [3.0.4](https://github.com/unjs/unimport/compare/v3.0.3...v3.0.4) (2023-03-24)
 
 
