@@ -200,6 +200,9 @@ function stringifyImportAlias (item: Import, isCJS = false) {
 function toImportModuleMap (imports: Import[]) {
   const map: Record<string, Set<Import>> = {}
   for (const _import of imports) {
+    if (_import.type) {
+      continue
+    }
     if (!map[_import.from]) {
       map[_import.from] = new Set()
     }
