@@ -1,3 +1,12 @@
+## [3.0.6](https://github.com/unjs/unimport/compare/v3.0.5...v3.0.6) (2023-04-05)
+
+
+### Bug Fixes
+
+* do not generate types in `.toExports()`, close https://github.com/nuxt/nuxt/issues/19920 ([7032de3](https://github.com/unjs/unimport/commit/7032de30f7383a934729750657c06427c10cc77c))
+
+
+
 ## [3.0.5](https://github.com/unjs/unimport/compare/v3.0.4...v3.0.5) (2023-04-04)
 
 
