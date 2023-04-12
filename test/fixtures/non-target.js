@@ -1,2 +1,0 @@
-useNonTarget()
-// @test-unmodified

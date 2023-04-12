@@ -7,7 +7,6 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowJs": true,
     "jsx": "preserve",
     "lib": [
       "dom",
@@ -22,6 +21,6 @@
     "test/*.ts"
   ],
   "exclude": [
-    "test/fixtures/**/*.*"
+    "./test/cases/**/*.*"
   ]
 }
