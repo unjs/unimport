@@ -36,6 +36,7 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   'toRaw',
   'toRef',
   'toRefs',
+  'toValue',
   'unref',
   'watch',
   'watchEffect',
