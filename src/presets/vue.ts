@@ -17,6 +17,9 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   // setup helpers
   'useAttrs',
   'useSlots',
+  'defineOptions',
+  'defineSlots',
+  'defineModel',
 
   // reactivity,
   'computed',
