@@ -61,7 +61,7 @@
     "@vitest/coverage-c8": "^0.31.0",
     "bumpp": "^9.1.0",
     "conventional-changelog-cli": "^2.2.2",
-    "eslint": "^8.40.0",
+    "eslint": "8.39.0",
     "h3": "^1.6.5",
     "jquery": "^3.7.0",
     "typescript": "^5.0.4",
