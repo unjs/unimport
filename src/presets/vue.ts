@@ -15,11 +15,12 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   'onUpdated',
 
   // setup helpers
-  'useAttrs',
-  'useSlots',
   'defineOptions',
   'defineSlots',
   'defineModel',
+  'useAttrs',
+  'useSlots',
+  'useModel',
 
   // reactivity,
   'computed',
