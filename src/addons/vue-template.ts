@@ -54,13 +54,21 @@ export const vueTemplateAddon = (): Addon => ({
       })
       .filter(Boolean)
       .sort()
+
+    const extendItems = items.map(i => '    ' + i).join('\n')
     return dts +
 `
 // for vue template auto import
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
-${items.map(i => '    ' + i).join('\n')}
+${extendItems}
+  }
+}` + // Workaround for Vue 3.3
+`
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+${extendItems}
   }
 }
 `
