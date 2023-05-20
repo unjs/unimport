@@ -1,3 +1,13 @@
+## [3.0.7](https://github.com/unjs/unimport/compare/v3.0.6...v3.0.7) (2023-05-20)
+
+
+### Bug Fixes
+
+* **presets:** add the new toValue method in vue 3 ([#241](https://github.com/unjs/unimport/issues/241)) ([64d0f95](https://github.com/unjs/unimport/commit/64d0f9503891232dcb5b57e7baba6adcbf000233))
+* workaround for Vue 3.3 template auto import ([88b9e34](https://github.com/unjs/unimport/commit/88b9e3424db15507e7b9e28b0cdb9a5f4d9a0880))
+
+
+
 ## [3.0.6](https://github.com/unjs/unimport/compare/v3.0.5...v3.0.6) (2023-04-05)
 
 
