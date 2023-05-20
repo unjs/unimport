@@ -58,16 +58,16 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
-    "@vitest/coverage-c8": "^0.31.0",
+    "@vitest/coverage-c8": "^0.31.1",
     "bumpp": "^9.1.0",
     "conventional-changelog-cli": "^2.2.2",
-    "eslint": "8.39.0",
-    "h3": "^1.6.5",
+    "eslint": "8.41.0",
+    "h3": "^1.6.6",
     "jquery": "^3.7.0",
     "typescript": "^5.0.4",
     "unbuild": "^1.2.1",
-    "vitest": "^0.31.0",
+    "vitest": "^0.31.1",
     "vue-tsc": "^1.6.5"
   },
-  "packageManager": "pnpm@8.5.0"
+  "packageManager": "pnpm@8.5.1"
 }
