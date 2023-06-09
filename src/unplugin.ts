@@ -10,6 +10,13 @@ export interface UnimportPluginOptions extends UnimportOptions {
   include: FilterPattern
   exclude: FilterPattern
   dts: boolean | string
+  /**
+   * Enable implicit auto import.
+   * Generate global TypeScript definitions.
+   *
+   * @default true
+   */
+  autoImport?: boolean
 }
 
 export const defaultIncludes = [/\.[jt]sx?$/, /\.vue$/, /\.vue\?vue/, /\.svelte$/]
@@ -22,12 +29,18 @@ function toArray<T> (x: T | T[] | undefined | null): T[] {
 export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => {
   const ctx = createUnimport(options)
   const filter = createFilter(
-    toArray(options.include as string[] || []).length ? options.include : defaultIncludes,
+    toArray(options.include as string[] || []).length
+      ? options.include
+      : defaultIncludes,
     options.exclude || defaultExcludes
   )
   const dts = options.dts === true
     ? 'unimport.d.ts'
     : options.dts
+
+  const {
+    autoImport = true
+  } = options
 
   return {
     name: 'unimport',
@@ -38,7 +51,9 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
     async transform (code, id) {
       const s = new MagicString(code)
 
-      await ctx.injectImports(s, id)
+      await ctx.injectImports(s, id, {
+        autoImport
+      })
 
       if (!s.hasChanged()) {
         return
