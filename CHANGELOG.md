@@ -1,3 +1,12 @@
+## [3.0.8](https://github.com/unjs/unimport/compare/v3.0.7...v3.0.8) (2023-06-09)
+
+
+### Features
+
+* **unplugin:** support disabling autoImport option ([c8c0fcc](https://github.com/unjs/unimport/commit/c8c0fcc7fbdc464093c09841d1ec9cacf54db82c))
+
+
+
 ## [3.0.7](https://github.com/unjs/unimport/compare/v3.0.6...v3.0.7) (2023-05-20)
 
 
