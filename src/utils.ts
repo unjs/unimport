@@ -147,15 +147,15 @@ export function extractJSDoc(modulePath: string, functionName: string) {
       modulePath=modulePath.slice(6)
       modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
     }
-    if(modulePath.indexOf("vue-router")!==-1){
-      modulePath=".nuxt/vue-router.d.ts"
-    }
     if(modulePath.indexOf("/")===-1 || modulePath.indexOf("@")!==-1){
       modulePath=(modulePath.indexOf("node_modules")===-1?"node_modules/":"")+modulePath+(modulePath.indexOf("i18n")===-1? "/dist/"+( modulePath==="vue" ? modulePath+".d.ts": "index.d.ts"): '')
     }
     if(modulePath.indexOf("/node_modules")!==-1){
       modulePath=modulePath.slice(modulePath.indexOf("/node_modules")+1)
       modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+    }
+    if(modulePath.indexOf("vue-router")!==-1){
+      modulePath="node_modules/vue-router/dist/vue-router.d.ts"
     }
     const sourceCode = fs.readFileSync(modulePath, 'utf8');
 
