@@ -140,14 +140,51 @@ export function toExports (imports: Import[], fileDir?: string) {
     })
     .join('\n')
 }
+export function extractJSDoc(modulePath: string, functionName: string) {
+  try{
+    if(modulePath.indexOf("../../")!==-1){
+      modulePath=modulePath.slice(6)
+      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+    }
+    if(modulePath.indexOf("vue-router")!==-1){
+      modulePath=".nuxt/vue-router.d.ts"
+    }
+    if(modulePath.indexOf("/")===-1 || modulePath.indexOf("@")!==-1){
+      modulePath=(modulePath.indexOf("node_modules")===-1?"node_modules/":"")+modulePath+(modulePath.indexOf("i18n")===-1? "/dist/"+( modulePath==="vue" ? modulePath+".d.ts": "index.d.ts"): '')
+    }
+    if(modulePath.indexOf("/node_modules")!==-1){
+      modulePath=modulePath.slice(modulePath.indexOf("/node_modules")+1)
+      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+    }
+    const sourceCode = fs.readFileSync(modulePath, 'utf8');
+
+    const sourceFile = ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.ES2015, true);
+
+    let jsDoc;
+    function visit(node) {
+      if (ts.isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
+        
+        if (node.jsDoc && node.jsDoc.length > 0) {
+          const comment = node.jsDoc[0].getText(sourceFile);
+          jsDoc = comment;
+        }
+      }
+
+      ts.forEachChild(node, visit);
+    }
+    visit(sourceFile);
+    return jsDoc;
+  }
+  catch (err){
+    return console.error("Error encountered while obtaining the JSDoc: "+err)
+  }
+}
 
 export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
-  return imports
-    .map((i) => {
-      const from = (options?.resolvePath?.(i) || i.from).replace(/\.ts$/, '')
-      return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
-    })
-    .sort()
+  return imports.map((i) => {
+    const from = (options?.resolvePath?.(i) || i.from).replace(/\.ts$/, "");
+    return `${extractJSDoc(from, i.as)}\n\tconst ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
+  }).sort();
 }
 
 export function toTypeDeclarationFile (imports: Import[], options?: TypeDeclarationOptions) {
