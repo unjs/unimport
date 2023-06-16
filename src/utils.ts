@@ -184,7 +184,8 @@ export function extractJSDoc(modulePath: string, functionName: string) {
 export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
   return imports.map((i) => {
     const from = (options?.resolvePath?.(i) || i.from).replace(/\.ts$/, "");
-    return `${extractJSDoc(from, i.as)}\n\tconst ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
+    const jsDoc=extractJSDoc(from, i.as)
+    return `${jsDoc===undefined ? '' : jsDoc+"\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
   }).sort();
 }
 
