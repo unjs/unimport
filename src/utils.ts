@@ -150,7 +150,7 @@ export function extractJSDoc(modulePath: string, functionName: string) {
       modulePath=existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
     }
     
-    //NPM packages (including scoped ones) (with proper handling for i18n, tested on Nuxt only, needs proper testing on other tools)
+    //NPM packages (including scoped ones) (with handling for i18n, tested on Nuxt only, needs proper testing on other tools)
     if(modulePath.indexOf("/")===-1 || modulePath.indexOf("@")!==-1){
       modulePath=(modulePath.indexOf("node_modules")===-1?"node_modules/":"")+modulePath+(modulePath.indexOf("i18n")===-1? "/dist/"+( modulePath==="vue" ? modulePath+".d.ts": "index.d.ts"): '')
     }
