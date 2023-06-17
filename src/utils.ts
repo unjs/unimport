@@ -4,7 +4,7 @@ import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
-import ts from "typescript"
+import {createSourceFile, ScriptTarget, isFunctionDeclaration, forEachChild} from "typescript"
 import {existsSync, readFileSync} from "fs";
 export const excludeRE = [
   // imported/exported from other module
@@ -167,17 +167,17 @@ export function extractJSDoc(modulePath: string, functionName: string) {
     }
     
     const sourceCode = readFileSync(modulePath, 'utf8');
-    const sourceFile = ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.ES2015, true);
+    const sourceFile = createSourceFile("temp.ts", sourceCode, ScriptTarget.ES2015, true);
 
     let jsDoc;
     function visit(node) {
-      if (ts.isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
+      if (isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
         if (node.jsDoc && node.jsDoc.length > 0) {
           const comment = node.jsDoc[0].getText(sourceFile);
           jsDoc = comment;
         }
       }
-      ts.forEachChild(node, visit);
+      forEachChild(node, visit);
     }
     visit(sourceFile);
     return jsDoc;
