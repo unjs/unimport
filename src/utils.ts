@@ -143,35 +143,40 @@ export function toExports (imports: Import[], fileDir?: string) {
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
   try{
+    
     //Relative paths
     if(modulePath.indexOf("../../")!==-1){
       modulePath=modulePath.slice(6)
-      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+      modulePath=existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
     }
+    
+    //NPM packages (including scoped ones) (with proper handling for i18n, tested on Nuxt only, needs proper testing on other tools)
     if(modulePath.indexOf("/")===-1 || modulePath.indexOf("@")!==-1){
       modulePath=(modulePath.indexOf("node_modules")===-1?"node_modules/":"")+modulePath+(modulePath.indexOf("i18n")===-1? "/dist/"+( modulePath==="vue" ? modulePath+".d.ts": "index.d.ts"): '')
     }
+    
+    //Absolute paths
     if(modulePath.indexOf("/node_modules")!==-1){
       modulePath=modulePath.slice(modulePath.indexOf("/node_modules")+1)
-      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+      modulePath=existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
     }
+    
+    //Vue-router (non-Nuxt locked)
     if(modulePath.indexOf("vue-router")!==-1){
-      modulePath="node_modules/vue-router/dist/vue-router.d.ts"
+      modulePath=existsSync(".nuxt") ? ".nuxt/vue-router.d.ts" : "node_modules/vue-router/dist/vue-router.d.ts"
     }
-    const sourceCode = fs.readFileSync(modulePath, 'utf8');
-
+    
+    const sourceCode = readFileSync(modulePath, 'utf8');
     const sourceFile = ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.ES2015, true);
 
     let jsDoc;
     function visit(node) {
       if (ts.isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
-        
         if (node.jsDoc && node.jsDoc.length > 0) {
           const comment = node.jsDoc[0].getText(sourceFile);
           jsDoc = comment;
         }
       }
-
       ts.forEachChild(node, visit);
     }
     visit(sourceFile);
