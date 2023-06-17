@@ -143,6 +143,7 @@ export function toExports (imports: Import[], fileDir?: string) {
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
   try{
+    //Relative paths
     if(modulePath.indexOf("../../")!==-1){
       modulePath=modulePath.slice(6)
       modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
@@ -177,7 +178,7 @@ export function extractJSDoc(modulePath: string, functionName: string) {
     return jsDoc;
   }
   catch (err){
-    return console.error("Error encountered while obtaining the JSDoc: "+err)
+    throw new Error(err)
   }
 }
 
