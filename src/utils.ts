@@ -4,8 +4,8 @@ import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
-import {createSourceFile, ScriptTarget, isFunctionDeclaration, forEachChild} from "typescript"
-import {existsSync, readFileSync} from "fs";
+import ts from "typescript"
+import fs from "fs";
 export const excludeRE = [
   // imported/exported from other module
   /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
@@ -143,41 +143,35 @@ export function toExports (imports: Import[], fileDir?: string) {
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
   try{
-    
-    //Relative paths
     if(modulePath.indexOf("../../")!==-1){
       modulePath=modulePath.slice(6)
-      modulePath=existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
     }
-    
-    //NPM packages (including scoped ones) (with handling for i18n, tested on Nuxt only, needs proper testing on other tools)
+    if(modulePath.indexOf("vue-router")!==-1){
+      modulePath=".nuxt/vue-router.d.ts"
+    }
     if(modulePath.indexOf("/")===-1 || modulePath.indexOf("@")!==-1){
       modulePath=(modulePath.indexOf("node_modules")===-1?"node_modules/":"")+modulePath+(modulePath.indexOf("i18n")===-1? "/dist/"+( modulePath==="vue" ? modulePath+".d.ts": "index.d.ts"): '')
     }
-    
-    //Absolute paths
     if(modulePath.indexOf("/node_modules")!==-1){
       modulePath=modulePath.slice(modulePath.indexOf("/node_modules")+1)
-      modulePath=existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
+      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
     }
-    
-    //Vue-router (non-Nuxt locked)
-    if(modulePath.indexOf("vue-router")!==-1){
-      modulePath=existsSync(".nuxt") ? ".nuxt/vue-router.d.ts" : "node_modules/vue-router/dist/vue-router.d.ts"
-    }
-    
-    const sourceCode = readFileSync(modulePath, 'utf8');
-    const sourceFile = createSourceFile("temp.ts", sourceCode, ScriptTarget.ES2015, true);
+    const sourceCode = fs.readFileSync(modulePath, 'utf8');
+
+    const sourceFile = ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.ES2015, true);
 
     let jsDoc;
     function visit(node) {
-      if (isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
+      if (ts.isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
+        
         if (node.jsDoc && node.jsDoc.length > 0) {
           const comment = node.jsDoc[0].getText(sourceFile);
           jsDoc = comment;
         }
       }
-      forEachChild(node, visit);
+
+      ts.forEachChild(node, visit);
     }
     visit(sourceFile);
     return jsDoc;
