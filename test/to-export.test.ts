@@ -90,4 +90,17 @@ describe('toExports', () => {
         export { foo3 } from './foo/bar';"
       `)
   })
+
+  it('include type', () => {
+    const root = process.cwd()
+    const imports: Import[] = [
+      { from: 'vue', name: 'ref', as: 'ref' },
+      { from: 'vue', name: 'Ref', as: 'Ref', type: true }
+    ]
+    expect(toExports(imports, root))
+      .toMatchInlineSnapshot('"export { ref } from \'vue\';"')
+
+    expect(toExports(imports, root, true))
+      .toMatchInlineSnapshot('"export { ref, Ref } from \'vue\';"')
+  })
 })
