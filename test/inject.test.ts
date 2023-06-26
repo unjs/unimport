@@ -101,6 +101,34 @@ console.log(fooBar())
       `)
   })
 
+  test('injection at end with comment', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+      injectAtEnd: true
+    })
+
+    expect((await injectImports(`
+/**
+* import { foo } from './foo'
+*/
+
+// import { foo1 } from './foo'
+import { foo } from 'foo'
+console.log(fooBar())
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+      "/**
+      * import { foo } from './foo'
+      */
+
+      // import { foo1 } from './foo'
+      import { foo } from 'foo'
+
+      import { fooBar } from 'test-id';
+      console.log(fooBar())"
+      `)
+  })
+
   test('injection at end with mixed imports', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
