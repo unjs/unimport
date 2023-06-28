@@ -13,7 +13,7 @@ export const excludeRE = [
   // defined as class
   /\bclass\s*([\w_$]+?)\s*{/gs,
   // defined as local variable
-  /(?:\b(const|let|var)\s+|,\s*)(\[[\s\w_$*{},]*?\]|\{[\s\w_$*{},]*?\}|[\s\w_$*{},]+?)\s*?[=;\n]/gs
+  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs
 ]
 
 export const importAsRE = /^.*\sas\s+/
