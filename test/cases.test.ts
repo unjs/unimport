@@ -6,6 +6,10 @@ import { createUnimport } from '../src/context'
 
 const UNMODIFIED_MARK = '@test-unmodified'
 
+const filters: string[] = [
+  // put file name here to test specific case
+]
+
 describe('cases', () => {
   const { injectImports } = createUnimport({
     imports: [
@@ -57,6 +61,7 @@ describe('cases', () => {
   const positives = import.meta.glob('./cases/positive/*', { as: 'raw' })
 
   for (const [file, getCode] of Object.entries(positives)) {
+    if (filters.length && !filters.some(f => file.includes(f))) { continue }
     if (file.match(/\.output\./)) {
       continue
     }
@@ -75,6 +80,7 @@ describe('cases', () => {
   }
 
   for (const [file, getCode] of Object.entries(negatives)) {
+    if (filters.length && !filters.some(f => file.includes(f))) { continue }
     it(basename(file), async () => {
       const code = await getCode()
       const pass1 = (await injectImports(code, file))?.code ?? code

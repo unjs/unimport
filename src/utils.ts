@@ -115,8 +115,8 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
   return imports.filter((_, idx) => !indexToRemove.has(idx))
 }
 
-export function toExports (imports: Import[], fileDir?: string) {
-  const map = toImportModuleMap(imports)
+export function toExports (imports: Import[], fileDir?: string, includeType = false) {
+  const map = toImportModuleMap(imports, includeType)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
       name = name.replace(/\.[a-z]+$/, '')
@@ -244,10 +244,10 @@ function stringifyImportAlias (item: Import, isCJS = false) {
       : `${item.name} as ${item.as}`
 }
 
-function toImportModuleMap (imports: Import[]) {
+function toImportModuleMap (imports: Import[], includeType = false) {
   const map: Record<string, Set<Import>> = {}
   for (const _import of imports) {
-    if (_import.type) {
+    if (_import.type && !includeType) {
       continue
     }
     if (!map[_import.from]) {
@@ -284,9 +284,13 @@ export function addImportToCode (
   const s = getMagicString(code)
 
   let _staticImports: StaticImport[] | undefined
+  const strippedCode = stripCommentsAndStrings(s.original)
+
   function findStaticImportsLazy () {
     if (!_staticImports) {
-      _staticImports = findStaticImports(s.original).map(i => parseStaticImport(i))
+      _staticImports = findStaticImports(s.original)
+        .filter(i => Boolean(strippedCode.slice(i.start, i.end).trim()))
+        .map(i => parseStaticImport(i))
     }
     return _staticImports
   }

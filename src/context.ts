@@ -174,7 +174,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     getImportMap: () => ctx.getImportMap(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: injectImportsWithContext,
-    toExports: async (filepath?: string) => toExports(await ctx.getImports(), filepath),
+    toExports: async (filepath?: string, includeTypes = false) => toExports(await ctx.getImports(), filepath, includeTypes),
     parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
     getMetadata: () => ctx.getMetadata(),
