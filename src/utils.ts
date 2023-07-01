@@ -4,8 +4,8 @@ import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 
 import MagicString from 'magic-string'
 import { stripLiteral } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
-import ts from "typescript"
-import fs from "fs";
+import fs from "fs"
+const files={}
 export const excludeRE = [
   // imported/exported from other module
   /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
@@ -163,25 +163,13 @@ export function extractJSDoc(modulePath: string, functionName: string) {
 
     //Vue-router (non-Nuxt locked)
     if(modulePath.indexOf("vue-router")!==-1){
-      modulePath=".nuxt/vue-router.d.ts"
+      modulePath=fs.existsSync(".nuxt") ? ".nuxt/vue-router.d.ts" : "node_modules/vue-router/dist/vue-router.d.ts"
     }
-
-    const sourceCode = fs.readFileSync(modulePath, 'utf8');
-    const sourceFile = ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.ES2015, true);
-
-    let jsDoc;
-    function visit(node) {
-      if (ts.isFunctionDeclaration(node) && node.name && node.name.text === functionName) {
-        
-        if (node.jsDoc && node.jsDoc.length > 0) {
-          const comment = node.jsDoc[0].getText(sourceFile);
-          jsDoc = comment;
-        }
-      }
-
-      ts.forEachChild(node, visit);
+    if(!files[modulePath]){
+      files[modulePath]=fs.readFileSync(modulePath, 'utf8');
     }
-    visit(sourceFile);
+    const jsDocRE=new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
+    const jsDoc= files[modulePath].match(jsDocRE)
     return jsDoc;
   }
   catch (err){
@@ -193,7 +181,7 @@ export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclara
   return imports.map((i) => {
     const from = (options?.resolvePath?.(i) || i.from).replace(/\.ts$/, "");
     const jsDoc=extractJSDoc(from, i.as)
-    return `${jsDoc===undefined ? '' : jsDoc+"\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
+    return `${jsDoc===null ? '' : jsDoc[0].slice(0,jsDoc[0].indexOf("*/\nexport")+3)+"\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
   }).sort();
 }
 
