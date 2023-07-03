@@ -114,7 +114,7 @@ import _ from 'lodash'
 
 ###### Custom Presets
 
-Presets are provides as a shorthand for declaring imports from the same package:
+Presets are provided as a shorthand for declaring imports from the same package:
 
 ```ts
 presets: [
@@ -213,13 +213,13 @@ Named exports for modules under `./composables/*` will be registered for auto im
 
 ### Opt-out Auto Import
 
-You can opt-out auto import for specific modules by adding a comment:
+You can opt-out auto-import for specific modules by adding a comment:
 
 ```ts
 // @unimport-disable
 ```
 
-It's can be customized by setting `commentsDisable`:
+It can be customized by setting `commentsDisable`:
 
 ```ts
 Unimport.vite({

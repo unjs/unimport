@@ -27,9 +27,13 @@ export interface ImportCommon {
     [key: string]: any
   }
   /**
-   * If this import is a type import
+   * If this import is a pure type import
    */
   type?: boolean
+  /**
+   * Using this as the from when generating type declarations
+   */
+  typeFrom?: ModuleId
 }
 
 export interface Import extends ImportCommon {
@@ -267,6 +271,10 @@ export interface Addon {
   transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
   declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>
+  /**
+   * Extend or modify the imports list before injecting
+   */
+  extendImports?: (this: UnimportContext, imports: Import[]) => Import[] | void
 }
 
 export interface InstallGlobalOptions {

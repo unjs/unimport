@@ -73,8 +73,15 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     if (!_combinedImports) {
       // Combine static and dynamic imports
       // eslint-disable-next-line no-console
-      const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
-        .filter(i => !i.disabled)
+      let imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
+
+      for (const addon of ctx.addons) {
+        if (addon.extendImports) {
+          imports = addon.extendImports.call(ctx, imports) ?? imports
+        }
+      }
+
+      imports = imports.filter(i => !i.disabled)
 
       // Create map
       _map.clear()
@@ -104,7 +111,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   async function generateTypeDeclarations (options?: TypeDeclarationOptions) {
     const opts: TypeDeclarationOptions = {
-      resolvePath: i => i.from,
+      resolvePath: i => i.typeFrom || i.from,
       ...options
     }
     const {
