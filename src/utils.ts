@@ -231,7 +231,9 @@ export function addImportToCode (
   isCJS = false,
   mergeExisting = false,
   injectAtLast = false,
-  firstOccurrence = Infinity
+  firstOccurrence = Infinity,
+  onResolved?: (imports: Import[]) => void | Import[],
+  onStringified?: (str: string, imports: Import[]) => void | string
 ): MagicStringResult {
   let newImports: Import[] = []
   const s = getMagicString(code)
@@ -274,7 +276,11 @@ export function addImportToCode (
     newImports = imports
   }
 
-  const newEntries = toImports(newImports, isCJS)
+  newImports = onResolved?.(newImports) ?? newImports
+
+  let newEntries = toImports(newImports, isCJS)
+  newEntries = onStringified?.(newEntries, newImports) ?? newEntries
+
   if (newEntries) {
     const insertionIndex = injectAtLast
       ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0

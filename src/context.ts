@@ -320,7 +320,26 @@ async function injectImports (
   }
 
   return {
-    ...addImportToCode(s, imports, isCJSContext, options?.mergeExisting, options?.injectAtEnd, firstOccurrence),
+    ...addImportToCode(
+      s,
+      imports,
+      isCJSContext,
+      options?.mergeExisting,
+      options?.injectAtEnd,
+      firstOccurrence,
+      (imports) => {
+        for (const addon of ctx.addons) {
+          imports = addon.injectImportsResolved?.call(ctx, imports, s) ?? imports
+        }
+        return imports
+      },
+      (str, imports) => {
+        for (const addon of ctx.addons) {
+          str = addon.injectImportsStringified?.call(ctx, str, imports) ?? str
+        }
+        return str
+      }
+    ),
     imports
   }
 }

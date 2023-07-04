@@ -275,6 +275,14 @@ export interface Addon {
    * Extend or modify the imports list before injecting
    */
   extendImports?: (this: UnimportContext, imports: Import[]) => Import[] | void
+  /**
+   * Resolve imports before injecting
+   */
+  injectImportsResolved?: (this: UnimportContext, imports: Import[], code: MagicString) => Import[] | void
+  /**
+   * Modify the injection code before injecting
+   */
+  injectImportsStringified?: (this: UnimportContext, injection: string, imports: Import[]) => string | void
 }
 
 export interface InstallGlobalOptions {
