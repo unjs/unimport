@@ -1,36 +1,11 @@
 import { expect, describe, test } from 'vitest'
 import { createUnimport } from '../src'
+import { functionWrapAddon } from './share'
 
 describe('addon inject hooks', () => {
   const ctx = createUnimport({
     addons: [
-      {
-        injectImportsResolved (imports) {
-          return imports
-            .map((i) => {
-              if (i.from === 'vue') {
-                return {
-                  ...i,
-                  meta: {
-                    originalAs: (i.as || i.name)
-                  },
-                  as: '__' + (i.as || i.name) + '__'
-                }
-              }
-              return i
-            })
-        },
-        injectImportsStringified (str, imports) {
-          const injected = imports.filter(i => i.meta?.originalAs)
-          if (injected.length) {
-            return [
-              str,
-              'import { __helper } from "helper"',
-              injected.map(i => `const ${i.meta!.originalAs} = __helper(${i.as})`).join('\n')
-            ].join('\n')
-          }
-        }
-      }
+      functionWrapAddon()
     ],
     presets: [
       {
@@ -54,9 +29,10 @@ describe('addon inject hooks', () => {
   test('inject', async () => {
     expect((await ctx.injectImports('ref(1)')).code)
       .toMatchInlineSnapshot(`
-        "import { ref as __ref__ } from 'vue';
+        "import { ref as _$_ref } from 'vue';
         import { __helper } from \\"helper\\"
-        const ref = __helper(__ref__)
+        const ref = __helper(_$_ref)
+
         ref(1)"
       `)
 
@@ -90,9 +66,10 @@ describe('addon inject hooks', () => {
 
     expect((await ctx.injectImports('foo(1)')).code)
       .toMatchInlineSnapshot(`
-        "import { bar as __foo__ } from 'vue';
+        "import { bar as _$_foo } from 'vue';
         import { __helper } from \\"helper\\"
-        const foo = __helper(__foo__)
+        const foo = __helper(_$_foo)
+
         foo(1)"
       `)
   })
