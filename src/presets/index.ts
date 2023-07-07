@@ -29,6 +29,7 @@ import uniApp from './uni-app'
 import solid from './solid'
 import solidAppRouter from './solid-app-router'
 import vueRouterComposables from './vue-router-composables'
+import rxjs from './rxjs'
 
 export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
@@ -58,7 +59,8 @@ export const builtinPresets = {
   vitest: vitest,
   'uni-app': uniApp,
   'solid-js': solid,
-  'solid-app-router': solidAppRouter
+  'solid-app-router': solidAppRouter,
+  rxjs: rxjs,
 }
 
 export type BuiltinPresetName = keyof typeof builtinPresets
