@@ -60,7 +60,7 @@ export const builtinPresets = {
   'uni-app': uniApp,
   'solid-js': solid,
   'solid-app-router': solidAppRouter,
-  rxjs: rxjs,
+  rxjs: rxjs
 }
 
 export type BuiltinPresetName = keyof typeof builtinPresets
