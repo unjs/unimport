@@ -79,6 +79,8 @@ export interface PackagePreset {
 export type Preset = InlinePreset | PackagePreset
 
 export interface UnimportContext {
+  version: string
+
   options: Partial<UnimportOptions>
   staticImports: Import[]
   dynamicImports: Import[]

@@ -1,5 +1,6 @@
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
+import { version } from '../package.json'
 import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportMeta, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, toTypeReExports } from './utils'
 import { resolveBuiltinPresets } from './preset'
@@ -34,6 +35,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   const ctx: UnimportContext = {
+    version,
+
     options: opts,
     addons,
     staticImports: [...(opts.imports || [])].filter(Boolean),
