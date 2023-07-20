@@ -54,20 +54,20 @@
     "pkg-types": "^1.0.3",
     "scule": "^1.0.0",
     "strip-literal": "^1.0.1",
-    "unplugin": "^1.3.2"
+    "unplugin": "^1.4.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@vitest/coverage-v8": "^0.33.0",
     "bumpp": "^9.1.1",
     "conventional-changelog-cli": "^3.0.0",
-    "eslint": "8.44.0",
+    "eslint": "8.45.0",
     "h3": "^1.7.1",
     "jquery": "^3.7.0",
     "typescript": "^5.1.6",
     "unbuild": "^1.2.1",
     "vitest": "^0.33.0",
-    "vue-tsc": "^1.8.4"
+    "vue-tsc": "^1.8.5"
   },
-  "packageManager": "pnpm@8.6.6"
+  "packageManager": "pnpm@8.6.9"
 }
