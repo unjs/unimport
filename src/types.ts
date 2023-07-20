@@ -278,11 +278,11 @@ export interface Addon {
   /**
    * Resolve imports before injecting
    */
-  injectImportsResolved?: (this: UnimportContext, imports: Import[], code: MagicString) => Import[] | void
+  injectImportsResolved?: (this: UnimportContext, imports: Import[], code: MagicString, id?: string) => Import[] | void
   /**
    * Modify the injection code before injecting
    */
-  injectImportsStringified?: (this: UnimportContext, injection: string, imports: Import[]) => string | void
+  injectImportsStringified?: (this: UnimportContext, injection: string, imports: Import[], code: MagicString, id?: string) => string | void
 }
 
 export interface InstallGlobalOptions {

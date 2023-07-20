@@ -329,13 +329,13 @@ async function injectImports (
       firstOccurrence,
       (imports) => {
         for (const addon of ctx.addons) {
-          imports = addon.injectImportsResolved?.call(ctx, imports, s) ?? imports
+          imports = addon.injectImportsResolved?.call(ctx, imports, s, id) ?? imports
         }
         return imports
       },
       (str, imports) => {
         for (const addon of ctx.addons) {
-          str = addon.injectImportsStringified?.call(ctx, str, imports) ?? str
+          str = addon.injectImportsStringified?.call(ctx, str, imports, s, id) ?? str
         }
         return str
       }

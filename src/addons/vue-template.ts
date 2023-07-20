@@ -6,7 +6,7 @@ const UNREF_KEY = '__unimport_unref_'
 
 export const vueTemplateAddon = (): Addon => {
   const self: Addon = {
-    async transform (s) {
+    async transform (s, id) {
       if (!s.original.includes('_ctx.') || s.original.includes(UNREF_KEY)) {
         return s
       }
@@ -45,7 +45,7 @@ export const vueTemplateAddon = (): Addon => {
           if (addon === self) {
             continue
           }
-          targets = await addon.injectImportsResolved?.call(this, targets, s) ?? targets
+          targets = await addon.injectImportsResolved?.call(this, targets, s, id) ?? targets
         }
 
         let injection = toImports(targets)
@@ -53,7 +53,7 @@ export const vueTemplateAddon = (): Addon => {
           if (addon === self) {
             continue
           }
-          injection = await addon.injectImportsStringified?.call(this, injection, targets) ?? injection
+          injection = await addon.injectImportsStringified?.call(this, injection, targets, s, id) ?? injection
         }
 
         s.prepend(injection)
