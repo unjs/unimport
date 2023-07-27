@@ -15,6 +15,8 @@ export interface ImportCommon {
   priority?: number
   /** If this import is disabled */
   disabled?: boolean
+  /** Won't output import in declaration file if true */
+  dtsDisabled?: boolean
   /**
    * Metadata of the import
    */
