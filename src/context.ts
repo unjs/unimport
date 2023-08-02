@@ -205,7 +205,15 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   const s = getMagicString(code)
   // Strip comments so we don't match on them
   const original = s.original
-  const strippedCode = stripCommentsAndStrings(original)
+  const strippedCode = stripCommentsAndStrings(
+    original,
+    // Do not strip comments if they are virtual import names
+    options?.transformVirtualImports !== false && ctx.options.virtualImports?.length
+      ? {
+          filter: i => !(ctx.options.virtualImports!.includes(i))
+        }
+      : undefined
+  )
   const syntax = detectSyntax(strippedCode)
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
@@ -264,7 +272,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
 
   // Transform virtual imports like `import { foo } from '#imports'`
   if (options?.transformVirtualImports !== false && options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
-    const virtualImports = parseVirtualImports(original, ctx)
+    const virtualImports = parseVirtualImports(strippedCode, ctx)
     virtualImports.forEach((i) => {
       s.remove(i.start, i.end)
       Object.entries(i.namedImports || {})

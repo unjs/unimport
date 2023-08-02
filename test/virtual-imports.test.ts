@@ -15,12 +15,12 @@ describe('virtual imports', () => {
   import { watch } from 'fs'
   import { ref, computed, watchEffect as effect,
     bar as BAR } from '#imports'
-  
+
   const a = ref(1)
   const b = shallowRef(2) // auto import
-  
+
   effect(() => {})
-  
+
   watch('file')
     `.trim()
 
@@ -42,9 +42,9 @@ describe('virtual imports', () => {
         import { watch } from 'fs'
           const a = ref(1)
           const b = shallowRef(2) // auto import
-          
+
           effect(() => {})
-          
+
           watch('file')"
       `)
   })
@@ -61,12 +61,27 @@ const a = computed()
       `)
   })
 
-  test('error', () => {
+  test('non-exist', async () => {
     const fixture = `
-  import { notExist } from '#imports'
+import { notExist } from '#imports'
     `.trim()
 
-    expect(ctx.injectImports(fixture)).rejects
+    await expect(ctx.injectImports(fixture)).rejects
       .toMatchInlineSnapshot('[Error: [unimport] failed to find "notExist" imported from "#imports"]')
+  })
+
+  test('comment false-positive', async () => {
+    const fixture = `
+// import { } from '#imports';
+
+const a = ref(1)
+    `.trim()
+
+    expect((await ctx.injectImports(fixture, undefined, { autoImport: false })).code)
+      .toMatchInlineSnapshot(`
+        "// import { } from '#imports';
+
+        const a = ref(1)"
+      `)
   })
 })

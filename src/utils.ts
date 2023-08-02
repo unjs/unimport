@@ -2,7 +2,7 @@
 import { isAbsolute, relative } from 'pathe'
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
-import { stripLiteral } from 'strip-literal'
+import { stripLiteral, StripLiteralOptions } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
@@ -26,8 +26,8 @@ export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)])([\w_$]+)\s*(?=[.(
 
 const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
-export function stripCommentsAndStrings (code: string) {
-  return stripLiteral(code)
+export function stripCommentsAndStrings (code: string, options?: StripLiteralOptions) {
+  return stripLiteral(code, options)
     .replace(regexRE, 'new RegExp("")')
 }
 
