@@ -84,4 +84,20 @@ const a = ref(1)
         const a = ref(1)"
       `)
   })
+
+  // https://github.com/unocss/unocss/issues/2938
+  test('side-effects', async () => {
+    const fixture = `
+import 'uno.css'
+import { ref } from '#imports';
+export default ref(() => {})
+        `.trim()
+
+    expect((await ctx.injectImports(fixture, undefined, { autoImport: false })).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        import 'uno.css'
+        export default ref(() => {})"
+      `)
+  })
 })

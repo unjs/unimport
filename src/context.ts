@@ -210,7 +210,8 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
     // Do not strip comments if they are virtual import names
     options?.transformVirtualImports !== false && ctx.options.virtualImports?.length
       ? {
-          filter: i => !(ctx.options.virtualImports!.includes(i))
+          filter: i => !(ctx.options.virtualImports!.includes(i)),
+          fillChar: '-'
         }
       : undefined
   )
