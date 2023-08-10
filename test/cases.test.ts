@@ -38,6 +38,10 @@ describe('cases', () => {
         ]
       },
       {
+        from: 'lit',
+        imports: ['LitElement']
+      },
+      {
         from: 'three',
         imports: [['*', 'THREE']]
       },
