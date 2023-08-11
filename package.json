@@ -61,7 +61,7 @@
     "@vitest/coverage-v8": "^0.34.1",
     "bumpp": "^9.1.1",
     "conventional-changelog-cli": "^3.0.0",
-    "eslint": "8.46.0",
+    "eslint": "8.47.0",
     "h3": "^1.7.1",
     "jquery": "^3.7.0",
     "typescript": "^5.1.6",
@@ -69,5 +69,5 @@
     "vitest": "^0.34.1",
     "vue-tsc": "^1.8.8"
   },
-  "packageManager": "pnpm@8.6.11"
+  "packageManager": "pnpm@8.6.12"
 }
