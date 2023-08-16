@@ -44,7 +44,7 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@rollup/pluginutils": "^5.0.2",
+    "@rollup/pluginutils": "^5.0.3",
     "escape-string-regexp": "^5.0.0",
     "fast-glob": "^3.3.1",
     "local-pkg": "^0.4.3",
@@ -62,7 +62,7 @@
     "bumpp": "^9.1.1",
     "conventional-changelog-cli": "^3.0.0",
     "eslint": "8.47.0",
-    "h3": "^1.7.1",
+    "h3": "^1.8.0",
     "jquery": "^3.7.0",
     "typescript": "^5.1.6",
     "unbuild": "^1.2.1",
