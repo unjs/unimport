@@ -121,7 +121,7 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
       typeReExports = true
     } = opts
     const imports = await ctx.getImports()
-    let dts = toTypeDeclarationFile(imports.filter(i => !i.type), opts)
+    let dts = toTypeDeclarationFile(imports.filter(i => !i.type && !i.dtsDisabled), opts)
     const typeOnly = imports.filter(i => i.type)
     if (typeReExports && typeOnly.length) {
       dts += '\n' + toTypeReExports(typeOnly, opts)
