@@ -19,10 +19,10 @@ export const excludeRE = [
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]|\bimport\b/g
 
-/**                                                           |       |
- *                    destructing   case&ternary    non-call  |  id   |
- *                         ↓             ↓             ↓      |       |*/
-export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)])([\w_$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$)/g
+/**                                                                            |       |
+ *                    destructing   case&ternary    non-call     inheritance   |  id   |
+ *                         ↓             ↓             ↓             ↓         |       |*/
+export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)]|(?:\bextends)\s+)([\w_$]+)\s*(?=[.()[\]}}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+{)/g
 
 const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
