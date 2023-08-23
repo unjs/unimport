@@ -1,6 +1,6 @@
 {
   "name": "unimport",
-  "version": "3.1.3",
+  "version": "3.2.0",
   "description": "Unified utils for auto importing APIs in modules",
   "repository": "unjs/unimport",
   "license": "MIT",
