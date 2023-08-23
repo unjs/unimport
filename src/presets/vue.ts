@@ -68,7 +68,8 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
     'InjectionKey',
     'PropType',
     'Ref',
-    'VNode'
+    'VNode',
+    'WritableComputedRef'
   ].map(name => ({ name, type: true }))
 ]
 
