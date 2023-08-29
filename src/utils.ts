@@ -5,7 +5,7 @@ import MagicString from 'magic-string'
 import { stripLiteral, StripLiteralOptions } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
 import fs from "fs"
-const files={}
+export const files={}
 export const excludeRE = [
   // imported/exported from other module
   /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
