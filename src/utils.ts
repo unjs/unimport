@@ -2,7 +2,7 @@
 import { isAbsolute, relative } from 'pathe'
 import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
-import { stripLiteral } from 'strip-literal'
+import { stripLiteral, StripLiteralOptions } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
 import fs from "fs"
 const files={}
@@ -20,15 +20,15 @@ export const excludeRE = [
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]|\bimport\b/g
 
-/**                                                           |       |
- *                    destructing   case&ternary    non-call  |  id   |
- *                         ↓             ↓             ↓      |       |*/
-export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)])([\w_$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$)/g
+/**                                                                            |       |
+ *                    destructing   case&ternary    non-call     inheritance   |  id   |
+ *                         ↓             ↓             ↓             ↓         |       |*/
+export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)]|(?:\bextends)\s+)([\w_$]+)\s*(?=[.()[\]}}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+{)/g
 
 const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
-export function stripCommentsAndStrings (code: string) {
-  return stripLiteral(code)
+export function stripCommentsAndStrings (code: string, options?: StripLiteralOptions) {
+  return stripLiteral(code, options)
     .replace(regexRE, 'new RegExp("")')
 }
 
@@ -266,7 +266,9 @@ export function addImportToCode (
   isCJS = false,
   mergeExisting = false,
   injectAtLast = false,
-  firstOccurrence = Infinity
+  firstOccurrence = Infinity,
+  onResolved?: (imports: Import[]) => void | Import[],
+  onStringified?: (str: string, imports: Import[]) => void | string
 ): MagicStringResult {
   let newImports: Import[] = []
   const s = getMagicString(code)
@@ -309,7 +311,11 @@ export function addImportToCode (
     newImports = imports
   }
 
-  const newEntries = toImports(newImports, isCJS)
+  newImports = onResolved?.(newImports) ?? newImports
+
+  let newEntries = toImports(newImports, isCJS)
+  newEntries = onStringified?.(newEntries, newImports) ?? newEntries
+
   if (newEntries) {
     const insertionIndex = injectAtLast
       ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0

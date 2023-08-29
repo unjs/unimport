@@ -1,5 +1,6 @@
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import MagicString from 'magic-string'
+import { version } from '../package.json'
 import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportMeta, UnimportOptions } from './types'
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, toTypeReExports } from './utils'
 import { resolveBuiltinPresets } from './preset'
@@ -34,6 +35,8 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   }
 
   const ctx: UnimportContext = {
+    version,
+
     options: opts,
     addons,
     staticImports: [...(opts.imports || [])].filter(Boolean),
@@ -73,8 +76,15 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     if (!_combinedImports) {
       // Combine static and dynamic imports
       // eslint-disable-next-line no-console
-      const imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
-        .filter(i => !i.disabled)
+      let imports = normalizeImports(dedupeImports([...ctx.staticImports, ...ctx.dynamicImports], opts.warn || console.warn))
+
+      for (const addon of ctx.addons) {
+        if (addon.extendImports) {
+          imports = addon.extendImports.call(ctx, imports) ?? imports
+        }
+      }
+
+      imports = imports.filter(i => !i.disabled)
 
       // Create map
       _map.clear()
@@ -104,14 +114,14 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
 
   async function generateTypeDeclarations (options?: TypeDeclarationOptions) {
     const opts: TypeDeclarationOptions = {
-      resolvePath: i => i.from,
+      resolvePath: i => i.typeFrom || i.from,
       ...options
     }
     const {
       typeReExports = true
     } = opts
     const imports = await ctx.getImports()
-    let dts = toTypeDeclarationFile(imports.filter(i => !i.type), opts)
+    let dts = toTypeDeclarationFile(imports.filter(i => !i.type && !i.dtsDisabled), opts)
     const typeOnly = imports.filter(i => i.type)
     if (typeReExports && typeOnly.length) {
       dts += '\n' + toTypeReExports(typeOnly, opts)
@@ -195,7 +205,16 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
   const s = getMagicString(code)
   // Strip comments so we don't match on them
   const original = s.original
-  const strippedCode = stripCommentsAndStrings(original)
+  const strippedCode = stripCommentsAndStrings(
+    original,
+    // Do not strip comments if they are virtual import names
+    options?.transformVirtualImports !== false && ctx.options.virtualImports?.length
+      ? {
+          filter: i => !(ctx.options.virtualImports!.includes(i)),
+          fillChar: '-'
+        }
+      : undefined
+  )
   const syntax = detectSyntax(strippedCode)
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
@@ -254,7 +273,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
 
   // Transform virtual imports like `import { foo } from '#imports'`
   if (options?.transformVirtualImports !== false && options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
-    const virtualImports = parseVirtualImports(original, ctx)
+    const virtualImports = parseVirtualImports(strippedCode, ctx)
     virtualImports.forEach((i) => {
       s.remove(i.start, i.end)
       Object.entries(i.namedImports || {})
@@ -313,7 +332,26 @@ async function injectImports (
   }
 
   return {
-    ...addImportToCode(s, imports, isCJSContext, options?.mergeExisting, options?.injectAtEnd, firstOccurrence),
+    ...addImportToCode(
+      s,
+      imports,
+      isCJSContext,
+      options?.mergeExisting,
+      options?.injectAtEnd,
+      firstOccurrence,
+      (imports) => {
+        for (const addon of ctx.addons) {
+          imports = addon.injectImportsResolved?.call(ctx, imports, s, id) ?? imports
+        }
+        return imports
+      },
+      (str, imports) => {
+        for (const addon of ctx.addons) {
+          str = addon.injectImportsStringified?.call(ctx, str, imports, s, id) ?? str
+        }
+        return str
+      }
+    ),
     imports
   }
 }

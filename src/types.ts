@@ -15,6 +15,8 @@ export interface ImportCommon {
   priority?: number
   /** If this import is disabled */
   disabled?: boolean
+  /** Won't output import in declaration file if true */
+  dtsDisabled?: boolean
   /**
    * Metadata of the import
    */
@@ -27,9 +29,13 @@ export interface ImportCommon {
     [key: string]: any
   }
   /**
-   * If this import is a type import
+   * If this import is a pure type import
    */
   type?: boolean
+  /**
+   * Using this as the from when generating type declarations
+   */
+  typeFrom?: ModuleId
 }
 
 export interface Import extends ImportCommon {
@@ -75,6 +81,8 @@ export interface PackagePreset {
 export type Preset = InlinePreset | PackagePreset
 
 export interface UnimportContext {
+  version: string
+
   options: Partial<UnimportOptions>
   staticImports: Import[]
   dynamicImports: Import[]
@@ -267,6 +275,18 @@ export interface Addon {
   transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
   declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>
+  /**
+   * Extend or modify the imports list before injecting
+   */
+  extendImports?: (this: UnimportContext, imports: Import[]) => Import[] | void
+  /**
+   * Resolve imports before injecting
+   */
+  injectImportsResolved?: (this: UnimportContext, imports: Import[], code: MagicString, id?: string) => Import[] | void
+  /**
+   * Modify the injection code before injecting
+   */
+  injectImportsStringified?: (this: UnimportContext, injection: string, imports: Import[], code: MagicString, id?: string) => string | void
 }
 
 export interface InstallGlobalOptions {
