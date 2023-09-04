@@ -209,7 +209,7 @@ export interface ScanDirExportsOptions {
   fileFilter?: (file: string) => boolean
 
   /**
-   * Also register type exports
+   * Register type exports
    *
    * @default true
    */
