@@ -122,9 +122,7 @@ export async function scanExports (filepath: string, includeTypes: boolean, seen
   await toImport(exports)
 
   if (includeTypes) {
-    const exportsType = findTypeExports(code)
-    console.log({ exportsType })
-    await toImport(exportsType, { type: true })
+    await toImport(findTypeExports(code), { type: true })
   }
 
   return imports
