@@ -2,7 +2,7 @@ import { readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import fg from 'fast-glob'
 import { parse as parsePath, join, normalize, resolve, extname, dirname } from 'pathe'
-import { findExports } from 'mlly'
+import { ESMExport, findExports, findTypeExports } from 'mlly'
 import { camelCase } from 'scule'
 import { Import, ScanDirExportsOptions } from './types'
 
@@ -34,7 +34,8 @@ export async function scanFilesFromDir (dir: string | string[], options?: ScanDi
 
 export async function scanDirExports (dir: string | string[], options?: ScanDirExportsOptions) {
   const files = await scanFilesFromDir(dir, options)
-  const fileExports = await Promise.all(files.map(i => scanExports(i)))
+  const includeTypes = options?.types ?? true
+  const fileExports = await Promise.all(files.map(i => scanExports(i, includeTypes)))
   return fileExports.flat()
 }
 
@@ -47,7 +48,7 @@ const FileExtensionLookup = [
   '.js'
 ]
 
-export async function scanExports (filepath: string, seen = new Set<string>()): Promise<Import[]> {
+export async function scanExports (filepath: string, includeTypes: boolean, seen = new Set<string>()): Promise<Import[]> {
   if (seen.has(filepath)) {
     // eslint-disable-next-line no-console
     console.warn(`[unimport] "${filepath}" is already scanned, skipping`)
@@ -71,45 +72,59 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
     imports.push({ name: 'default', as, from: filepath })
   }
 
-  for (const exp of exports) {
-    if (exp.type === 'named') {
-      for (const name of exp.names) {
-        imports.push({ name, as: name, from: filepath })
-      }
-    } else if (exp.type === 'declaration') {
-      if (exp.name) {
-        imports.push({ name: exp.name, as: exp.name, from: filepath })
-      }
-    } else if (exp.type === 'star' && exp.specifier) {
-      if (exp.name) {
-        // export * as foo from './foo'
-        imports.push({ name: exp.name, as: exp.name, from: filepath })
-      } else {
-        // export * from './foo', scan deeper
-        const subfile = exp.specifier
-        let subfilepath = resolve(dirname(filepath), subfile)
+  async function toImport (exports: ESMExport[], additional?: Partial<Import>) {
+    for (const exp of exports) {
+      if (exp.type === 'named') {
+        for (const name of exp.names) {
+          imports.push({ name, as: name, from: filepath, ...additional })
+        }
+      } else if (exp.type === 'declaration') {
+        if (exp.name) {
+          imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
+        }
+      } else if (exp.type === 'star' && exp.specifier) {
+        if (exp.name) {
+          // export * as foo from './foo'
+          imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
+        } else {
+          // export * from './foo', scan deeper
+          const subfile = exp.specifier
+          let subfilepath = resolve(dirname(filepath), subfile)
 
-        if (!extname(subfilepath)) {
-          for (const ext of FileExtensionLookup) {
-            if (existsSync(`${subfilepath}${ext}`)) {
-              subfilepath = `${subfilepath}${ext}`
-              break
-            } else if (existsSync(`${subfilepath}/index${ext}`)) {
-              subfilepath = `${subfilepath}/index${ext}`
-              break
+          if (!extname(subfilepath)) {
+            for (const ext of FileExtensionLookup) {
+              if (existsSync(`${subfilepath}${ext}`)) {
+                subfilepath = `${subfilepath}${ext}`
+                break
+              } else if (existsSync(`${subfilepath}/index${ext}`)) {
+                subfilepath = `${subfilepath}/index${ext}`
+                break
+              }
             }
           }
-        }
 
-        if (!existsSync(subfilepath)) {
-          // eslint-disable-next-line no-console
-          console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
-          continue
-        }
+          if (!existsSync(subfilepath)) {
+            // eslint-disable-next-line no-console
+            console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
+            continue
+          }
 
-        imports.push(...await scanExports(subfilepath, seen))
+          const nested = await scanExports(subfilepath, includeTypes, seen)
+          imports.push(...(additional
+            ? nested.map(i => ({ ...i, ...additional }))
+            : nested
+          ))
+        }
       }
     }
+  }
+
+  await toImport(exports)
+
+  if (includeTypes) {
+    const exportsType = findTypeExports(code)
+    console.log({ exportsType })
+    await toImport(exportsType, { type: true })
   }
 
   return imports

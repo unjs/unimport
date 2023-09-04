@@ -209,6 +209,13 @@ export interface ScanDirExportsOptions {
   fileFilter?: (file: string) => boolean
 
   /**
+   * Also register type exports
+   *
+   * @default true
+   */
+  types?: boolean
+
+  /**
    * Current working directory
    *
    * @default process.cwd()

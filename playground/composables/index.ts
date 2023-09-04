@@ -17,3 +17,9 @@ export {
   localA,
   localB as localBAlias
 }
+
+export type CustomType1 = string | number
+
+export interface CustomInterface1 {
+  name: string
+}
