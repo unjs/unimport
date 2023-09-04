@@ -94,6 +94,10 @@ test('dts', async () => {
         export type { Ref, ComputedRef } from 'vue'
         // @ts-ignore
         export type { JQuery } from 'jquery'
+        // @ts-ignore
+        export type { CustomType1, CustomInterface1 } from '<root>/playground/composables/index.ts'
+        // @ts-ignore
+        export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index.ts'
       }"
     `)
 })

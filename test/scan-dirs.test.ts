@@ -20,6 +20,18 @@ describe('scan-dirs', () => {
             "name": "bump",
           },
           {
+            "as": "CustomInterface1",
+            "from": "index.ts",
+            "name": "CustomInterface1",
+            "type": true,
+          },
+          {
+            "as": "CustomType1",
+            "from": "index.ts",
+            "name": "CustomType1",
+            "type": true,
+          },
+          {
             "as": "foo",
             "from": "foo.ts",
             "name": "default",
@@ -78,6 +90,37 @@ describe('scan-dirs', () => {
         i.from = relative(dir, i.from)
         return i
       })
+
+    expect(importsResult).toMatchInlineSnapshot(`
+      [
+        {
+          "as": "bar",
+          "from": "nested/bar/index.ts",
+          "name": "bar",
+        },
+        {
+          "as": "myBazFunction",
+          "from": "nested/bar/baz.ts",
+          "name": "myBazFunction",
+        },
+        {
+          "as": "named",
+          "from": "nested/bar/index.ts",
+          "name": "named",
+        },
+        {
+          "as": "subFoo",
+          "from": "nested/bar/sub/index.ts",
+          "name": "subFoo",
+        },
+        {
+          "as": "CustomType2",
+          "from": "nested/bar/sub/index.ts",
+          "name": "CustomType2",
+          "type": true,
+        },
+      ]
+    `)
 
     expect(toImports(importsResult)).toMatchInlineSnapshot(`
       "import { bar, named } from 'nested/bar/index.ts';
