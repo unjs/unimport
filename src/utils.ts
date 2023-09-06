@@ -101,7 +101,7 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
     }
     const diff = (other.priority || 1) - (i.priority || 1)
     if (diff === 0) {
-      warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored`)
+      warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored and "${i.from}" is used`)
     }
     if (diff <= 0) {
       indexToRemove.add(map.get(name)!)
