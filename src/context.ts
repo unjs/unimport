@@ -132,15 +132,16 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
     return dts
   }
 
-  async function scanImportsFromFile (filepath: string) {
-    const additions = await scanExports(filepath)
+  async function scanImportsFromFile (filepath: string, includeTypes = true) {
+    const additions = await scanExports(filepath, includeTypes)
     await modifyDynamicImports(imports => imports.filter(i => i.from !== filepath).concat(additions))
     return additions
   }
 
   async function scanImportsFromDir (dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
     const files = await scanFilesFromDir(dirs, options)
-    return (await Promise.all(files.map(scanImportsFromFile))).flat()
+    const includeTypes = options?.types ?? true
+    return (await Promise.all(files.map(dir => scanImportsFromFile(dir, includeTypes)))).flat()
   }
 
   async function injectImportsWithContext (code: string | MagicString, id?: string, options?: InjectImportsOptions) {
