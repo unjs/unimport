@@ -38,15 +38,7 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
   const fileExports = await Promise.all(files.map(i => scanExports(i, includeTypes)))
   const exports = fileExports.flat()
 
-  // Dedupe imports for the same export name exists in both `.js` and `.d.ts` file,
-  // We remove the type-only entry
-  const deduped = exports.filter((i) => {
-    if (!i.type) {
-      return true
-    }
-    return !exports.find(e => e.as === i.as && e.name === i.name && !e.type)
-  })
-
+  const deduped = dedupeDtsExports(exports)
   return deduped
 }
 
@@ -58,6 +50,17 @@ const FileExtensionLookup = [
   '.cjs',
   '.js'
 ]
+
+export function dedupeDtsExports (exports: Import[]) {
+  // Dedupe imports for the same export name exists in both `.js` and `.d.ts` file,
+  // We remove the type-only entry
+  return exports.filter((i) => {
+    if (!i.type) {
+      return true
+    }
+    return !exports.find(e => e.as === i.as && e.name === i.name && !e.type)
+  })
+}
 
 export async function scanExports (filepath: string, includeTypes: boolean, seen = new Set<string>()): Promise<Import[]> {
   if (seen.has(filepath)) {
