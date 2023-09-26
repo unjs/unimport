@@ -36,7 +36,18 @@ export async function scanDirExports (dir: string | string[], options?: ScanDirE
   const files = await scanFilesFromDir(dir, options)
   const includeTypes = options?.types ?? true
   const fileExports = await Promise.all(files.map(i => scanExports(i, includeTypes)))
-  return fileExports.flat()
+  const exports = fileExports.flat()
+
+  // Dedupe imports for the same export name exists in both `.js` and `.d.ts` file,
+  // We remove the type-only entry
+  const deduped = exports.filter((i) => {
+    if (!i.type) {
+      return true
+    }
+    return !exports.find(e => e.as === i.as && e.name === i.name && !e.type)
+  })
+
+  return deduped
 }
 
 const FileExtensionLookup = [
@@ -119,10 +130,19 @@ export async function scanExports (filepath: string, includeTypes: boolean, seen
     }
   }
 
-  await toImport(exports)
+  const isDts = filepath.match(/\.d\.[mc]?ts$/)
 
-  if (includeTypes) {
-    await toImport(findTypeExports(code), { type: true })
+  if (isDts) {
+    if (includeTypes) {
+      await toImport(exports, { type: true })
+      await toImport(findTypeExports(code), { type: true })
+    }
+  } else {
+    await toImport(exports)
+
+    if (includeTypes) {
+      await toImport(findTypeExports(code), { type: true })
+    }
   }
 
   return imports

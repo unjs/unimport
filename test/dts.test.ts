@@ -87,6 +87,8 @@ test('dts', async () => {
         const useEffect: typeof import('react')['useEffect']
         const useRef: typeof import('react')['useRef']
         const useState: typeof import('react')['useState']
+        const vanillaA: typeof import('<root>/playground/composables/vanilla.js')['vanillaA']
+        const vanillaB: typeof import('<root>/playground/composables/vanilla.js')['vanillaB']
       }
       // for type re-export
       declare global {
@@ -98,6 +100,8 @@ test('dts', async () => {
         export type { CustomType1, CustomInterface1 } from '<root>/playground/composables/index.ts'
         // @ts-ignore
         export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index.ts'
+        // @ts-ignore
+        export type { vanillaTypeOnlyFunction, VanillaInterface, VanillaInterfaceAlias } from '<root>/playground/composables/vanilla.d.ts'
       }"
     `)
 })
