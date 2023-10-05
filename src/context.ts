@@ -5,7 +5,7 @@ import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenab
 import { excludeRE, stripCommentsAndStrings, separatorRE, importAsRE, toTypeDeclarationFile, addImportToCode, dedupeImports, toExports, normalizeImports, matchRE, getMagicString, toTypeReExports } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
-import { scanExports, scanFilesFromDir } from './scan-dirs'
+import { dedupeDtsExports, scanExports, scanFilesFromDir } from './scan-dirs'
 
 export type Unimport = ReturnType<typeof createUnimport>
 
@@ -141,7 +141,10 @@ export function createUnimport (opts: Partial<UnimportOptions>) {
   async function scanImportsFromDir (dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
     const files = await scanFilesFromDir(dirs, options)
     const includeTypes = options?.types ?? true
-    return (await Promise.all(files.map(dir => scanImportsFromFile(dir, includeTypes)))).flat()
+    const imports = (await Promise.all(files.map(dir => scanExports(dir, includeTypes)))).flat()
+    const deduped = dedupeDtsExports(imports)
+    await modifyDynamicImports(imports => imports.filter(i => !files.includes(i.from)).concat(deduped))
+    return imports
   }
 
   async function injectImportsWithContext (code: string | MagicString, id?: string, options?: InjectImportsOptions) {

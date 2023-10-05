@@ -61,6 +61,34 @@ describe('scan-dirs', () => {
             "from": "index.ts",
             "name": "useDoubled",
           },
+          {
+            "as": "vanillaA",
+            "from": "vanilla.js",
+            "name": "vanillaA",
+          },
+          {
+            "as": "vanillaB",
+            "from": "vanilla.js",
+            "name": "vanillaB",
+          },
+          {
+            "as": "VanillaInterface",
+            "from": "vanilla.d.ts",
+            "name": "VanillaInterface",
+            "type": true,
+          },
+          {
+            "as": "VanillaInterfaceAlias",
+            "from": "vanilla.d.ts",
+            "name": "VanillaInterfaceAlias",
+            "type": true,
+          },
+          {
+            "as": "vanillaTypeOnlyFunction",
+            "from": "vanilla.d.ts",
+            "name": "vanillaTypeOnlyFunction",
+            "type": true,
+          },
         ]
       `)
   })
