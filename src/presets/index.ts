@@ -30,6 +30,7 @@ import solid from './solid'
 import solidAppRouter from './solid-app-router'
 import vueRouterComposables from './vue-router-composables'
 import rxjs from './rxjs'
+import dateFns from './date-fns'
 
 export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
@@ -60,7 +61,8 @@ export const builtinPresets = {
   'uni-app': uniApp,
   'solid-js': solid,
   'solid-app-router': solidAppRouter,
-  rxjs: rxjs
+  rxjs: rxjs,
+  'date-fns': dateFns
 }
 
 export type BuiltinPresetName = keyof typeof builtinPresets
