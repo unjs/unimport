@@ -66,13 +66,19 @@ describe('toExports', () => {
   it('strip extensions', () => {
     const imports: Import[] = [
       { from: 'test1.ts', name: 'foo', as: 'foo' },
-      { from: 'test2.mjs', name: 'foobar', as: 'foobar' }
+      { from: 'test2.mjs', name: 'foobar', as: 'foobar' },
+      { from: './test1.ts', name: 'foo', as: 'foo' },
+      { from: './test2.mjs', name: 'foobar', as: 'foobar' },
+      { from: 'test1.ts/test1.ts', name: 'foo', as: 'foo' }
     ]
 
     expect(toExports(imports))
       .toMatchInlineSnapshot(`
-        "export { foo } from 'test1';
-        export { foobar } from 'test2';"
+        "export { foo } from 'test1.ts';
+        export { foobar } from 'test2.mjs';
+        export { foo } from './test1';
+        export { foobar } from './test2';
+        export { foo } from 'test1.ts/test1';"
       `)
   })
 
