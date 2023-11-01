@@ -118,7 +118,7 @@ export function toExports (imports: Import[], fileDir?: string, includeType = fa
   const map = toImportModuleMap(imports, includeType)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
-      name = name.replace(/(\/|\.\/)(.*)(\.[^.]+)/, "$1$2")
+      name = name.replace(/(\/|\.\/)(.*)(\.[^.]+)/, '$1$2')
       if (fileDir && isAbsolute(name)) {
         name = relative(fileDir, name)
         if (!name.match(/^[.\/]/)) {
