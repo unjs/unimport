@@ -151,4 +151,19 @@ import { baz } from 'baz'
         import { baz } from 'baz'"
       `)
   })
+
+  test('deep ternary inject', async () => {
+    const { injectImports } = createUnimport({
+      imports: [
+        { name: 'A', from: 'test-id' },
+        { name: 'B', from: 'test-id' },
+        { name: 'C', from: 'test-id' }
+      ]
+    })
+    expect((await injectImports('const result = true ? false ? A : B : C')).code)
+      .toMatchInlineSnapshot(`
+        "import { A, B, C } from 'test-id';
+        const result = true ? false ? A : B : C"
+      `)
+  })
 })

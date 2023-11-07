@@ -237,7 +237,9 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
         }
         // Remove property, but keep `case x:` and `? x :`
         const end = strippedCode[i.index! + i[0].length]
-        if (end === ':' && !['?', 'case'].includes(i[1].trim())) {
+        // also keeps deep ternary like `true ? false ? a : b : c`
+        const before = strippedCode[i.index! - 1]
+        if (end === ':' && !['?', 'case'].includes(i[1].trim()) && before !== ':') {
           return null
         }
         const name = i[2]
