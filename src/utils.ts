@@ -118,7 +118,9 @@ export function toExports (imports: Import[], fileDir?: string, includeType = fa
   const map = toImportModuleMap(imports, includeType)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
-      if (isFilePath(name)) { name = name.replace(/(\/|\.\/)(.*)(\.[^.]+)/, '$1$2') }
+      if (isFilePath(name)) {
+        name = name.replace(/(\/|\.\/)(.*)(\.[^.]+)/, '$1$2')
+      }
       if (fileDir && isAbsolute(name)) {
         name = relative(fileDir, name)
         if (!name.match(/^[.\/]/)) {
@@ -313,5 +315,5 @@ export function resolveIdAbsolute (id: string, parentId?: string) {
 }
 
 function isFilePath (path: string) {
-  return path.startsWith('.') || path.startsWith('/') || path.startsWith('\\') || path.includes('://')
+  return path.startsWith('.') || isAbsolute(path) || path.includes('://')
 }
