@@ -78,7 +78,7 @@ describe('toExports', () => {
         export { foobar } from 'test2.mjs';
         export { foo } from './test1';
         export { foobar } from './test2';
-        export { foo } from 'test1.ts/test1';"
+        export { foo } from 'test1.ts/test1.ts';"
       `)
   })
 
