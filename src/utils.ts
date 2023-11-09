@@ -119,7 +119,7 @@ export function toExports (imports: Import[], fileDir?: string, includeType = fa
   return Object.entries(map)
     .flatMap(([name, imports]) => {
       if (isFilePath(name)) {
-        name = name.replace(/(\/|\.\/)(.*)(\.[^.]+)/, '$1$2')
+        name = name.replace(/\.[a-zA-Z]+$/, '')
       }
       if (fileDir && isAbsolute(name)) {
         name = relative(fileDir, name)
