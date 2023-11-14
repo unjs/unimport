@@ -1,0 +1,16 @@
+{
+  "pair-diff.patterns": [
+    {
+      "source": "./test/cases/positive/*.ts",
+      "target": "./test/cases/positive/<name>.output.ts",
+      "ignore": "**/*.output.ts",
+    },
+    {
+      "source": "./test/cases/positive/*.output.ts",
+      "target": "./test/cases/positive/<name>.ts",
+      "replace": {
+        ".output.": "."
+      }
+    }
+  ]
+}
