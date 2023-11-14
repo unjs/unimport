@@ -7,14 +7,14 @@ describe('context', () => {
       imports: [
         { name: 'default', from: 'jquery', as: '$' },
         { name: 'foo', from: 'foo', as: 'disabled', disabled: true },
-        { name: 'FOO', from: 'vue', type: true }
+        { name: 'FOO', from: 'vue', type: true },
       ],
       presets: [
         {
           from: 'vue',
-          imports: ['ref', 'reactive', 'computed', { name: 'Ref', type: true }]
-        }
-      ]
+          imports: ['ref', 'reactive', 'computed', { name: 'Ref', type: true }],
+        },
+      ],
     })
 
     expect(await unimport.toExports()).toMatchInlineSnapshot(`

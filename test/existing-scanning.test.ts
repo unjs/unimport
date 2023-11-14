@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { excludeRE, importAsRE, separatorRE, stripCommentsAndStrings } from '../src/utils'
 
 describe('regex for extract local variable', () => {
-  const cases:{input:string, output:string[]}[] = [
+  const cases: { input: string; output: string[] }[] = [
     { input: 'const b;', output: ['b'] },
     { input: 'const { ref,    computed,watch} = Vue', output: ['ref', 'computed', 'watch'] },
     { input: 'const {  } = Vue', output: [] },
     { input: 'const { ref} = Vue', output: ['ref'] },
     { input: 'const { mabye_test, $test} = Vue', output: ['mabye_test', '$test'] },
-    { input: 'const [state] = useState(1)', output: ['state'] }
+    { input: 'const [state] = useState(1)', output: ['state'] },
 
     // We may not able to handle these cases
     //     { input: 'const b = computed(0)  ,   test=1;', output: ['b', 'test'] },
@@ -32,7 +32,7 @@ describe('regex for extract local variable', () => {
   for (const item of cases) {
     it(item.input, () => {
       const strippedCode = stripCommentsAndStrings(item.input)
-      const identifiers:string[] = []
+      const identifiers: string[] = []
 
       for (const match of strippedCode.matchAll(excludeRE[3])) {
         const segments = [...match[1]?.split(separatorRE) || [], ...match[2]?.split(separatorRE) || []]

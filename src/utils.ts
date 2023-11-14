@@ -1,8 +1,9 @@
-/* eslint-disable spaced-comment */
 import { isAbsolute, relative } from 'pathe'
-import { findStaticImports, parseStaticImport, StaticImport, resolvePath } from 'mlly'
+import type { StaticImport } from 'mlly'
+import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
-import { stripLiteral, StripLiteralOptions } from 'strip-literal'
+import type { StripLiteralOptions } from 'strip-literal'
+import { stripLiteral } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
 
 export const excludeRE = [
@@ -13,29 +14,31 @@ export const excludeRE = [
   // defined as class
   /\bclass\s*([\w_$]+?)\s*{/gs,
   // defined as local variable
-  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs
+  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs,
 ]
 
 export const importAsRE = /^.*\sas\s+/
 export const separatorRE = /[,[\]{}\n]|\bimport\b/g
 
-/**                                                                            |       |
+/**
+ *                                                                            |       |
  *                    destructing   case&ternary    non-call     inheritance   |  id   |
- *                         ↓             ↓             ↓             ↓         |       |*/
+ *                         ↓             ↓             ↓             ↓         |       |
+ */
 export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)]|(?:\bextends)\s+)([\w_$]+)\s*(?=[.()[\]}}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+{)/g
 
 const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
-export function stripCommentsAndStrings (code: string, options?: StripLiteralOptions) {
+export function stripCommentsAndStrings(code: string, options?: StripLiteralOptions) {
   return stripLiteral(code, options)
     .replace(regexRE, 'new RegExp("")')
 }
 
-export function defineUnimportPreset (preset: InlinePreset): InlinePreset {
+export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
-export function toImports (imports: Import[], isCJS = false) {
+export function toImports(imports: Import[], isCJS = false) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
     .flatMap(([name, importSet]) => {
@@ -47,21 +50,23 @@ export function toImports (imports: Import[], isCJS = false) {
             entries.push(
               isCJS
                 ? `require('${name}');`
-                : `import '${name}';`
+                : `import '${name}';`,
             )
             return false
-          } else if (i.name === 'default') {
+          }
+          else if (i.name === 'default') {
             entries.push(
               isCJS
                 ? `const { default: ${i.as} } = require('${name}');`
-                : `import ${i.as} from '${name}';`
+                : `import ${i.as} from '${name}';`,
             )
             return false
-          } else if (i.name === '*') {
+          }
+          else if (i.name === '*') {
             entries.push(
               isCJS
                 ? `const ${i.as} = require('${name}');`
-                : `import * as ${i.as} from '${name}';`
+                : `import * as ${i.as} from '${name}';`,
             )
             return false
           }
@@ -74,7 +79,7 @@ export function toImports (imports: Import[], isCJS = false) {
         entries.push(
           isCJS
             ? `const { ${importsAs.join(', ')} } = require('${name}');`
-            : `import { ${importsAs.join(', ')} } from '${name}';`
+            : `import { ${importsAs.join(', ')} } from '${name}';`,
         )
       }
 
@@ -83,7 +88,7 @@ export function toImports (imports: Import[], isCJS = false) {
     .join('\n')
 }
 
-export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
+export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
   const map = new Map<string, number>()
   const indexToRemove = new Set<number>()
 
@@ -100,13 +105,14 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
       return
     }
     const diff = (other.priority || 1) - (i.priority || 1)
-    if (diff === 0) {
+    if (diff === 0)
       warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored and "${i.from}" is used`)
-    }
+
     if (diff <= 0) {
       indexToRemove.add(map.get(name)!)
       map.set(name, idx)
-    } else {
+    }
+    else {
       indexToRemove.add(idx)
     }
   })
@@ -114,18 +120,17 @@ export function dedupeImports (imports: Import[], warn: (msg: string) => void) {
   return imports.filter((_, idx) => !indexToRemove.has(idx))
 }
 
-export function toExports (imports: Import[], fileDir?: string, includeType = false) {
+export function toExports(imports: Import[], fileDir?: string, includeType = false) {
   const map = toImportModuleMap(imports, includeType)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
-      if (isFilePath(name)) {
+      if (isFilePath(name))
         name = name.replace(/\.[a-zA-Z]+$/, '')
-      }
+
       if (fileDir && isAbsolute(name)) {
         name = relative(fileDir, name)
-        if (!name.match(/^[.\/]/)) {
-          name = './' + name
-        }
+        if (!name.match(/^[.\/]/))
+          name = `./${name}`
       }
       const entries: string[] = []
       const filtered = Array.from(imports).filter((i) => {
@@ -135,15 +140,15 @@ export function toExports (imports: Import[], fileDir?: string, includeType = fa
         }
         return true
       })
-      if (filtered.length) {
+      if (filtered.length)
         entries.push(`export { ${filtered.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
-      }
+
       return entries
     })
     .join('\n')
 }
 
-export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
+export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
   return imports
     .map((i) => {
       const from = (options?.resolvePath?.(i) || i.typeFrom || i.from).replace(/\.ts$/, '')
@@ -152,21 +157,21 @@ export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclara
     .sort()
 }
 
-export function toTypeDeclarationFile (imports: Import[], options?: TypeDeclarationOptions) {
+export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarationOptions) {
   const items = toTypeDeclarationItems(imports, options)
   const {
-    exportHelper = true
+    exportHelper = true,
   } = options || {}
 
   let declaration = ''
-  if (exportHelper) {
+  if (exportHelper)
     declaration += 'export {}\n'
-  }
-  declaration += 'declare global {\n' + items.map(i => '  ' + i).join('\n') + '\n}'
+
+  declaration += `declare global {\n${items.map(i => `  ${i}`).join('\n')}\n}`
   return declaration
 }
 
-export function toTypeReExports (imports: Import[], options?: TypeDeclarationOptions) {
+export function toTypeReExports(imports: Import[], options?: TypeDeclarationOptions) {
   const importsMap = new Map<string, Import[]>()
   imports.forEach((i) => {
     const from = options?.resolvePath?.(i) || i.from
@@ -178,20 +183,20 @@ export function toTypeReExports (imports: Import[], options?: TypeDeclarationOpt
   const code = Array.from(importsMap.entries()).flatMap(([from, imports]) => {
     const names = imports.map((i) => {
       let name = i.name === '*' ? 'default' : i.name
-      if (i.as && i.as !== name) {
+      if (i.as && i.as !== name)
         name += ` as ${i.as}`
-      }
+
       return name
     })
     return [
       '// @ts-ignore',
-      `export type { ${names.join(', ')} } from '${from}'`
+      `export type { ${names.join(', ')} } from '${from}'`,
     ]
   })
-  return '// for type re-export\ndeclare global {\n' + code.map(i => '  ' + i).join('\n') + '\n}'
+  return `// for type re-export\ndeclare global {\n${code.map(i => `  ${i}`).join('\n')}\n}`
 }
 
-function stringifyImportAlias (item: Import, isCJS = false) {
+function stringifyImportAlias(item: Import, isCJS = false) {
   return (item.as === undefined || item.name === item.as)
     ? item.name
     : isCJS
@@ -199,43 +204,43 @@ function stringifyImportAlias (item: Import, isCJS = false) {
       : `${item.name} as ${item.as}`
 }
 
-function toImportModuleMap (imports: Import[], includeType = false) {
+function toImportModuleMap(imports: Import[], includeType = false) {
   const map: Record<string, Set<Import>> = {}
   for (const _import of imports) {
-    if (_import.type && !includeType) {
+    if (_import.type && !includeType)
       continue
-    }
-    if (!map[_import.from]) {
+
+    if (!map[_import.from])
       map[_import.from] = new Set()
-    }
+
     map[_import.from].add(_import)
   }
   return map
 }
 
-export function getString (code:string | MagicString) {
-  if (typeof code === 'string') {
+export function getString(code: string | MagicString) {
+  if (typeof code === 'string')
     return code
-  }
+
   return code.toString()
 }
 
-export function getMagicString (code:string | MagicString) {
-  if (typeof code === 'string') {
+export function getMagicString(code: string | MagicString) {
+  if (typeof code === 'string')
     return new MagicString(code)
-  }
+
   return code
 }
 
-export function addImportToCode (
+export function addImportToCode(
   code: string | MagicString,
   imports: Import[],
   isCJS = false,
   mergeExisting = false,
   injectAtLast = false,
-  firstOccurrence = Infinity,
+  firstOccurrence = Number.POSITIVE_INFINITY,
   onResolved?: (imports: Import[]) => void | Import[],
-  onStringified?: (str: string, imports: Import[]) => void | string
+  onStringified?: (str: string, imports: Import[]) => void | string,
 ): MagicStringResult {
   let newImports: Import[] = []
   const s = getMagicString(code)
@@ -243,7 +248,7 @@ export function addImportToCode (
   let _staticImports: StaticImport[] | undefined
   const strippedCode = stripCommentsAndStrings(s.original)
 
-  function findStaticImportsLazy () {
+  function findStaticImportsLazy() {
     if (!_staticImports) {
       _staticImports = findStaticImports(s.original)
         .filter(i => Boolean(strippedCode.slice(i.start, i.end).trim()))
@@ -258,23 +263,23 @@ export function addImportToCode (
 
     imports.forEach((i) => {
       const target = existingImports.find(e => e.specifier === i.from && e.imports.startsWith('{'))
-      if (!target) {
+      if (!target)
         return newImports.push(i)
-      }
-      if (!map.has(target)) {
+
+      if (!map.has(target))
         map.set(target, [])
-      }
+
       map.get(target)!.push(i)
     })
 
     for (const [target, items] of map.entries()) {
-      const strings = items.map(i => stringifyImportAlias(i) + ', ')
+      const strings = items.map(i => `${stringifyImportAlias(i)}, `)
       const importLength = target.code.match(/^\s*import\s*{/)?.[0]?.length
-      if (importLength) {
-        s.appendLeft(target.start + importLength, ' ' + strings.join('').trim())
-      }
+      if (importLength)
+        s.appendLeft(target.start + importLength, ` ${strings.join('').trim()}`)
     }
-  } else {
+  }
+  else {
     newImports = imports
   }
 
@@ -288,32 +293,31 @@ export function addImportToCode (
       ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0
       : 0
 
-    if (insertionIndex === 0) {
-      s.prepend(newEntries + '\n')
-    } else {
-      s.appendRight(insertionIndex, '\n' + newEntries + '\n')
-    }
+    if (insertionIndex === 0)
+      s.prepend(`${newEntries}\n`)
+    else
+      s.appendRight(insertionIndex, `\n${newEntries}\n`)
   }
 
   return {
     s,
-    get code () { return s.toString() }
+    get code() { return s.toString() },
   }
 }
 
-export function normalizeImports (imports: Import[]): Import[] {
-  for (const _import of imports) {
+export function normalizeImports(imports: Import[]): Import[] {
+  for (const _import of imports)
     _import.as = _import.as ?? _import.name
-  }
+
   return imports
 }
 
-export function resolveIdAbsolute (id: string, parentId?: string) {
+export function resolveIdAbsolute(id: string, parentId?: string) {
   return resolvePath(id, {
-    url: parentId
+    url: parentId,
   })
 }
 
-function isFilePath (path: string) {
+function isFilePath(path: string) {
   return path.startsWith('.') || isAbsolute(path) || path.includes('://')
 }

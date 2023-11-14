@@ -1,4 +1,4 @@
-import { InlinePreset } from '../types'
+import type { InlinePreset } from '../types'
 import { defineUnimportPreset } from '../utils'
 
 export const CommonCompositionAPI: InlinePreset['imports'] = [
@@ -72,8 +72,8 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
     'PropType',
     'Ref',
     'VNode',
-    'WritableComputedRef'
-  ].map(name => ({ name, type: true }))
+    'WritableComputedRef',
+  ].map(name => ({ name, type: true })),
 ]
 
 export default defineUnimportPreset({
@@ -85,6 +85,6 @@ export default defineUnimportPreset({
     'onRenderTracked',
     'onRenderTriggered',
     'resolveComponent',
-    'useCssVars'
-  ]
+    'useCssVars',
+  ],
 })

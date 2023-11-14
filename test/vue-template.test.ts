@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { compileTemplate } from 'vue/compiler-sfc'
 import { createUnimport, vueTemplateAddon } from '../src'
 import { functionWrapAddon } from './share'
@@ -14,21 +14,21 @@ const result = compileTemplate({
     <div @click="foo"></div>
   `,
   compilerOptions: {
-    hoistStatic: false
-  }
+    hoistStatic: false,
+  },
 })
 
 describe('vue-template', () => {
   const ctx = createUnimport({
     imports: [
-      { name: 'foo', from: 'foo', as: 'foo' }
+      { name: 'foo', from: 'foo', as: 'foo' },
     ],
     addons: {
-      vueTemplate: true
-    }
+      vueTemplate: true,
+    },
   })
 
-  test('inject', async () => {
+  it('inject', async () => {
     expect(result.code).toMatchInlineSnapshot(`
       "import { toDisplayString as _toDisplayString, createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock, createCommentVNode as _createCommentVNode, Fragment as _Fragment } from \\"vue\\"
 
@@ -70,7 +70,7 @@ describe('vue-template', () => {
     `)
   })
 
-  test('dts', async () => {
+  it('dts', async () => {
     expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
       "export {}
       declare global {
@@ -92,21 +92,21 @@ describe('vue-template', () => {
     `)
   })
 
-  test('skip non-targets', async () => {
+  it('skip non-targets', async () => {
     const input = 'ctx.multiplier'
     expect((await ctx.injectImports(input, 'a.vue')).code.toString())
       .toEqual(input)
   })
 
-  test('without addon hooks', async () => {
+  it('without addon hooks', async () => {
     const ctx = createUnimport({
       imports: [
-        { name: 'foo', from: 'vue', as: 'foo' }
+        { name: 'foo', from: 'vue', as: 'foo' },
       ],
       addons: [
         vueTemplateAddon(),
-        functionWrapAddon()
-      ]
+        functionWrapAddon(),
+      ],
     })
 
     expect((await ctx.injectImports(result.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`

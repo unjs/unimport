@@ -1,6 +1,7 @@
-import { resolve } from 'path'
-import { describe, it, expect } from 'vitest'
-import { Import } from '../src/types'
+import { resolve } from 'node:path'
+import process from 'node:process'
+import { describe, expect, it } from 'vitest'
+import type { Import } from '../src/types'
 import { toExports } from '../src/utils'
 
 describe('toExports', () => {
@@ -20,7 +21,7 @@ describe('toExports', () => {
     const imports: Import[] = [
       { from: 'test1', name: 'foo', as: 'foo' },
       { from: 'test1', name: 'bar', as: 'bar' },
-      { from: 'test2', name: 'foobar', as: 'foobar' }
+      { from: 'test2', name: 'foobar', as: 'foobar' },
     ]
     expect(toExports(imports))
       .toMatchInlineSnapshot(`
@@ -31,7 +32,7 @@ describe('toExports', () => {
 
   it('default', () => {
     const imports: Import[] = [
-      { from: 'test1', name: 'default', as: 'foo' }
+      { from: 'test1', name: 'default', as: 'foo' },
     ]
     expect(toExports(imports))
       .toMatchInlineSnapshot('"export { default as foo } from \'test1\';"')
@@ -39,7 +40,7 @@ describe('toExports', () => {
 
   it('import all as', () => {
     const imports: Import[] = [
-      { from: 'test1', name: '*', as: 'foo' }
+      { from: 'test1', name: '*', as: 'foo' },
     ]
     expect(toExports(imports))
       .toMatchInlineSnapshot('"export * as foo from \'test1\';"')
@@ -52,7 +53,7 @@ describe('toExports', () => {
       { from: 'test1', name: 'foo', as: 'foo' },
       { from: 'test1', name: 'bar', as: 'bar' },
       { from: 'test2', name: 'foobar', as: 'foobar' },
-      { from: 'test2', name: 'default', as: 'defaultAlias' }
+      { from: 'test2', name: 'default', as: 'defaultAlias' },
     ]
     expect(toExports(imports))
       .toMatchInlineSnapshot(`
@@ -69,7 +70,7 @@ describe('toExports', () => {
       { from: 'test2.mjs', name: 'foobar', as: 'foobar' },
       { from: './test1.ts', name: 'foo', as: 'foo' },
       { from: './test2.mjs', name: 'foobar', as: 'foobar' },
-      { from: 'test1.ts/test1.ts', name: 'foo', as: 'foo' }
+      { from: 'test1.ts/test1.ts', name: 'foo', as: 'foo' },
     ]
 
     expect(toExports(imports))
@@ -87,7 +88,7 @@ describe('toExports', () => {
     const imports: Import[] = [
       { from: resolve(root, 'foo.ts'), name: 'foo1', as: 'foo1' },
       { from: resolve(root, '../foo.ts'), name: 'foo2', as: 'foo2' },
-      { from: resolve(root, 'foo/bar.ts'), name: 'foo3', as: 'foo3' }
+      { from: resolve(root, 'foo/bar.ts'), name: 'foo3', as: 'foo3' },
     ]
     expect(toExports(imports, root))
       .toMatchInlineSnapshot(`
@@ -101,7 +102,7 @@ describe('toExports', () => {
     const root = process.cwd()
     const imports: Import[] = [
       { from: 'vue', name: 'ref', as: 'ref' },
-      { from: 'vue', name: 'Ref', as: 'Ref', type: true }
+      { from: 'vue', name: 'Ref', as: 'Ref', type: true },
     ]
     expect(toExports(imports, root))
       .toMatchInlineSnapshot('"export { ref } from \'vue\';"')

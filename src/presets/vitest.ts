@@ -19,6 +19,6 @@ export default defineUnimportPreset({
     'beforeAll',
     'afterAll',
     'beforeEach',
-    'afterEach'
-  ]
+    'afterEach',
+  ],
 })

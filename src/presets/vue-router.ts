@@ -7,6 +7,6 @@ export default defineUnimportPreset({
     'useRoute',
     'useLink',
     'onBeforeRouteLeave',
-    'onBeforeRouteUpdate'
-  ]
+    'onBeforeRouteUpdate',
+  ],
 })

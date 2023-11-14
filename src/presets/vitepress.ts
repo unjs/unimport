@@ -7,6 +7,6 @@ export default defineUnimportPreset({
     'useData',
     'useRoute',
     'useRouter',
-    'withBase'
-  ]
+    'withBase',
+  ],
 })

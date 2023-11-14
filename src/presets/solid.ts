@@ -34,8 +34,8 @@ export const solidCore = defineUnimportPreset({
     'Index',
     'ErrorBoundary',
     'Suspense',
-    'SuspenseList'
-  ]
+    'SuspenseList',
+  ],
 })
 
 export const solidStore = defineUnimportPreset({
@@ -44,8 +44,8 @@ export const solidStore = defineUnimportPreset({
     'createStore',
     'produce',
     'reconcile',
-    'createMutable'
-  ]
+    'createMutable',
+  ],
 })
 
 export const solidWeb = defineUnimportPreset({
@@ -58,8 +58,8 @@ export const solidWeb = defineUnimportPreset({
     'renderToStringAsync',
     'renderToStream',
     'isServer',
-    'Portal'
-  ]
+    'Portal',
+  ],
 })
 
 export default defineUnimportPreset({
@@ -67,6 +67,6 @@ export default defineUnimportPreset({
   imports: [
     solidCore,
     solidStore,
-    solidWeb
-  ]
+    solidWeb,
+  ],
 })

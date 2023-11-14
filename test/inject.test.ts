@@ -1,10 +1,10 @@
-import { expect, describe, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
 
 describe('inject import', () => {
-  test('basic', async () => {
+  it('basic', async () => {
     const { injectImports } = createUnimport({
-      imports: [{ name: 'fooBar', from: 'test-id' }]
+      imports: [{ name: 'fooBar', from: 'test-id' }],
     })
     expect((await injectImports('console.log(fooBar())')).code)
       .toMatchInlineSnapshot(`
@@ -13,15 +13,15 @@ describe('inject import', () => {
       `)
   })
 
-  test('should not match export', async () => {
+  it('should not match export', async () => {
     const { injectImports } = createUnimport({
-      imports: [{ name: 'fooBar', from: 'test-id' }]
+      imports: [{ name: 'fooBar', from: 'test-id' }],
     })
     expect((await injectImports('export { fooBar } from "test-id"')).code)
       .toMatchInlineSnapshot('"export { fooBar } from \\"test-id\\""')
   })
 
-  test('metadata', async () => {
+  it('metadata', async () => {
     const ctx = createUnimport({
       imports: [
         { name: 'import1', from: 'specifier1' },
@@ -29,9 +29,9 @@ describe('inject import', () => {
         { name: 'import3', from: 'specifier3' },
         { name: 'import4', from: 'specifier4' },
         { name: 'foo', as: 'import5', from: 'specifier5' },
-        { name: 'import10', from: 'specifier10' }
+        { name: 'import10', from: 'specifier10' },
       ],
-      collectMeta: true
+      collectMeta: true,
     })
     await ctx.injectImports('console.log(import1())', 'foo')
     await ctx.injectImports('console.log(import1())', 'foo')
@@ -69,10 +69,10 @@ describe('inject import', () => {
     `)
   })
 
-  test('mergeExisting', async () => {
+  it('mergeExisting', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
-      mergeExisting: true
+      mergeExisting: true,
     })
     expect((await injectImports(`
 import { foo } from 'test-id'
@@ -84,10 +84,10 @@ console.log(fooBar())
       `)
   })
 
-  test('injection at end', async () => {
+  it('injection at end', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
-      injectAtEnd: true
+      injectAtEnd: true,
     })
     expect((await injectImports(`
 import { foo } from 'foo'
@@ -101,10 +101,10 @@ console.log(fooBar())
       `)
   })
 
-  test('injection at end with comment', async () => {
+  it('injection at end with comment', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
-      injectAtEnd: true
+      injectAtEnd: true,
     })
 
     expect((await injectImports(`
@@ -129,10 +129,10 @@ console.log(fooBar())
       `)
   })
 
-  test('injection at end with mixed imports', async () => {
+  it('injection at end with mixed imports', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
-      injectAtEnd: true
+      injectAtEnd: true,
     })
     expect((await injectImports(`
 import { foo } from 'foo'
@@ -152,13 +152,13 @@ import { baz } from 'baz'
       `)
   })
 
-  test('deep ternary inject', async () => {
+  it('deep ternary inject', async () => {
     const { injectImports } = createUnimport({
       imports: [
         { name: 'A', from: 'test-id' },
         { name: 'B', from: 'test-id' },
-        { name: 'C', from: 'test-id' }
-      ]
+        { name: 'C', from: 'test-id' },
+      ],
     })
     expect((await injectImports('const result = true ? false ? A : B : C')).code)
       .toMatchInlineSnapshot(`

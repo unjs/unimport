@@ -10,6 +10,6 @@ export default defineUnimportPreset({
     '$shallowRef',
     '$toRef',
     '$customRef',
-    '$computed'
-  ]
+    '$computed',
+  ],
 })

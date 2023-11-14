@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 import pinia from './pinia'
 import preact from './preact'
 import quasar from './quasar'
@@ -11,7 +10,7 @@ import {
   svelteEasing,
   svelteMotion,
   svelteStore,
-  svelteTransition
+  svelteTransition,
 } from './svelte'
 import veeValidate from './vee-validate'
 import vitepress from './vitepress'
@@ -36,33 +35,33 @@ export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
   '@vueuse/core': vueuseCore,
   '@vueuse/head': vueuseHead,
-  pinia: pinia,
-  preact: preact,
-  quasar: quasar,
-  react: react,
+  'pinia': pinia,
+  'preact': preact,
+  'quasar': quasar,
+  'react': react,
   'react-router': reactRouter,
   'react-router-dom': reactRouterDom,
-  svelte: svelte,
+  'svelte': svelte,
   'svelte/animate': svelteAnimate,
   'svelte/easing': svelteEasing,
   'svelte/motion': svelteMotion,
   'svelte/store': svelteStore,
   'svelte/transition': svelteTransition,
   'vee-validate': veeValidate,
-  vitepress: vitepress,
+  'vitepress': vitepress,
   'vue-demi': vueDemi,
   'vue-i18n': vueI18n,
   'vue-router': vueRouter,
   'vue-router-composables': vueRouterComposables,
-  vue: vue,
+  'vue': vue,
   'vue/macros': vueMacros,
-  vuex: vuex,
-  vitest: vitest,
+  'vuex': vuex,
+  'vitest': vitest,
   'uni-app': uniApp,
   'solid-js': solid,
   'solid-app-router': solidAppRouter,
-  rxjs: rxjs,
-  'date-fns': dateFns
+  'rxjs': rxjs,
+  'date-fns': dateFns,
 }
 
 export type BuiltinPresetName = keyof typeof builtinPresets

@@ -13,12 +13,12 @@ export const ReactRouterHooks = [
   'useOutlet',
   'useParams',
   'useResolvedPath',
-  'useRoutes'
+  'useRoutes',
 ]
 
 export default defineUnimportPreset({
   from: 'react-router',
   imports: [
-    ...ReactRouterHooks
-  ]
+    ...ReactRouterHooks,
+  ],
 })

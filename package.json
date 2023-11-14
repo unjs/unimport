@@ -1,11 +1,12 @@
 {
   "name": "unimport",
-  "version": "3.5.0",
-  "description": "Unified utils for auto importing APIs in modules",
-  "repository": "unjs/unimport",
-  "license": "MIT",
-  "sideEffects": false,
   "type": "module",
+  "version": "3.5.0",
+  "packageManager": "pnpm@8.10.2",
+  "description": "Unified utils for auto importing APIs in modules",
+  "license": "MIT",
+  "repository": "unjs/unimport",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -28,13 +29,13 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "*.d.ts"
+    "*.d.ts",
+    "dist"
   ],
   "scripts": {
     "build": "unbuild",
     "dev": "vitest dev",
-    "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
+    "lint": "eslint .",
     "prepack": "unbuild",
     "play": "pnpm -C playground run dev",
     "play:build": "pnpm -C playground run build",
@@ -57,7 +58,7 @@
     "unplugin": "^1.5.0"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@antfu/eslint-config": "^1.1.2",
     "@vitest/coverage-v8": "^0.34.6",
     "bumpp": "^9.2.0",
     "conventional-changelog-cli": "^4.1.0",
@@ -69,6 +70,5 @@
     "unbuild": "^2.0.0",
     "vitest": "^0.34.6",
     "vue-tsc": "^1.8.22"
-  },
-  "packageManager": "pnpm@8.10.2"
+  }
 }

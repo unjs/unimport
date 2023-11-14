@@ -243,6 +243,6 @@ export default defineUnimportPreset({
     'toDate',
     'weeksToDays',
     'yearsToMonths',
-    'yearsToQuarters'
-  ]
+    'yearsToQuarters',
+  ],
 })

@@ -3,5 +3,5 @@ import { CommonCompositionAPI } from './vue'
 
 export default defineUnimportPreset({
   from: '@vue/composition-api',
-  imports: CommonCompositionAPI
+  imports: CommonCompositionAPI,
 })

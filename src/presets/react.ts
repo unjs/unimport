@@ -9,6 +9,6 @@ export default defineUnimportPreset({
     'useEffect',
     'useRef',
     'useContext',
-    'useReducer'
-  ]
+    'useReducer',
+  ],
 })

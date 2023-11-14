@@ -1,13 +1,12 @@
-
-import { expect, test } from 'vitest'
+import { expect, it } from 'vitest'
 import { createUnimport } from '../src'
 
-test('dts', async () => {
+it('dts', async () => {
   const cwd = process.cwd().replace(/\\/g, '/')
   const { generateTypeDeclarations, init } = createUnimport({
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
-      { name: 'foobar', from: 'foobar', as: 'foobar' }
+      { name: 'foobar', from: 'foobar', as: 'foobar' },
     ],
     presets: [
       {
@@ -19,21 +18,21 @@ test('dts', async () => {
           'toRefs',
           {
             name: 'Ref',
-            type: true
+            type: true,
           },
           {
             name: 'ComputedRef',
-            type: true
-          }
-        ]
+            type: true,
+          },
+        ],
       },
       {
         from: 'three',
-        imports: [['*', 'THREE']]
+        imports: [['*', 'THREE']],
       },
       {
         from: 'react',
-        imports: ['useState', 'useEffect', 'useRef']
+        imports: ['useState', 'useEffect', 'useRef'],
       },
       {
         from: 'jquery',
@@ -41,23 +40,23 @@ test('dts', async () => {
           '$',
           {
             name: 'JQuery',
-            type: true
-          }
-        ]
-      }
+            type: true,
+          },
+        ],
+      },
     ],
     dirs: [
-      './playground/composables/**'
+      './playground/composables/**',
     ],
     dirsScanOptions: {
-      cwd
-    }
+      cwd,
+    },
   })
 
   await init()
 
   expect(
-    (await generateTypeDeclarations()).replaceAll(cwd, '<root>')
+    (await generateTypeDeclarations()).replaceAll(cwd, '<root>'),
   )
     .toMatchInlineSnapshot(`
       "export {}

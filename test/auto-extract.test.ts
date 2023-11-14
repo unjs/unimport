@@ -1,4 +1,4 @@
-import { expect, describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { resolvePreset } from '../src/preset'
 
 describe('auto-extract', () => {
@@ -6,17 +6,17 @@ describe('auto-extract', () => {
     const result1 = await resolvePreset({
       package: 'h3',
       cache: false,
-      ignore: ['isStream', /^[A-Z]/, /^[a-z]*$/, r => r.length > 8]
+      ignore: ['isStream', /^[A-Z]/, /^[a-z]*$/, r => r.length > 8],
     })
 
     const result2 = await resolvePreset({
       package: 'h3',
-      ignore: ['isStream', /^[A-Z]/, /^[a-z]*$/, r => r.length > 8]
+      ignore: ['isStream', /^[A-Z]/, /^[a-z]*$/, r => r.length > 8],
     })
 
     expect(result1).toEqual(result2)
     expect(
-      result1.slice(0, 5)
+      result1.slice(0, 5),
     ).toMatchInlineSnapshot(`
       [
         {

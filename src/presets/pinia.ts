@@ -15,6 +15,6 @@ export default defineUnimportPreset({
     'mapWritableState',
     'setActivePinia',
     'setMapStoreSuffix',
-    'storeToRefs'
-  ]
+    'storeToRefs',
+  ],
 })

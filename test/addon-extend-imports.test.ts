@@ -1,25 +1,25 @@
-import { expect, describe, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
 
 describe('addon extend imports', () => {
   const ctx = createUnimport({
     addons: [
       {
-        extendImports (imports) {
+        extendImports(imports) {
           return imports
             .map((i) => {
               if (i.from === 'vue') {
                 return {
                   ...i,
-                  as: i.as + '1',
+                  as: `${i.as}1`,
                   from: 'vue-demi',
-                  typeFrom: 'vue'
+                  typeFrom: 'vue',
                 }
               }
               return i
             })
-        }
-      }
+        },
+      },
     ],
     presets: [
       {
@@ -27,20 +27,20 @@ describe('addon extend imports', () => {
         imports: [
           'ref',
           'computed',
-          'watch'
-        ]
+          'watch',
+        ],
       },
       {
         from: 'react',
         imports: [
           'useState',
-          'useEffect'
-        ]
-      }
-    ]
+          'useEffect',
+        ],
+      },
+    ],
   })
 
-  test('extendImports', async () => {
+  it('extendImports', async () => {
     expect((await ctx.injectImports('ref(1)')).code)
       .toMatchInlineSnapshot('"ref(1)"')
 
@@ -63,14 +63,14 @@ describe('addon extend imports', () => {
       `)
   })
 
-  test('dynamic extended', async () => {
+  it('dynamic extended', async () => {
     expect((await ctx.injectImports('foo1(1)')).code)
       .toMatchInlineSnapshot('"foo1(1)"')
 
     await ctx.modifyDynamicImports((imports) => {
       imports.push({
         name: 'foo',
-        from: 'vue'
+        from: 'vue',
       })
     })
 

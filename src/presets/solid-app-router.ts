@@ -25,6 +25,6 @@ export default defineUnimportPreset({
     'useResolvedPath',
     'useRouteData',
     'useRoutes',
-    'useSearchParams'
-  ]
+    'useSearchParams',
+  ],
 })

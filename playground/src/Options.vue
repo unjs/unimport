@@ -1,23 +1,23 @@
 <script lang="ts">
 export default defineComponent({
-  setup () {
+  setup() {
     const multiplier = ref(100)
     const count = ref(5)
 
     return {
       multiplier,
       count,
-      inc () {
+      inc() {
         count.value += 1
       },
-      bump () {
+      bump() {
         multiplier.value += 1
       },
-      nested () {
+      nested() {
         return 'from setup, this should not be overridden'
-      }
+      },
     }
-  }
+  },
 })
 </script>
 

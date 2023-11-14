@@ -25,6 +25,6 @@ export default defineUnimportPreset({
     'Navigate',
     'Outlet',
     'Route',
-    'Routes'
-  ]
+    'Routes',
+  ],
 })
