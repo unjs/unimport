@@ -180,8 +180,8 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
     importsMap.set(from, list)
   })
 
-  const code = Array.from(importsMap.entries()).flatMap(([from, imports]) => {
-    const names = imports.map((i) => {
+  const code = Array.from(importsMap.entries()).flatMap(([from, items]) => {
+    const names = items.map((i) => {
       let name = i.name === '*' ? 'default' : i.name
       if (i.as && i.as !== name)
         name += ` as ${i.as}`
@@ -189,8 +189,14 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
       return name
     })
     return [
+      // Because of TypeScript's limitation, it errors when re-exporting type in declare.
+      // But it actually works so we use @ts-ignore to dismiss the error.
       '// @ts-ignore',
+      // Re-export type
       `export type { ${names.join(', ')} } from '${from}'`,
+      // If a module is only been re-exported as type, TypeScript will not initialize it for some reason.
+      // Adding an import statement will fix it.
+      `import('${from}')`,
     ]
   })
   return `// for type re-export\ndeclare global {\n${code.map(i => `  ${i}`).join('\n')}\n}`

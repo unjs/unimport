@@ -93,14 +93,19 @@ it('dts', async () => {
       declare global {
         // @ts-ignore
         export type { Ref, ComputedRef } from 'vue'
+        import('vue')
         // @ts-ignore
         export type { JQuery } from 'jquery'
+        import('jquery')
         // @ts-ignore
         export type { CustomType1, CustomInterface1 } from '<root>/playground/composables/index.ts'
+        import('<root>/playground/composables/index.ts')
         // @ts-ignore
         export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index.ts'
+        import('<root>/playground/composables/nested/bar/sub/index.ts')
         // @ts-ignore
         export type { vanillaTypeOnlyFunction, VanillaInterface, VanillaInterfaceAlias } from '<root>/playground/composables/vanilla.d.ts'
+        import('<root>/playground/composables/vanilla.d.ts')
       }"
     `)
 })
