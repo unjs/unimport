@@ -58,7 +58,7 @@
     "unplugin": "^1.5.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^1.1.2",
+    "@antfu/eslint-config": "^2.1.0",
     "@vitest/coverage-v8": "^0.34.6",
     "bumpp": "^9.2.0",
     "conventional-changelog-cli": "^4.1.0",
