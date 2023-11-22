@@ -1,3 +1,12 @@
+# [3.6.0](https://github.com/unjs/unimport/compare/v3.5.0...v3.6.0) (2023-11-22)
+
+
+### Bug Fixes
+
+* improve global types exports on type-only module ([17f2894](https://github.com/unjs/unimport/commit/17f28945eb5572986e27a387a1d1aa3bb55fd3a1))
+
+
+
 # [3.5.0](https://github.com/unjs/unimport/compare/v3.4.0...v3.5.0) (2023-11-09)
 
 
