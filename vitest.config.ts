@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'v8',
-      exclude: ['src/presets']
-    }
-  }
+      exclude: ['src/presets'],
+    },
+  },
 })

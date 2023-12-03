@@ -33,6 +33,6 @@ export default defineUnimportPreset({
     'debounce',
     'debounceTime',
     'find',
-    'every'
-  ]
+    'every',
+  ],
 })

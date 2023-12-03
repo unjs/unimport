@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { Import } from '../src/types'
+import { describe, expect, it } from 'vitest'
+import type { Import } from '../src/types'
 import { toImports } from '../src/utils'
 
 describe('toImports', () => {
@@ -23,7 +23,7 @@ describe('toImports', () => {
     const imports: Import[] = [
       { from: 'test1', name: 'foo', as: 'foo' },
       { from: 'test1', name: 'bar', as: 'bar' },
-      { from: 'test2', name: 'foobar', as: 'foobar' }
+      { from: 'test2', name: 'foobar', as: 'foobar' },
     ]
     expect(toImports(imports))
       .toMatchInlineSnapshot(`
@@ -39,7 +39,7 @@ describe('toImports', () => {
 
   it('default', () => {
     const imports: Import[] = [
-      { from: 'test1', name: 'default', as: 'foo' }
+      { from: 'test1', name: 'default', as: 'foo' },
     ]
     expect(toImports(imports))
       .toMatchInlineSnapshot('"import foo from \'test1\';"')
@@ -49,7 +49,7 @@ describe('toImports', () => {
 
   it('import all as', () => {
     const imports: Import[] = [
-      { from: 'test1', name: '*', as: 'foo' }
+      { from: 'test1', name: '*', as: 'foo' },
     ]
     expect(toImports(imports))
       .toMatchInlineSnapshot('"import * as foo from \'test1\';"')
@@ -65,7 +65,7 @@ describe('toImports', () => {
       { from: 'test1', name: 'bar', as: 'bar' },
       { from: 'test2', name: 'foobar', as: 'foobar' },
       { from: 'test2', name: 'default', as: 'defaultAlias' },
-      { from: 'sideeffects', name: '', as: '' }
+      { from: 'sideeffects', name: '', as: '' },
     ]
     expect(toImports(imports))
       .toMatchInlineSnapshot(`

@@ -25,7 +25,7 @@ export default defineUnimportPreset({
     'daysToWeeks',
     'differenceInBusinessDays',
     'differenceInCalendarDays',
-    'differenceInCalendarISOWeekYears  ',
+    'differenceInCalendarISOWeekYears',
     'differenceInCalendarISOWeeks',
     'differenceInCalendarMonths',
     'differenceInCalendarQuarters',
@@ -243,6 +243,6 @@ export default defineUnimportPreset({
     'toDate',
     'weeksToDays',
     'yearsToMonths',
-    'yearsToQuarters'
-  ]
+    'yearsToQuarters',
+  ],
 })

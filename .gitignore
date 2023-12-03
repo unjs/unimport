@@ -7,7 +7,6 @@
 .pnp.*
 .conf*
 .DS_Store
-.vscode
 *.log*
 coverage
 dist

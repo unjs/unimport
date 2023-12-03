@@ -1,5 +1,5 @@
-import { test, expect, describe } from 'vitest'
-import { Import } from '../src/types'
+import { describe, expect, it } from 'vitest'
+import type { Import } from '../src/types'
 import { addImportToCode } from '../src/utils'
 
 describe('add-import', () => {
@@ -17,10 +17,10 @@ import { } from 'specifier5'
     { name: 'import3', from: 'specifier3' },
     { name: 'import4', from: 'specifier4' },
     { name: 'foo', as: 'import5', from: 'specifier5' },
-    { name: 'import10', from: 'specifier10' }
+    { name: 'import10', from: 'specifier10' },
   ]
 
-  test('no merge', () => {
+  it('no merge', () => {
     expect(addImportToCode(code, imports, false, false).code)
       .toMatchInlineSnapshot(`
         "import { import1 } from 'specifier1';
@@ -40,7 +40,7 @@ import { } from 'specifier5'
       `)
   })
 
-  test('merge existing', () => {
+  it('merge existing', () => {
     expect(addImportToCode(code, imports, false, true).code)
       .toMatchInlineSnapshot(`
         "import { import2 } from 'specifier2';
@@ -77,10 +77,10 @@ import { } from 'specifier5'
     { name: 'import3', from: 'specifier3' },
     { name: 'import4', from: 'specifier4' },
     { name: 'foo', as: 'import5', from: 'specifier5' },
-    { name: 'import10', from: 'specifier10' }
+    { name: 'import10', from: 'specifier10' },
   ]
 
-  test('no merge', () => {
+  it('no merge', () => {
     expect(addImportToCode(code, imports, false, false).code)
       .toMatchInlineSnapshot(`
         "import { import1 } from 'specifier1';
@@ -104,7 +104,7 @@ import { } from 'specifier5'
       `)
   })
 
-  test('merge existing', () => {
+  it('merge existing', () => {
     expect(addImportToCode(code, imports, false, true).code)
       .toMatchInlineSnapshot(`
         "import { import2 } from 'specifier2';
@@ -125,7 +125,7 @@ import { } from 'specifier5'
       `)
   })
 
-  test('merge existing and injection at end', () => {
+  it('merge existing and injection at end', () => {
     expect(addImportToCode(code, imports, false, true, true).code)
       .toMatchInlineSnapshot(`
         "

@@ -1,11 +1,11 @@
-import { expect, describe, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
 import { functionWrapAddon } from './share'
 
 describe('addon inject hooks', () => {
   const ctx = createUnimport({
     addons: [
-      functionWrapAddon()
+      functionWrapAddon(),
     ],
     presets: [
       {
@@ -13,20 +13,20 @@ describe('addon inject hooks', () => {
         imports: [
           'ref',
           'computed',
-          'watch'
-        ]
+          'watch',
+        ],
       },
       {
         from: 'react',
         imports: [
           'useState',
-          'useEffect'
-        ]
-      }
-    ]
+          'useEffect',
+        ],
+      },
+    ],
   })
 
-  test('inject', async () => {
+  it('inject', async () => {
     expect((await ctx.injectImports('ref(1)')).code)
       .toMatchInlineSnapshot(`
         "import { ref as _$_ref } from 'vue';
@@ -52,7 +52,7 @@ describe('addon inject hooks', () => {
       `)
   })
 
-  test('dynamic inject', async () => {
+  it('dynamic inject', async () => {
     expect((await ctx.injectImports('foo(1)')).code)
       .toMatchInlineSnapshot('"foo(1)"')
 
@@ -60,7 +60,7 @@ describe('addon inject hooks', () => {
       imports.push({
         name: 'bar',
         as: 'foo',
-        from: 'vue'
+        from: 'vue',
       })
     })
 

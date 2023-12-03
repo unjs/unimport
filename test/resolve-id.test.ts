@@ -1,5 +1,6 @@
+import process from 'node:process'
 import { resolve } from 'pathe'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createUnimport, resolveIdAbsolute } from '../src'
 
 describe('resolve-id', () => {
@@ -9,18 +10,18 @@ let b = computed(() => a.value)
 const path = resolvePath()
   `
 
-  test('inject', async () => {
-    const calls: (string| undefined)[][] = []
+  it('inject', async () => {
+    const calls: (string | undefined)[][] = []
     const ctx = createUnimport({
       presets: [
         'vue',
-        'vue-router'
+        'vue-router',
       ],
-      async resolveId (id, parentId) {
+      async resolveId(id, parentId) {
         await Promise.resolve()
         calls.push([id, parentId])
-        return id + '?from=' + parentId
-      }
+        return `${id}?from=${parentId}`
+      },
     })
 
     expect((await ctx.injectImports(input, 'a.vue')).code.toString())
@@ -47,7 +48,7 @@ const path = resolvePath()
     `)
   })
 
-  test('resolveAbsolute', async () => {
+  it('resolveAbsolute', async () => {
     const cwd = process.cwd()
     const path = resolve(cwd, 'a.vue')
     const ctx = createUnimport({
@@ -55,10 +56,10 @@ const path = resolvePath()
         'vue',
         {
           from: 'mlly',
-          imports: ['resolvePath']
-        }
+          imports: ['resolvePath'],
+        },
       ],
-      resolveId: resolveIdAbsolute
+      resolveId: resolveIdAbsolute,
     })
 
     const transformed = (await ctx.injectImports(input, path)).code.toString()
@@ -66,13 +67,13 @@ const path = resolvePath()
     expect(transformed).toContain('node_modules/mlly')
   })
 
-  test('exclude self', async () => {
-    const calls: (string| undefined)[][] = []
+  it('exclude self', async () => {
+    const calls: (string | undefined)[][] = []
     const ctx = createUnimport({
       presets: [{
         from: 'a.vue',
-        imports: ['foo']
-      }]
+        imports: ['foo'],
+      }],
     })
 
     expect((await ctx.injectImports('console.log(foo)', 'a.vue')).code.toString())

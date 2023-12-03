@@ -1,3 +1,28 @@
+# [3.6.0](https://github.com/unjs/unimport/compare/v3.5.0...v3.6.0) (2023-11-22)
+
+
+### Bug Fixes
+
+* improve global types exports on type-only module ([17f2894](https://github.com/unjs/unimport/commit/17f28945eb5572986e27a387a1d1aa3bb55fd3a1))
+
+
+
+# [3.5.0](https://github.com/unjs/unimport/compare/v3.4.0...v3.5.0) (2023-11-09)
+
+
+### Bug Fixes
+
+* support deep ternary injection ([#293](https://github.com/unjs/unimport/issues/293)) ([189da45](https://github.com/unjs/unimport/commit/189da458cfe93e826bc7cc1ecb0967fba537eac0))
+* **toExports:** don't strip extension for package import ([#291](https://github.com/unjs/unimport/issues/291)) ([cf28aa3](https://github.com/unjs/unimport/commit/cf28aa35761fa37de6fda187953efc1b0a8d71a9))
+* typo in date-fns preset ([#287](https://github.com/unjs/unimport/issues/287)) ([7df98d0](https://github.com/unjs/unimport/commit/7df98d0a6a7b53437514eb078c295dfc5ec86087))
+
+
+### Features
+
+* add date-fns preset ([#286](https://github.com/unjs/unimport/issues/286)) ([bb6e997](https://github.com/unjs/unimport/commit/bb6e99781ba4ecfa64c5e9a2b004c4c1a2435e3c))
+
+
+
 # [3.4.0](https://github.com/unjs/unimport/compare/v3.3.0...v3.4.0) (2023-09-26)
 
 

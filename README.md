@@ -171,16 +171,16 @@ This will be expanded into:
 ```ts
 imports: [
   {
-    "from": "h3",
-    "name": "appendHeader",
+    from: 'h3',
+    name: 'appendHeader',
   },
   {
-    "from": "h3",
-    "name": "appendHeaders",
+    from: 'h3',
+    name: 'appendHeaders',
   },
   {
-    "from": "h3",
-    "name": "appendResponseHeader",
+    from: 'h3',
+    name: 'appendResponseHeader',
   },
   // ...
 ]
@@ -201,11 +201,9 @@ Unimport.vite({
 ### Directory Auto Import
 
 ```ts
-{
-  dirs: [
-    './composables/*'
-  ]
-}
+dirs: [
+  './composables/*'
+]
 ```
 
 Named exports for modules under `./composables/*` will be registered for auto imports.

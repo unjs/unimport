@@ -1,7 +1,7 @@
-export const myfunc1 = () => {
+export function myfunc1() {
   return 'function 1'
 }
 
-export const myfunc2 = () => {
+export function myfunc2() {
   return 'function 2'
 }

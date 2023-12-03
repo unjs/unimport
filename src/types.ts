@@ -1,5 +1,4 @@
-/* eslint-disable no-use-before-define */
-import MagicString from 'magic-string'
+import type MagicString from 'magic-string'
 import type { BuiltinPresetName } from './presets'
 
 export type ModuleId = string
@@ -99,7 +98,7 @@ export interface UnimportContext {
 }
 
 export interface InjectionUsageRecord {
-  import: Import,
+  import: Import
   count: number
   moduleIds: string[]
 }
@@ -171,7 +170,7 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
   /**
    * Custom resolver to auto import id
    */
-  resolveId?: (id: string, importee?:string) => Thenable<string | void>
+  resolveId?: (id: string, importee?: string) => Thenable<string | void>
 
   /**
    * Custom magic comments to be opt-out for auto import, per file/module

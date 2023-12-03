@@ -1,5 +1,0 @@
-dist
-node_modules
-test/cases
-*.d.ts
-package.json

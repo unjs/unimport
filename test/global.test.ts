@@ -6,14 +6,14 @@ describe('global', () => {
     const unimport = createUnimport({
       imports: [
         { name: 'default', from: 'jquery', as: '$' },
-        { name: 'foo', from: 'foo', as: 'disabled', disabled: true }
+        { name: 'foo', from: 'foo', as: 'disabled', disabled: true },
       ],
       presets: [
         {
           from: 'vue',
-          imports: ['ref', 'reactive', 'computed']
-        }
-      ]
+          imports: ['ref', 'reactive', 'computed'],
+        },
+      ],
     })
 
     const fakeGlobal: any = {}

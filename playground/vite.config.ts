@@ -10,15 +10,15 @@ export default defineConfig({
     unimport.vite({
       dts: true,
       presets: [
-        'vue'
+        'vue',
       ],
       dirs: [
-        './composables/**'
+        './composables/**',
       ],
       addons: {
-        vueTemplate: true
-      }
+        vueTemplate: true,
+      },
     }),
-    inspect()
-  ]
+    inspect(),
+  ],
 })

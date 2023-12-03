@@ -1,8 +1,0 @@
-{
-  "extends": [
-    "@nuxtjs/eslint-config-typescript"
-  ],
-  "rules": {
-    "no-useless-escape": "off"
-  }
-}

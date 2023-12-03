@@ -7,6 +7,6 @@ export default defineUnimportPreset({
     'useQuasar',
     'useDialogPluginComponent',
     'useFormChild',
-    'useMeta'
-  ]
+    'useMeta',
+  ],
 })

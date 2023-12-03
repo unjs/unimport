@@ -1,3 +1,3 @@
 ignore:
-  - "src/presets/**/*"
-  - "presets/**/*"
+  - 'src/presets/**/*'
+  - 'presets/**/*'

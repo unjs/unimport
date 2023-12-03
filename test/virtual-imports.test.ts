@@ -1,16 +1,16 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
 
 describe('virtual imports', () => {
   const ctx = createUnimport({
     imports: [
-      { from: 'foo', name: 'foo', as: 'bar' }
+      { from: 'foo', name: 'foo', as: 'bar' },
     ],
     presets: ['vue'],
-    virtualImports: ['#imports']
+    virtualImports: ['#imports'],
   })
 
-  test('inject', async () => {
+  it('inject', async () => {
     const fixture = `
   import { watch } from 'fs'
   import { ref, computed, watchEffect as effect,
@@ -49,7 +49,7 @@ describe('virtual imports', () => {
       `)
   })
 
-  test('virtual imports only', async () => {
+  it('virtual imports only', async () => {
     const fixture = `
 import { ref } from '#imports'
 const a = computed()
@@ -61,7 +61,7 @@ const a = computed()
       `)
   })
 
-  test('non-exist', async () => {
+  it('non-exist', async () => {
     const fixture = `
 import { notExist } from '#imports'
     `.trim()
@@ -70,7 +70,7 @@ import { notExist } from '#imports'
       .toMatchInlineSnapshot('[Error: [unimport] failed to find "notExist" imported from "#imports"]')
   })
 
-  test('comment false-positive', async () => {
+  it('comment false-positive', async () => {
     const fixture = `
 // import { } from '#imports';
 
@@ -86,7 +86,7 @@ const a = ref(1)
   })
 
   // https://github.com/unocss/unocss/issues/2938
-  test('side-effects', async () => {
+  it('side-effects', async () => {
     const fixture = `
 import 'uno.css'
 import { ref } from '#imports';

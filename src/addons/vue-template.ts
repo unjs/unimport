@@ -1,15 +1,15 @@
-import { Import, Addon } from '../types'
+import type { Addon, Import } from '../types'
 import { toImports } from '../utils'
 
 const contextRE = /\b_ctx\.([\w_]+)\b/g
 const UNREF_KEY = '__unimport_unref_'
 
-export const vueTemplateAddon = (): Addon => {
+export function vueTemplateAddon(): Addon {
   const self: Addon = {
-    async transform (s, id) {
-      if (!s.original.includes('_ctx.') || s.original.includes(UNREF_KEY)) {
+    async transform(s, id) {
+      if (!s.original.includes('_ctx.') || s.original.includes(UNREF_KEY))
         return s
-      }
+
       const matches = Array.from(s.original.matchAll(contextRE))
       const imports = await this.getImports()
       let targets: Import[] = []
@@ -17,9 +17,8 @@ export const vueTemplateAddon = (): Addon => {
       for (const match of matches) {
         const name = match[1]
         const item = imports.find(i => i.as === name)
-        if (!item) {
+        if (!item)
           continue
-        }
 
         const start = match.index!
         const end = start + match[0].length
@@ -29,7 +28,7 @@ export const vueTemplateAddon = (): Addon => {
         if (!targets.find(i => i.as === tempName)) {
           targets.push({
             ...item,
-            as: tempName
+            as: tempName,
           })
         }
       }
@@ -38,21 +37,21 @@ export const vueTemplateAddon = (): Addon => {
         targets.push({
           name: 'unref',
           from: 'vue',
-          as: UNREF_KEY
+          as: UNREF_KEY,
         })
 
         for (const addon of this.addons) {
-          if (addon === self) {
+          if (addon === self)
             continue
-          }
+
           targets = await addon.injectImportsResolved?.call(this, targets, s, id) ?? targets
         }
 
         let injection = toImports(targets)
         for (const addon of this.addons) {
-          if (addon === self) {
+          if (addon === self)
             continue
-          }
+
           injection = await addon.injectImportsStringified?.call(this, injection, targets, s, id) ?? injection
         }
 
@@ -61,35 +60,36 @@ export const vueTemplateAddon = (): Addon => {
 
       return s
     },
-    async declaration (dts, options) {
+    async declaration(dts, options) {
       const imports = await this.getImports()
       const items = imports
         .map((i) => {
-          if (i.type) { return '' }
+          if (i.type)
+            return ''
           const from = options?.resolvePath?.(i) || i.from
           return `readonly ${i.as}: UnwrapRef<typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}>`
         })
         .filter(Boolean)
         .sort()
 
-      const extendItems = items.map(i => '    ' + i).join('\n')
-      return dts +
-`
+      const extendItems = items.map(i => `    ${i}`).join('\n')
+      return `${dts
+}
 // for vue template auto import
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
 ${extendItems}
   }
-}` + // Workaround for Vue 3.3
-`
+}` // Workaround for Vue 3.3
++ `
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
 ${extendItems}
   }
 }
 `
-    }
+    },
   }
 
   return self

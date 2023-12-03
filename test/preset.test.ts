@@ -1,5 +1,5 @@
-import { expect, describe, it } from 'vitest'
-import { resolvePreset, resolveBuiltinPresets } from '../src/preset'
+import { describe, expect, it } from 'vitest'
+import { resolveBuiltinPresets, resolvePreset } from '../src/preset'
 import { defineUnimportPreset } from '../src/utils'
 
 describe('preset', () => {
@@ -16,18 +16,18 @@ describe('preset', () => {
           // full options
           {
             name: 'toRefs',
-            from: 'vue-alias'
+            from: 'vue-alias',
           },
           // nested preset
           {
             from: 'vue-nested',
             imports: [
-              'toRef'
+              'toRef',
             ],
-            disabled: true
-          }
-        ]
-      }))
+            disabled: true,
+          },
+        ],
+      })),
     ).toMatchInlineSnapshot(`
       [
         {
@@ -67,8 +67,8 @@ describe('preset', () => {
   it('built-in presets', async () => {
     expect(
       await resolveBuiltinPresets([
-        'vue-router'
-      ])
+        'vue-router',
+      ]),
     ).toMatchInlineSnapshot(`
       [
         {
@@ -110,14 +110,14 @@ describe('preset', () => {
             name: 'toRefs',
             from: 'vue-alias',
             meta: {
-              docsUrl: 'https://vuejs.org/api/reactivity-utilities.html#torefs'
-            }
-          }
+              docsUrl: 'https://vuejs.org/api/reactivity-utilities.html#torefs',
+            },
+          },
         ],
         meta: {
-          docsUrl: 'https://vuejs.org'
-        }
-      }))
+          docsUrl: 'https://vuejs.org',
+        },
+      })),
     ).toMatchInlineSnapshot(`
       [
         {

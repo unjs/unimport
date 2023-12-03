@@ -27,6 +27,6 @@ export default defineUnimportPreset({
     'onTabItemTap',
     'onThemeChange',
     'onUnhandledRejection',
-    'onUnload'
-  ]
+    'onUnload',
+  ],
 })

@@ -14,6 +14,6 @@ export default defineUnimportPreset({
     'mapMutations',
     'createNamespacedHelpers',
     // https://next.vuex.vuejs.org/api/#composable-functions
-    'useStore'
-  ]
+    'useStore',
+  ],
 })

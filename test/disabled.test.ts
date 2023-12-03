@@ -1,12 +1,13 @@
-import { expect, describe, test } from 'vitest'
-import { createUnimport, Import } from '../src'
+import { describe, expect, it } from 'vitest'
+import type { Import } from '../src'
+import { createUnimport } from '../src'
 
 describe('able to disable', () => {
   const item: Import = { name: 'fooBar', from: 'test-id' }
   const { injectImports } = createUnimport({
-    imports: [item]
+    imports: [item],
   })
-  test('disable: false', async () => {
+  it('disable: false', async () => {
     item.disabled = false
     expect((await injectImports('console.log(fooBar())')).code)
       .toMatchInlineSnapshot(`
@@ -14,15 +15,15 @@ describe('able to disable', () => {
         console.log(fooBar())"
       `)
   })
-  test('disable: true', async () => {
+  it('disable: true', async () => {
     item.disabled = true
     expect((await injectImports('console.log(fooBar())')).code)
       .toMatchInlineSnapshot('"console.log(fooBar())"')
   })
-  test('multiple imports', async () => {
+  it('multiple imports', async () => {
     const item2 = { name: item.name, from: 'other-id', disabled: false }
     const { injectImports } = createUnimport({
-      imports: [item, item2]
+      imports: [item, item2],
     })
     item.disabled = true
     expect((await injectImports('console.log(fooBar())')).code)

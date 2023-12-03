@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const count: Ref<number> = ref(1)
 
-function inc () {
+function inc() {
   count.value += 1
 }
 </script>

@@ -3,8 +3,8 @@ import { defineUnimportPreset } from '../utils'
 export const svelteAnimate = defineUnimportPreset({
   from: 'svelte/animate',
   imports: [
-    'flip'
-  ]
+    'flip',
+  ],
 })
 
 export const svelteEasing = defineUnimportPreset({
@@ -19,11 +19,11 @@ export const svelteEasing = defineUnimportPreset({
     'quad',
     'quart',
     'quint',
-    'sine'
+    'sine',
   ].reduce((acc, e) => {
     acc.push(`${e}In`, `${e}Out`, `${e}InOut`)
     return acc
-  }, ['linear'])
+  }, ['linear']),
 })
 
 export const svelteStore = defineUnimportPreset({
@@ -32,16 +32,16 @@ export const svelteStore = defineUnimportPreset({
     'writable',
     'readable',
     'derived',
-    'get'
-  ]
+    'get',
+  ],
 })
 
 export const svelteMotion = defineUnimportPreset({
   from: 'svelte/motion',
   imports: [
     'tweened',
-    'spring'
-  ]
+    'spring',
+  ],
 })
 
 export const svelteTransition = defineUnimportPreset({
@@ -53,8 +53,8 @@ export const svelteTransition = defineUnimportPreset({
     'slide',
     'scale',
     'draw',
-    'crossfade'
-  ]
+    'crossfade',
+  ],
 })
 
 export const svelte = defineUnimportPreset({
@@ -73,6 +73,6 @@ export const svelte = defineUnimportPreset({
     'hasContext',
     'getAllContexts',
     // event dispatcher
-    'createEventDispatcher'
-  ]
+    'createEventDispatcher',
+  ],
 })
