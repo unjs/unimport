@@ -1,5 +1,5 @@
-export const vanillaA = 1
+export const vanillaAMJS = 1
 
-export function vanillaB() {
+export function vanillaBMJS() {
   return 'vanillaB'
 }
