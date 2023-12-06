@@ -86,8 +86,10 @@ it('dts', async () => {
         const useEffect: typeof import('react')['useEffect']
         const useRef: typeof import('react')['useRef']
         const useState: typeof import('react')['useState']
-        const vanillaA: typeof import('<root>/playground/composables/vanilla.js')['vanillaA']
-        const vanillaB: typeof import('<root>/playground/composables/vanilla.js')['vanillaB']
+        const vanillaA: typeof import('<root>/playground/composables/vanilla')['vanillaA']
+        const vanillaAMJS: typeof import('<root>/playground/composables/vanilla')['vanillaAMJS']
+        const vanillaB: typeof import('<root>/playground/composables/vanilla')['vanillaB']
+        const vanillaBMJS: typeof import('<root>/playground/composables/vanilla')['vanillaBMJS']
       }
       // for type re-export
       declare global {

@@ -67,9 +67,19 @@ describe('scan-dirs', () => {
             "name": "vanillaA",
           },
           {
+            "as": "vanillaAMJS",
+            "from": "vanilla.mjs",
+            "name": "vanillaAMJS",
+          },
+          {
             "as": "vanillaB",
             "from": "vanilla.js",
             "name": "vanillaB",
+          },
+          {
+            "as": "vanillaBMJS",
+            "from": "vanilla.mjs",
+            "name": "vanillaBMJS",
           },
           {
             "as": "VanillaInterface",
