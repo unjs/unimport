@@ -18,7 +18,7 @@ describe('inject import', () => {
       imports: [{ name: 'fooBar', from: 'test-id' }],
     })
     expect((await injectImports('export { fooBar } from "test-id"')).code)
-      .toMatchInlineSnapshot('"export { fooBar } from \\"test-id\\""')
+      .toMatchInlineSnapshot(`"export { fooBar } from "test-id""`)
   })
 
   it('metadata', async () => {
