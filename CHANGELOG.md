@@ -1,3 +1,12 @@
+## [3.6.1](https://github.com/unjs/unimport/compare/v3.6.0...v3.6.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* always remove file extension by default in `toTypeDeclarationItems` ([#303](https://github.com/unjs/unimport/issues/303)) ([7ec41c2](https://github.com/unjs/unimport/commit/7ec41c211405ea1f1ee153c021a14a9cbfd70cc1))
+
+
+
 # [3.6.0](https://github.com/unjs/unimport/compare/v3.5.0...v3.6.0) (2023-11-22)
 
 
