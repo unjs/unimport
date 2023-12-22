@@ -1,5 +1,4 @@
-import type { Unimport } from './context'
-import type { Import, InstallGlobalOptions } from './types'
+import type { Import, InstallGlobalOptions, Unimport } from './types'
 
 export async function installGlobalAutoImports(
   imports: Import[] | Unimport,
