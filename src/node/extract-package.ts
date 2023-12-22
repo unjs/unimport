@@ -3,7 +3,7 @@ import { accessSync, constants, existsSync, promises as fsp } from 'node:fs'
 import { resolveModuleExportNames } from 'mlly'
 import { readPackageJSON, resolvePackageJSON } from 'pkg-types'
 import { dirname, join } from 'pathe'
-import type { Import, PackagePreset } from './types'
+import type { Import, PackagePreset } from '../types'
 
 const CACHE_PATH = /* #__PURE__ */ join(os.tmpdir(), 'unimport')
 let CACHE_WRITEABLE: boolean | undefined

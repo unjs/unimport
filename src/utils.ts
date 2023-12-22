@@ -2,43 +2,14 @@ import { isAbsolute, relative } from 'pathe'
 import type { StaticImport } from 'mlly'
 import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
-import type { StripLiteralOptions } from 'strip-literal'
-import { stripLiteral } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
-
-export const excludeRE = [
-  // imported/exported from other module
-  /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
-  // defined as function
-  /\bfunction\s*([\w_$]+?)\s*\(/gs,
-  // defined as class
-  /\bclass\s*([\w_$]+?)\s*{/gs,
-  // defined as local variable
-  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs,
-]
-
-export const importAsRE = /^.*\sas\s+/
-export const separatorRE = /[,[\]{}\n]|\bimport\b/g
-
-/**
- *                                                                            |       |
- *                    destructing   case&ternary    non-call     inheritance   |  id   |
- *                         ↓             ↓             ↓             ↓         |       |
- */
-export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)]|(?:\bextends)\s+)([\w_$]+)\s*(?=[.()[\]}}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+{)/g
-
-const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
-
-export function stripCommentsAndStrings(code: string, options?: StripLiteralOptions) {
-  return stripLiteral(code, options)
-    .replace(regexRE, 'new RegExp("")')
-}
+import { stripCommentsAndStrings } from './regexp'
 
 export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
-export function toImports(imports: Import[], isCJS = false) {
+export function stringifyImports(imports: Import[], isCJS = false) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
     .flatMap(([name, importSet]) => {
@@ -227,7 +198,6 @@ function toImportModuleMap(imports: Import[], includeType = false) {
 export function getString(code: string | MagicString) {
   if (typeof code === 'string')
     return code
-
   return code.toString()
 }
 
@@ -291,7 +261,7 @@ export function addImportToCode(
 
   newImports = onResolved?.(newImports) ?? newImports
 
-  let newEntries = toImports(newImports, isCJS)
+  let newEntries = stringifyImports(newImports, isCJS)
   newEntries = onStringified?.(newEntries, newImports) ?? newEntries
 
   if (newEntries) {
@@ -327,3 +297,8 @@ export function resolveIdAbsolute(id: string, parentId?: string) {
 function isFilePath(path: string) {
   return path.startsWith('.') || isAbsolute(path) || path.includes('://')
 }
+
+/**
+ * @deprecated renamed to `stringifyImports`
+ */
+export const toImports = stringifyImports

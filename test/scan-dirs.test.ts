@@ -1,6 +1,6 @@
 import { join, relative } from 'pathe'
 import { describe, expect, it } from 'vitest'
-import { scanDirExports, toImports } from '../src'
+import { scanDirExports, stringifyImports } from '../src'
 
 describe('scan-dirs', () => {
   it('scanDirExports', async () => {
@@ -160,7 +160,7 @@ describe('scan-dirs', () => {
       ]
     `)
 
-    expect(toImports(importsResult)).toMatchInlineSnapshot(`
+    expect(stringifyImports(importsResult)).toMatchInlineSnapshot(`
       "import { bar, named } from 'nested/bar/index.ts';
       import { myBazFunction } from 'nested/bar/baz.ts';
       import { subFoo } from 'nested/bar/sub/index.ts';"

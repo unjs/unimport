@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { excludeRE, importAsRE, separatorRE, stripCommentsAndStrings } from '../src/utils'
+import { excludeRE, importAsRE, separatorRE, stripCommentsAndStrings } from '../src/regexp'
 
 describe('regex for extract local variable', () => {
   const cases: { input: string, output: string[] }[] = [
@@ -7,7 +7,7 @@ describe('regex for extract local variable', () => {
     { input: 'const { ref,    computed,watch} = Vue', output: ['ref', 'computed', 'watch'] },
     { input: 'const {  } = Vue', output: [] },
     { input: 'const { ref} = Vue', output: ['ref'] },
-    { input: 'const { mabye_test, $test} = Vue', output: ['mabye_test', '$test'] },
+    { input: 'const { maybe_test, $test} = Vue', output: ['maybe_test', '$test'] },
     { input: 'const [state] = useState(1)', output: ['state'] },
 
     // We may not able to handle these cases

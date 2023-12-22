@@ -1,15 +1,102 @@
-import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import type MagicString from 'magic-string'
 import { version } from '../package.json'
-import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, UnimportContext, UnimportMeta, UnimportOptions } from './types'
-import { addImportToCode, dedupeImports, excludeRE, getMagicString, importAsRE, matchRE, normalizeImports, separatorRE, stripCommentsAndStrings, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
+import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, Unimport, UnimportContext, UnimportMeta, UnimportOptions } from './types'
+import { addImportToCode, dedupeImports, getMagicString, normalizeImports, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
-import { dedupeDtsExports, scanExports, scanFilesFromDir } from './scan-dirs'
+import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
+import { detectImports, parseVirtualImports } from './detect'
 
-export type Unimport = ReturnType<typeof createUnimport>
+export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
+  const ctx = createInternalContext(opts)
 
-export function createUnimport(opts: Partial<UnimportOptions>) {
+  async function generateTypeDeclarations(options?: TypeDeclarationOptions) {
+    const opts: TypeDeclarationOptions = {
+      resolvePath: i => i.typeFrom || i.from,
+      ...options,
+    }
+    const {
+      typeReExports = true,
+    } = opts
+    const imports = await ctx.getImports()
+    let dts = toTypeDeclarationFile(imports.filter(i => !i.type && !i.dtsDisabled), opts)
+    const typeOnly = imports.filter(i => i.type)
+    if (typeReExports && typeOnly.length)
+      dts += `\n${toTypeReExports(typeOnly, opts)}`
+
+    for (const addon of ctx.addons)
+      dts = await addon.declaration?.call(ctx, dts, opts) ?? dts
+
+    return dts
+  }
+
+  async function scanImportsFromFile(filepath: string, includeTypes = true) {
+    const additions = await scanExports(filepath, includeTypes)
+    await ctx.modifyDynamicImports(imports => imports.filter(i => i.from !== filepath).concat(additions))
+    return additions
+  }
+
+  async function scanImportsFromDir(dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
+    const files = await scanFilesFromDir(dirs, options)
+    const includeTypes = options?.types ?? true
+    const imports = (await Promise.all(files.map(dir => scanExports(dir, includeTypes)))).flat()
+    const deduped = dedupeDtsExports(imports)
+    await ctx.modifyDynamicImports(imports => imports.filter(i => !files.includes(i.from)).concat(deduped))
+    return imports
+  }
+
+  async function injectImportsWithContext(code: string | MagicString, id?: string, options?: InjectImportsOptions) {
+    const result = await injectImports(code, id, ctx, {
+      ...opts,
+      ...options,
+    })
+
+    // Collect metadata
+    const metadata = ctx.getMetadata()
+    if (metadata) {
+      result.imports.forEach((i) => {
+        metadata.injectionUsage[i.name] = metadata.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
+        metadata.injectionUsage[i.name].count++
+        if (id && !metadata.injectionUsage[i.name].moduleIds.includes(id))
+          metadata.injectionUsage[i.name].moduleIds.push(id)
+      })
+    }
+
+    return result
+  }
+
+  /**
+   * Initialize unimport:
+   * - scan imports from dirs
+   */
+  async function init() {
+    if (ctx.options.dirs?.length)
+      await scanImportsFromDir()
+  }
+
+  // Public API
+  return {
+    version,
+    init,
+    clearDynamicImports: () => ctx.clearDynamicImports(),
+    modifyDynamicImports: fn => ctx.modifyDynamicImports(fn),
+    scanImportsFromDir,
+    scanImportsFromFile,
+    getImports: () => ctx.getImports(),
+    getImportMap: () => ctx.getImportMap(),
+    detectImports: (code: string | MagicString) => detectImports(code, ctx),
+    injectImports: injectImportsWithContext,
+    parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
+    generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
+    getMetadata: () => ctx.getMetadata(),
+    getInternalContext: () => ctx,
+
+    // Deprecated
+    toExports: async (filepath?: string, includeTypes = false) => toExports(await ctx.getImports(), filepath, includeTypes),
+  }
+}
+
+function createInternalContext(opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
   const _map = new Map()
@@ -37,11 +124,12 @@ export function createUnimport(opts: Partial<UnimportOptions>) {
 
   const ctx: UnimportContext = {
     version,
-
     options: opts,
     addons,
     staticImports: [...(opts.imports || [])].filter(Boolean),
     dynamicImports: [],
+    modifyDynamicImports,
+    clearDynamicImports,
     async getImports() {
       await resolvePromise
       return updateImports()
@@ -102,7 +190,6 @@ export function createUnimport(opts: Partial<UnimportOptions>) {
     const result = await fn(ctx.dynamicImports)
     if (Array.isArray(result))
       ctx.dynamicImports = result
-
     ctx.invalidate()
   }
 
@@ -111,196 +198,7 @@ export function createUnimport(opts: Partial<UnimportOptions>) {
     ctx.invalidate()
   }
 
-  async function generateTypeDeclarations(options?: TypeDeclarationOptions) {
-    const opts: TypeDeclarationOptions = {
-      resolvePath: i => i.typeFrom || i.from,
-      ...options,
-    }
-    const {
-      typeReExports = true,
-    } = opts
-    const imports = await ctx.getImports()
-    let dts = toTypeDeclarationFile(imports.filter(i => !i.type && !i.dtsDisabled), opts)
-    const typeOnly = imports.filter(i => i.type)
-    if (typeReExports && typeOnly.length)
-      dts += `\n${toTypeReExports(typeOnly, opts)}`
-
-    for (const addon of ctx.addons)
-      dts = await addon.declaration?.call(ctx, dts, opts) ?? dts
-
-    return dts
-  }
-
-  async function scanImportsFromFile(filepath: string, includeTypes = true) {
-    const additions = await scanExports(filepath, includeTypes)
-    await modifyDynamicImports(imports => imports.filter(i => i.from !== filepath).concat(additions))
-    return additions
-  }
-
-  async function scanImportsFromDir(dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
-    const files = await scanFilesFromDir(dirs, options)
-    const includeTypes = options?.types ?? true
-    const imports = (await Promise.all(files.map(dir => scanExports(dir, includeTypes)))).flat()
-    const deduped = dedupeDtsExports(imports)
-    await modifyDynamicImports(imports => imports.filter(i => !files.includes(i.from)).concat(deduped))
-    return imports
-  }
-
-  async function injectImportsWithContext(code: string | MagicString, id?: string, options?: InjectImportsOptions) {
-    const result = await injectImports(code, id, ctx, {
-      ...opts,
-      ...options,
-    })
-
-    // Collect metadata
-    if (metadata) {
-      result.imports.forEach((i) => {
-        metadata!.injectionUsage[i.name] = metadata!.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
-        metadata!.injectionUsage[i.name].count++
-        if (id && !metadata!.injectionUsage[i.name].moduleIds.includes(id))
-          metadata!.injectionUsage[i.name].moduleIds.push(id)
-      })
-    }
-
-    return result
-  }
-
-  /**
-   * Initialize unimport:
-   * - scan imports from dirs
-   */
-  async function init() {
-    if (ctx.options.dirs?.length)
-      await scanImportsFromDir()
-  }
-
-  // Public API
-  return {
-    init,
-    clearDynamicImports,
-    modifyDynamicImports,
-    scanImportsFromDir,
-    scanImportsFromFile,
-    getImports: () => ctx.getImports(),
-    getImportMap: () => ctx.getImportMap(),
-    detectImports: (code: string | MagicString) => detectImports(code, ctx),
-    injectImports: injectImportsWithContext,
-    toExports: async (filepath?: string, includeTypes = false) => toExports(await ctx.getImports(), filepath, includeTypes),
-    parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
-    generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
-    getMetadata: () => ctx.getMetadata(),
-    getInternalContext: () => ctx,
-  }
-}
-
-function parseVirtualImports(code: string, ctx: UnimportContext) {
-  if (ctx.options.virtualImports?.length) {
-    return findStaticImports(code)
-      .filter(i => ctx.options.virtualImports!.includes(i.specifier))
-      .map(i => parseStaticImport(i))
-  }
-  return []
-}
-
-async function detectImports(code: string | MagicString, ctx: UnimportContext, options?: InjectImportsOptions) {
-  const s = getMagicString(code)
-  // Strip comments so we don't match on them
-  const original = s.original
-  const strippedCode = stripCommentsAndStrings(
-    original,
-    // Do not strip comments if they are virtual import names
-    options?.transformVirtualImports !== false && ctx.options.virtualImports?.length
-      ? {
-          filter: i => !(ctx.options.virtualImports!.includes(i)),
-          fillChar: '-',
-        }
-      : undefined,
-  )
-  const syntax = detectSyntax(strippedCode)
-  const isCJSContext = syntax.hasCJS && !syntax.hasESM
-  let matchedImports: Import[] = []
-
-  const occurrenceMap = new Map<string, number>()
-
-  const map = await ctx.getImportMap()
-  // Auto import, search for unreferenced usages
-  if (options?.autoImport !== false) {
-    // Find all possible injection
-    Array.from(strippedCode.matchAll(matchRE))
-      .forEach((i) => {
-        // Remove dot access, but keep destructuring
-        if (i[1] === '.')
-          return null
-
-        // Remove property, but keep `case x:` and `? x :`
-        const end = strippedCode[i.index! + i[0].length]
-        // also keeps deep ternary like `true ? false ? a : b : c`
-        const before = strippedCode[i.index! - 1]
-        if (end === ':' && !['?', 'case'].includes(i[1].trim()) && before !== ':')
-          return null
-
-        const name = i[2]
-        const occurrence = i.index! + i[1].length
-        if (occurrenceMap.get(name) || Number.POSITIVE_INFINITY > occurrence)
-          occurrenceMap.set(name, occurrence)
-      })
-
-    // Remove those already defined
-    for (const regex of excludeRE) {
-      for (const match of strippedCode.matchAll(regex)) {
-        const segments = [...match[1]?.split(separatorRE) || [], ...match[2]?.split(separatorRE) || []]
-        for (const segment of segments) {
-          const identifier = segment.replace(importAsRE, '').trim()
-          occurrenceMap.delete(identifier)
-        }
-      }
-    }
-
-    const identifiers = new Set(occurrenceMap.keys())
-    matchedImports = Array.from(identifiers)
-      .map((name) => {
-        const item = map.get(name)
-        if (item && !item.disabled)
-          return item
-
-        occurrenceMap.delete(name)
-        return null
-      })
-      .filter(Boolean) as Import[]
-
-    for (const addon of ctx.addons)
-      matchedImports = await addon.matchImports?.call(ctx, identifiers, matchedImports) || matchedImports
-  }
-
-  // Transform virtual imports like `import { foo } from '#imports'`
-  if (options?.transformVirtualImports !== false && options?.transformVirtualImoports !== false && ctx.options.virtualImports?.length) {
-    const virtualImports = parseVirtualImports(strippedCode, ctx)
-    virtualImports.forEach((i) => {
-      s.remove(i.start, i.end)
-      Object.entries(i.namedImports || {})
-        .forEach(([name, as]) => {
-          const original = map.get(name)
-          if (!original)
-            throw new Error(`[unimport] failed to find "${name}" imported from "${i.specifier}"`)
-
-          matchedImports.push({
-            from: original.from,
-            name: original.name,
-            as,
-          })
-        })
-    })
-  }
-
-  const firstOccurrence = Math.min(...Array.from(occurrenceMap.entries()).map(i => i[1]))
-
-  return {
-    s,
-    strippedCode,
-    isCJSContext,
-    matchedImports,
-    firstOccurrence,
-  }
+  return ctx
 }
 
 async function injectImports(

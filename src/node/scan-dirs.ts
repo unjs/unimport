@@ -6,7 +6,7 @@ import { dirname, extname, join, normalize, parse as parsePath, resolve } from '
 import type { ESMExport } from 'mlly'
 import { findExports, findTypeExports } from 'mlly'
 import { camelCase } from 'scule'
-import type { Import, ScanDirExportsOptions } from './types'
+import type { Import, ScanDirExportsOptions } from '../types'
 
 export async function scanFilesFromDir(dir: string | string[], options?: ScanDirExportsOptions) {
   const dirs = (Array.isArray(dir) ? dir : [dir]).map(d => normalize(d))
