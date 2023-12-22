@@ -1,11 +1,9 @@
 /// <reference types="vite/client" />
 
-import { basename, dirname } from 'node:path'
-import { dir } from 'node:console'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { resolve } from 'pathe'
-import { b } from 'vitest/dist/suite-dF4WyktM'
 import { createUnimport } from '../src/context'
 import type { UnimportOptions } from '../src'
 
@@ -25,6 +23,7 @@ const options: Record<string, Partial<UnimportOptions>> = {
 }
 
 const excludes: Record<string, (file: string) => boolean> = {
+  default: (file: string) => !!file.match(/acorn-/),
   acorn: (file: string) => !file.match(/\.js$/),
 }
 
