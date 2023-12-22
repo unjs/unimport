@@ -1,3 +1,17 @@
+# [3.7.0](https://github.com/unjs/unimport/compare/v3.6.1...v3.7.0) (2023-12-22)
+
+
+### Bug Fixes
+
+* **vue-template:** support auto import with `$`, close [#298](https://github.com/unjs/unimport/issues/298) ([656756c](https://github.com/unjs/unimport/commit/656756c05e63d05cd08b72b9616665d491b55643))
+
+
+### Features
+
+* introduce acorn as parser ([#307](https://github.com/unjs/unimport/issues/307)) ([be1dccc](https://github.com/unjs/unimport/commit/be1dccc478acd3f03c98430768232adfdfe257e0))
+
+
+
 ## [3.6.1](https://github.com/unjs/unimport/compare/v3.6.0...v3.6.1) (2023-12-06)
 
 
