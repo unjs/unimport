@@ -46,7 +46,9 @@
   },
   "dependencies": {
     "@rollup/pluginutils": "^5.1.0",
+    "acorn": "^8.11.2",
     "escape-string-regexp": "^5.0.0",
+    "estree-walker": "^3.0.3",
     "fast-glob": "^3.3.2",
     "local-pkg": "^0.5.0",
     "magic-string": "^0.30.5",
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.4.6",
+    "@types/estree": "^1.0.5",
     "@types/node": "^20.10.5",
     "@vitest/coverage-v8": "^1.1.0",
     "bumpp": "^9.2.1",

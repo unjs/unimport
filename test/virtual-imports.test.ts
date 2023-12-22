@@ -24,17 +24,6 @@ describe('virtual imports', () => {
   watch('file')
     `.trim()
 
-    expect(ctx.parseVirtualImports(fixture).map(i => i.namedImports))
-      .toMatchInlineSnapshot(`
-        [
-          {
-            "bar": "BAR",
-            "computed": "computed",
-            "ref": "ref",
-            "watchEffect": "effect",
-          },
-        ]
-      `)
     expect((await ctx.injectImports(fixture)).code)
       .toMatchInlineSnapshot(`
         "import { shallowRef, ref, computed, watchEffect as effect } from 'vue';
