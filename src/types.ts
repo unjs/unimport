@@ -1,5 +1,4 @@
 import type MagicString from 'magic-string'
-import type { ParsedStaticImport } from 'mlly'
 import type { BuiltinPresetName } from './presets'
 
 export type ModuleId = string
@@ -131,7 +130,6 @@ export interface Unimport {
 
   scanImportsFromDir(dir?: string[], options?: ScanDirExportsOptions): Promise<Import[]>
   scanImportsFromFile(file: string, includeTypes?: boolean): Promise<Import[]>
-  parseVirtualImports(code: string): ParsedStaticImport[]
 
   /**
    * @deprecated
@@ -158,7 +156,7 @@ export interface AddonsOptions {
   vueTemplate?: boolean
 }
 
-export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting'> {
+export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {
   /**
    * Auto import items
    */
@@ -305,6 +303,15 @@ export interface InjectImportsOptions {
    * @default true
    */
   transformVirtualImports?: boolean
+
+  /**
+   * Parser to use for parsing the code
+   *
+   * Note that `acorn` only takes valid JS Code, should usually only be used after transformationa and transpilation
+   *
+   * @default 'regex'
+   */
+  parser?: 'acorn' | 'regex'
 
   /**
    * Inject the imports at the end of other imports

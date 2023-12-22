@@ -5,7 +5,7 @@ import { addImportToCode, dedupeImports, getMagicString, normalizeImports, toExp
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
 import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
-import { detectImports, parseVirtualImports } from './detect'
+import { detectImports } from './detect'
 
 export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   const ctx = createInternalContext(opts)
@@ -86,7 +86,6 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     getImportMap: () => ctx.getImportMap(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: injectImportsWithContext,
-    parseVirtualImports: (code: string) => parseVirtualImports(code, ctx),
     generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
     getMetadata: () => ctx.getMetadata(),
     getInternalContext: () => ctx,
