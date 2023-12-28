@@ -1,3 +1,12 @@
+## [3.7.1](https://github.com/unjs/unimport/compare/v3.7.0...v3.7.1) (2023-12-28)
+
+
+### Bug Fixes
+
+* do not stripe file extension when a custom `resolvePath` is provided, close [#306](https://github.com/unjs/unimport/issues/306) ([1d31ff2](https://github.com/unjs/unimport/commit/1d31ff2e0c8ee45d637e2f1df48bcb2cf8d4c4e3))
+
+
+
 # [3.7.0](https://github.com/unjs/unimport/compare/v3.6.1...v3.7.0) (2023-12-22)
 
 
