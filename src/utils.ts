@@ -119,10 +119,14 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
     .join('\n')
 }
 
+export function stripFileExtension(path: string) {
+  return path.replace(/\.[a-zA-Z]+$/, '')
+}
+
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
   return imports
     .map((i) => {
-      const from = (options?.resolvePath?.(i) || i.typeFrom || i.from).replace(/\.[a-zA-Z]+$/, '')
+      const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
       return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
     })
     .sort()
@@ -145,7 +149,7 @@ export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarati
 export function toTypeReExports(imports: Import[], options?: TypeDeclarationOptions) {
   const importsMap = new Map<string, Import[]>()
   imports.forEach((i) => {
-    const from = options?.resolvePath?.(i) || i.from
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
     const list = importsMap.get(from) || []
     list.push(i)
     importsMap.set(from, list)

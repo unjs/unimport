@@ -1,7 +1,7 @@
 import type MagicString from 'magic-string'
 import { version } from '../package.json'
 import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, Unimport, UnimportContext, UnimportMeta, UnimportOptions } from './types'
-import { addImportToCode, dedupeImports, getMagicString, normalizeImports, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
+import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 import { resolveBuiltinPresets } from './preset'
 import { vueTemplateAddon } from './addons'
 import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
@@ -12,7 +12,7 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
 
   async function generateTypeDeclarations(options?: TypeDeclarationOptions) {
     const opts: TypeDeclarationOptions = {
-      resolvePath: i => i.typeFrom || i.from,
+      resolvePath: i => stripFileExtension(i.typeFrom || i.from),
       ...options,
     }
     const {

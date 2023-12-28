@@ -100,14 +100,14 @@ it('dts', async () => {
         export type { JQuery } from 'jquery'
         import('jquery')
         // @ts-ignore
-        export type { CustomType1, CustomInterface1 } from '<root>/playground/composables/index.ts'
-        import('<root>/playground/composables/index.ts')
+        export type { CustomType1, CustomInterface1 } from '<root>/playground/composables/index'
+        import('<root>/playground/composables/index')
         // @ts-ignore
-        export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index.ts'
-        import('<root>/playground/composables/nested/bar/sub/index.ts')
+        export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index'
+        import('<root>/playground/composables/nested/bar/sub/index')
         // @ts-ignore
-        export type { vanillaTypeOnlyFunction, VanillaInterface, VanillaInterfaceAlias } from '<root>/playground/composables/vanilla.d.ts'
-        import('<root>/playground/composables/vanilla.d.ts')
+        export type { vanillaTypeOnlyFunction, VanillaInterface, VanillaInterfaceAlias } from '<root>/playground/composables/vanilla.d'
+        import('<root>/playground/composables/vanilla.d')
       }"
     `)
 })

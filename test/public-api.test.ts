@@ -28,6 +28,7 @@ it('public-api', async () => {
         "separatorRE",
         "stringifyImports",
         "stripCommentsAndStrings",
+        "stripFileExtension",
         "toExports",
         "toImports",
         "toTypeDeclarationFile",
