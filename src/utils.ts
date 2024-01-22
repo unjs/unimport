@@ -123,11 +123,23 @@ export function stripFileExtension(path: string) {
   return path.replace(/\.[a-zA-Z]+$/, '')
 }
 
+function isModuleFile(path: string) {
+  return path.includes('node_modules') && path.match(/\.[mc]?js$/)
+}
+
+// if in node_modules and .mjs, js, cjs delete
+function removeModuleFileExtension(path: string) {
+  return path.replace(/\.[mc]?js$/, '')
+}
+
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
   return imports
     .map((i) => {
       const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
+      if (isModuleFile(from))
+        return `const ${i.as}: typeof import('${removeModuleFileExtension(from)}')${i.name !== '*' ? `['${i.name}']` : ''}`
+      else
+        return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
     })
     .sort()
 }
