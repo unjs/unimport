@@ -1,7 +1,7 @@
 import type { Addon, Import } from '../types'
-import { toImports } from '../utils'
+import { stringifyImports } from '../utils'
 
-const contextRE = /\b_ctx\.([\w_]+)\b/g
+const contextRE = /\b_ctx\.([$\w_]+)\b/g
 const UNREF_KEY = '__unimport_unref_'
 
 export function vueTemplateAddon(): Addon {
@@ -47,7 +47,7 @@ export function vueTemplateAddon(): Addon {
           targets = await addon.injectImportsResolved?.call(this, targets, s, id) ?? targets
         }
 
-        let injection = toImports(targets)
+        let injection = stringifyImports(targets)
         for (const addon of this.addons) {
           if (addon === self)
             continue

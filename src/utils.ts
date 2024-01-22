@@ -2,9 +2,8 @@ import { isAbsolute, relative } from 'pathe'
 import type { StaticImport } from 'mlly'
 import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
-import type { StripLiteralOptions } from 'strip-literal'
-import { stripLiteral } from 'strip-literal'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
+import { stripCommentsAndStrings } from './regexp'
 import fs from "fs"
 export const files={}
 export const excludeRE = [
@@ -39,7 +38,7 @@ export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
-export function toImports(imports: Import[], isCJS = false) {
+export function stringifyImports(imports: Import[], isCJS = false) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
     .flatMap(([name, importSet]) => {
@@ -150,7 +149,6 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
   try{
-
     //Relative paths
     if(modulePath.indexOf("../../")!==-1){
       modulePath=modulePath.slice(6)
@@ -187,10 +185,14 @@ export function extractJSDoc(modulePath: string, functionName: string) {
 
 export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
   return imports.map((i) => {
-    const from = (options?.resolvePath?.(i) || i.from).replace(/\.ts$/, "");
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
     const jsDoc=extractJSDoc(from, i.as)
     return `${jsDoc===null ? '' : jsDoc[0].slice(0,jsDoc[0].indexOf("*/\nexport")+3)+"\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
   }).sort();
+export function stripFileExtension(path: string) {
+  return path.replace(/\.[a-zA-Z]+$/, '')
+}
+
 }
 
 export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarationOptions) {
@@ -210,7 +212,7 @@ export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarati
 export function toTypeReExports(imports: Import[], options?: TypeDeclarationOptions) {
   const importsMap = new Map<string, Import[]>()
   imports.forEach((i) => {
-    const from = options?.resolvePath?.(i) || i.from
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
     const list = importsMap.get(from) || []
     list.push(i)
     importsMap.set(from, list)
@@ -263,7 +265,6 @@ function toImportModuleMap(imports: Import[], includeType = false) {
 export function getString(code: string | MagicString) {
   if (typeof code === 'string')
     return code
-
   return code.toString()
 }
 
@@ -327,7 +328,7 @@ export function addImportToCode(
 
   newImports = onResolved?.(newImports) ?? newImports
 
-  let newEntries = toImports(newImports, isCJS)
+  let newEntries = stringifyImports(newImports, isCJS)
   newEntries = onStringified?.(newEntries, newImports) ?? newEntries
 
   if (newEntries) {
@@ -363,3 +364,8 @@ export function resolveIdAbsolute(id: string, parentId?: string) {
 function isFilePath(path: string) {
   return path.startsWith('.') || isAbsolute(path) || path.includes('://')
 }
+
+/**
+ * @deprecated renamed to `stringifyImports`
+ */
+export const toImports = stringifyImports

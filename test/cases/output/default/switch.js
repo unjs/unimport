@@ -1,3 +1,4 @@
+import { Foo, Bar } from 'foobar';
 function foo(mode) {
   switch (mode) {
     case Foo:

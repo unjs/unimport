@@ -1,3 +1,35 @@
+## [3.7.1](https://github.com/unjs/unimport/compare/v3.7.0...v3.7.1) (2023-12-28)
+
+
+### Bug Fixes
+
+* do not stripe file extension when a custom `resolvePath` is provided, close [#306](https://github.com/unjs/unimport/issues/306) ([1d31ff2](https://github.com/unjs/unimport/commit/1d31ff2e0c8ee45d637e2f1df48bcb2cf8d4c4e3))
+
+
+
+# [3.7.0](https://github.com/unjs/unimport/compare/v3.6.1...v3.7.0) (2023-12-22)
+
+
+### Bug Fixes
+
+* **vue-template:** support auto import with `$`, close [#298](https://github.com/unjs/unimport/issues/298) ([656756c](https://github.com/unjs/unimport/commit/656756c05e63d05cd08b72b9616665d491b55643))
+
+
+### Features
+
+* introduce acorn as parser ([#307](https://github.com/unjs/unimport/issues/307)) ([be1dccc](https://github.com/unjs/unimport/commit/be1dccc478acd3f03c98430768232adfdfe257e0))
+
+
+
+## [3.6.1](https://github.com/unjs/unimport/compare/v3.6.0...v3.6.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* always remove file extension by default in `toTypeDeclarationItems` ([#303](https://github.com/unjs/unimport/issues/303)) ([7ec41c2](https://github.com/unjs/unimport/commit/7ec41c211405ea1f1ee153c021a14a9cbfd70cc1))
+
+
+
 # [3.6.0](https://github.com/unjs/unimport/compare/v3.5.0...v3.6.0) (2023-11-22)
 
 

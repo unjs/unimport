@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import type { Import } from '../src/types'
-import { toImports } from '../src/utils'
+import { stringifyImports } from '../src/utils'
 
 describe('toImports', () => {
   it('basic', () => {
     const imports: Import[] = [{ from: 'test-id', name: 'fooBar', as: 'fooBar' }]
-    expect(toImports(imports))
+    expect(stringifyImports(imports))
       .toMatchInlineSnapshot('"import { fooBar } from \'test-id\';"')
-    expect(toImports(imports, true))
+    expect(stringifyImports(imports, true))
       .toMatchInlineSnapshot('"const { fooBar } = require(\'test-id\');"')
   })
 
   it('alias', () => {
     const imports: Import[] = [{ from: 'test-id', name: 'foo', as: 'bar' }]
-    expect(toImports(imports))
+    expect(stringifyImports(imports))
       .toMatchInlineSnapshot('"import { foo as bar } from \'test-id\';"')
-    expect(toImports(imports, true))
+    expect(stringifyImports(imports, true))
       .toMatchInlineSnapshot('"const { foo: bar } = require(\'test-id\');"')
   })
 
@@ -25,12 +25,12 @@ describe('toImports', () => {
       { from: 'test1', name: 'bar', as: 'bar' },
       { from: 'test2', name: 'foobar', as: 'foobar' },
     ]
-    expect(toImports(imports))
+    expect(stringifyImports(imports))
       .toMatchInlineSnapshot(`
         "import { foo, bar } from 'test1';
         import { foobar } from 'test2';"
       `)
-    expect(toImports(imports, true))
+    expect(stringifyImports(imports, true))
       .toMatchInlineSnapshot(`
         "const { foo, bar } = require('test1');
         const { foobar } = require('test2');"
@@ -41,9 +41,9 @@ describe('toImports', () => {
     const imports: Import[] = [
       { from: 'test1', name: 'default', as: 'foo' },
     ]
-    expect(toImports(imports))
+    expect(stringifyImports(imports))
       .toMatchInlineSnapshot('"import foo from \'test1\';"')
-    expect(toImports(imports, true))
+    expect(stringifyImports(imports, true))
       .toMatchInlineSnapshot('"const { default: foo } = require(\'test1\');"')
   })
 
@@ -51,9 +51,9 @@ describe('toImports', () => {
     const imports: Import[] = [
       { from: 'test1', name: '*', as: 'foo' },
     ]
-    expect(toImports(imports))
+    expect(stringifyImports(imports))
       .toMatchInlineSnapshot('"import * as foo from \'test1\';"')
-    expect(toImports(imports, true))
+    expect(stringifyImports(imports, true))
       .toMatchInlineSnapshot('"const foo = require(\'test1\');"')
   })
 
@@ -67,7 +67,7 @@ describe('toImports', () => {
       { from: 'test2', name: 'default', as: 'defaultAlias' },
       { from: 'sideeffects', name: '', as: '' },
     ]
-    expect(toImports(imports))
+    expect(stringifyImports(imports))
       .toMatchInlineSnapshot(`
         "import * as foo from 'test1';
         import * as bar from 'test1';
@@ -76,7 +76,7 @@ describe('toImports', () => {
         import { foobar } from 'test2';
         import 'sideeffects';"
       `)
-    expect(toImports(imports, true))
+    expect(stringifyImports(imports, true))
       .toMatchInlineSnapshot(`
         "const foo = require('test1');
         const bar = require('test1');

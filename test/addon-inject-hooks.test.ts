@@ -30,7 +30,7 @@ describe('addon inject hooks', () => {
     expect((await ctx.injectImports('ref(1)')).code)
       .toMatchInlineSnapshot(`
         "import { ref as _$_ref } from 'vue';
-        import { __helper } from \\"helper\\"
+        import { __helper } from "helper"
         const ref = __helper(_$_ref)
 
         ref(1)"
@@ -67,7 +67,7 @@ describe('addon inject hooks', () => {
     expect((await ctx.injectImports('foo(1)')).code)
       .toMatchInlineSnapshot(`
         "import { bar as _$_foo } from 'vue';
-        import { __helper } from \\"helper\\"
+        import { __helper } from "helper"
         const foo = __helper(_$_foo)
 
         foo(1)"

@@ -12,4 +12,3 @@ We are excited to hear you want to contribute to the presets! While we are happy
 The rules are not fixed and will adjust if needed.
 
 Thanks :)
-

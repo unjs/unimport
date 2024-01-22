@@ -227,6 +227,18 @@ Unimport.vite({
 })
 ```
 
+### Acorn Parser
+
+By default, `unimport` uses RegExp to detect unimport entries. In some cases, RegExp might not be able to detect all the entries (false positive & false negative).
+
+We introduced a new AST-based parser powered by [acorn](https://github.com/acornjs/acorn), providing a more accurate result. The limitation is when using Acorn, it assumes all input code are valid and vanilla JavaScript code.
+
+```ts
+Unimport.vite({
+  parser: 'acorn'
+})
+```
+
 ### Vue Template Auto Import
 
 In Vue's template, the usage of API is in a different context than plain modules. Thus some custom transformations are required. To enable it, set `addons.vueTemplate` to `true`:

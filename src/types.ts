@@ -80,7 +80,7 @@ export interface PackagePreset {
 export type Preset = InlinePreset | PackagePreset
 
 export interface UnimportContext {
-  version: string
+  readonly version: string
 
   options: Partial<UnimportOptions>
   staticImports: Import[]
@@ -91,10 +91,50 @@ export interface UnimportContext {
   getImportMap(): Promise<Map<string, Import>>
   getMetadata(): UnimportMeta | undefined
 
+  modifyDynamicImports(fn: (imports: Import[]) => Thenable<void | Import[]>): Promise<void>
+  clearDynamicImports(): void
   replaceImports(imports: UnimportOptions['imports']): Promise<Import[]>
 
   invalidate(): void
   resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
+}
+
+export interface DetectImportResult {
+  s: MagicString
+  strippedCode: string
+  isCJSContext: boolean
+  matchedImports: Import[]
+  firstOccurrence: number
+}
+
+export interface Unimport {
+  readonly version: string
+  init(): Promise<void>
+
+  clearDynamicImports: UnimportContext['clearDynamicImports']
+  getImportMap: UnimportContext['getImportMap']
+  getImports: UnimportContext['getImports']
+  getInternalContext: () => UnimportContext
+  getMetadata: UnimportContext['getMetadata']
+  modifyDynamicImports: UnimportContext['modifyDynamicImports']
+  generateTypeDeclarations: (options?: TypeDeclarationOptions) => Promise<string>
+
+  /**
+   * Get un-imported usages from code
+   */
+  detectImports(code: string | MagicString): Promise<DetectImportResult>
+  /**
+   * Insert missing imports statements to code
+   */
+  injectImports(code: string | MagicString, id?: string, options?: InjectImportsOptions): Promise<ImportInjectionResult>
+
+  scanImportsFromDir(dir?: string[], options?: ScanDirExportsOptions): Promise<Import[]>
+  scanImportsFromFile(file: string, includeTypes?: boolean): Promise<Import[]>
+
+  /**
+   * @deprecated
+   */
+  toExports(filepath?: string, includeTypes?: boolean): Promise<string>
 }
 
 export interface InjectionUsageRecord {
@@ -116,7 +156,7 @@ export interface AddonsOptions {
   vueTemplate?: boolean
 }
 
-export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting'> {
+export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {
   /**
    * Auto import items
    */
@@ -264,8 +304,14 @@ export interface InjectImportsOptions {
    */
   transformVirtualImports?: boolean
 
-  /** @deprecated use `virtualImports` instead */
-  transformVirtualImoports?: boolean
+  /**
+   * Parser to use for parsing the code
+   *
+   * Note that `acorn` only takes valid JS Code, should usually only be used after transformationa and transpilation
+   *
+   * @default 'regex'
+   */
+  parser?: 'acorn' | 'regex'
 
   /**
    * Inject the imports at the end of other imports

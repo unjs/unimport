@@ -1,7 +1,7 @@
+import { resolvePackagePreset } from './node/extract-package'
 import type { BuiltinPresetName } from './presets'
 import { builtinPresets } from './presets'
 import type { Import, ImportCommon, InlinePreset, Preset } from './types'
-import { resolvePackagePreset } from './extract'
 
 /**
  * Common propreties for import item and preset
