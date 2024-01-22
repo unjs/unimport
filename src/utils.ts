@@ -148,6 +148,9 @@ export function extractJSDoc(modulePath: string, functionName: string) {
   }
 }
 
+export function stripFileExtension(path: string) {
+  return path.replace(/\.[a-zA-Z]+$/, '')
+}
 
 export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
   return imports.map((i) => {
@@ -155,10 +158,6 @@ export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclara
     const jsDoc=extractJSDoc(from, i.as)
     return `${jsDoc===null ? '' : jsDoc[0].slice(0,jsDoc[0].indexOf("*/\nexport")+3)+"\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
   }).sort();
-export function stripFileExtension(path: string) {
-  return path.replace(/\.[a-zA-Z]+$/, '')
-}
-
 }
 
 export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarationOptions) {
