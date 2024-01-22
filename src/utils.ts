@@ -1,4 +1,4 @@
-import { isAbsolute, relative } from 'pathe'
+import { isAbsolute, relative, resolve } from 'pathe'
 import type { StaticImport } from 'mlly'
 import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
@@ -149,32 +149,25 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
   try{
-    //Relative paths
-    if(modulePath.indexOf("../../")!==-1){
-      modulePath=modulePath.slice(6)
-      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
-    }
-
-    //NPM packages (including scoped ones) (with handling for i18n, tested on Nuxt only, needs proper testing on other tools)
-    if(modulePath.indexOf("/")===-1 || modulePath.indexOf("@")!==-1){
-      modulePath=(modulePath.indexOf("node_modules")===-1?"node_modules/":"")+modulePath+(modulePath.indexOf("i18n")===-1? "/dist/"+( modulePath==="vue" ? modulePath+".d.ts": "index.d.ts"): '')
-    }
-
-    //Absolute paths
-    if(modulePath.indexOf("/node_modules")!==-1){
-      modulePath=modulePath.slice(modulePath.indexOf("/node_modules")+1)
-      modulePath=fs.existsSync(modulePath+".d.ts") ? modulePath+".d.ts" : modulePath+"/index.d.ts"
-    }
-
-    //Vue-router (non-Nuxt locked)
-    if(modulePath.indexOf("vue-router")!==-1){
-      modulePath=fs.existsSync(".nuxt") ? ".nuxt/vue-router.d.ts" : "node_modules/vue-router/dist/vue-router.d.ts"
-    }
-    if(!files[modulePath]){
-      files[modulePath]=fs.readFileSync(modulePath, 'utf8');
-    }
     const jsDocRE=new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
-    const jsDoc= files[modulePath].match(jsDocRE)
+    modulePath=resolve(modulePath.slice(6))
+    if(!files.has(modulePath)){
+      if(fs.existsSync(modulePath+"/package.json")){
+        const pkg = JSON.parse(fs.readFileSync(modulePath+"/package.json","utf8"))
+        files.set(modulePath,readFileSync(modulePath+"/"+pkg.main,"utf8"))
+      }
+      else{
+        if(!files[modulePath]){
+          for(const ext of [".ts",".js",".mjs",".cjs"]){
+            if(fs.existsSync(modulePath+ext)){
+              files.set(modulePath,fs.readFileSync(modulePath+ext,"utf8"))
+              break
+            }
+          }
+        }
+      }
+    }
+    const jsDoc= files.get(modulePath)?.match(jsDocRE)
     return jsDoc;
   }
   catch (err){
