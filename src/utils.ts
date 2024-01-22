@@ -121,7 +121,7 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
     .join('\n')
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
-  try{
+  try {
     const jsDocRE = new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
     modulePath = resolve(modulePath.slice(6))
     if(!files.has(modulePath)){
