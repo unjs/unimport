@@ -130,12 +130,10 @@ export function extractJSDoc(modulePath: string, functionName: string) {
         files.set(modulePath,readFileSync(modulePath+"/"+pkg.main,"utf8"))
       }
       else{
-        if(!files[modulePath]){
-          for(const ext of [".ts",".js",".mjs",".cjs"]){
-            if(fs.existsSync(modulePath+ext)){
-              files.set(modulePath,fs.readFileSync(modulePath+ext,"utf8"))
-              break
-            }
+        for(const ext of [".ts",".js",".mjs",".cjs"]){
+          if(fs.existsSync(modulePath+ext)){
+            files.set(modulePath,fs.readFileSync(modulePath+ext,"utf8"))
+            break
           }
         }
       }
