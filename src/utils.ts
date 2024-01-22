@@ -122,23 +122,23 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
 }
 export function extractJSDoc(modulePath: string, functionName: string) {
   try{
-    const jsDocRE=new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
-    modulePath=resolve(modulePath.slice(6))
+    const jsDocRE = new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
+    modulePath = resolve(modulePath.slice(6))
     if(!files.has(modulePath)){
-      if(fs.existsSync(modulePath+"/package.json")){
-        const pkg = JSON.parse(fs.readFileSync(modulePath+"/package.json","utf8"))
-        files.set(modulePath,readFileSync(modulePath+"/"+pkg.main,"utf8"))
+      if(fs.existsSync(modulePath + "/package.json")){
+        const pkg = JSON.parse(fs.readFileSync(modulePath + "/package.json","utf8"))
+        files.set(modulePath, readFileSync(modulePath + "/" + pkg.main,"utf8"))
       }
       else{
         for(const ext of [".ts",".js",".mjs",".cjs"]){
           if(fs.existsSync(modulePath+ext)){
-            files.set(modulePath,fs.readFileSync(modulePath+ext,"utf8"))
+            files.set(modulePath, fs.readFileSync(modulePath+ext,"utf8"))
             break
           }
         }
       }
     }
-    const jsDoc= files.get(modulePath)?.match(jsDocRE)
+    const jsDoc = files.get(modulePath)?.match(jsDocRE)
     return jsDoc;
   }
   catch (err){
@@ -153,8 +153,8 @@ export function stripFileExtension(path: string) {
 export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
   return imports.map((i) => {
     const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-    const jsDoc=extractJSDoc(from, i.as)
-    return `${jsDoc===null ? '' : jsDoc[0].slice(0,jsDoc[0].indexOf("*/\nexport")+3)+"\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
+    const jsDoc = extractJSDoc(from, i.as)
+    return `${jsDoc === null || jsDoc === undefined ? '' : jsDoc[0].slice(0, jsDoc[0].indexOf("*/\nexport")+3) + "\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
   }).sort();
 }
 
