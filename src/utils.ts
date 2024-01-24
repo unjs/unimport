@@ -124,15 +124,15 @@ export function extractJSDoc(modulePath: string, functionName: string) {
   try {
     const jsDocRE = new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
     modulePath = resolve(modulePath.slice(6))
-    if(!files.has(modulePath)){
-      if(fs.existsSync(modulePath + "/package.json")){
-        const pkg = JSON.parse(fs.readFileSync(modulePath + "/package.json","utf8"))
-        files.set(modulePath, readFileSync(modulePath + "/" + pkg.main,"utf8"))
+    if (!files.has(modulePath)) {
+      if (fs.existsSync(modulePath + "/package.json")) {
+        const pkg = JSON.parse(fs.readFileSync(modulePath + "/package.json", "utf8"))
+        files.set(modulePath, readFileSync(modulePath + "/" + pkg.main, "utf8"))
       }
-      else{
-        for(const ext of [".ts",".js",".mjs",".cjs"]){
-          if(fs.existsSync(modulePath+ext)){
-            files.set(modulePath, fs.readFileSync(modulePath+ext,"utf8"))
+      else {
+        for (const ext of [".ts",".js",".mjs",".cjs"]) {
+          if (fs.existsSync(modulePath + ext)) {
+            files.set(modulePath, fs.readFileSync(modulePath+ext, "utf8"))
             break
           }
         }
@@ -141,7 +141,7 @@ export function extractJSDoc(modulePath: string, functionName: string) {
     const jsDoc = files.get(modulePath)?.match(jsDocRE)
     return jsDoc;
   }
-  catch (err){
+  catch (err) {
     throw new Error(err)
   }
 }
