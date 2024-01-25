@@ -267,6 +267,13 @@ export interface TypeDeclarationOptions {
    * Custom resolver for path of the import
    */
   resolvePath?: PathFromResolver
+
+  /**
+   * Remove ext automatically for imports
+   * @default true
+   */
+  stripFromExt?: boolean
+
   /**
    * Append `export {}` to the end of the file
    *

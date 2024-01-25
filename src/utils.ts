@@ -119,27 +119,30 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
     .join('\n')
 }
 
+/**
+ * Strip file extension from a path
+ * @example
+ * `test.ts` -> `test`
+ * 'test.service.ts' -> `test.service`
+ */
 export function stripFileExtension(path: string) {
-  return path.replace(/\.[a-zA-Z]+$/, '')
-}
-
-function isModuleFile(path: string) {
-  return path.includes('node_modules') && path.match(/\.[mc]?js$/)
-}
-
-// if in node_modules and .mjs, js, cjs delete
-function removeModuleFileExtension(path: string) {
-  return path.replace(/\.[mc]?js$/, '')
+  const match = path.match(/^(.+)\.[a-zA-Z]+$/)
+  if (match)
+    return match[1]
+  return path
 }
 
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
+  const {
+    stripFromExt = true,
+  } = options || {}
+
   return imports
     .map((i) => {
-      const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      if (isModuleFile(from))
-        return `const ${i.as}: typeof import('${removeModuleFileExtension(from)}')${i.name !== '*' ? `['${i.name}']` : ''}`
-      else
-        return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
+      i.from = stripFromExt ? stripFileExtension(i.from) : i.from
+      const from = options?.resolvePath?.(i) || i.from
+
+      return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
     })
     .sort()
 }
