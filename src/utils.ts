@@ -278,19 +278,12 @@ export function addImportToCode(
       ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0
       : 0
 
-    if (insertionIndex > 0) {
+    if (insertionIndex > 0)
       s.appendRight(insertionIndex, `\n${newEntries}\n`)
-    }
-    else {
-      if (hasShebang()) {
-        const insertIndex = s.original.indexOf('\n') + 1
-        if (insertIndex > 0)
-          s.appendLeft(insertIndex, `\n${newEntries}\n`)
-      }
-      else {
-        s.prepend(`${newEntries}\n`)
-      }
-    }
+    else if (hasShebang())
+      s.appendLeft(s.original.indexOf('\n') + 1, `\n${newEntries}\n`)
+    else
+      s.prepend(`${newEntries}\n`)
   }
 
   return {
