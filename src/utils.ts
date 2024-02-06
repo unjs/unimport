@@ -240,6 +240,11 @@ export function addImportToCode(
     return _staticImports
   }
 
+  function hasShebang() {
+    const shebangRegex = /^#!.+/
+    return shebangRegex.test(s.original)
+  }
+
   if (mergeExisting && !isCJS) {
     const existingImports = findStaticImportsLazy()
     const map = new Map<StaticImport, Import[]>()
@@ -276,10 +281,12 @@ export function addImportToCode(
       ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0
       : 0
 
-    if (insertionIndex === 0)
-      s.prepend(`${newEntries}\n`)
-    else
+    if (insertionIndex > 0)
       s.appendRight(insertionIndex, `\n${newEntries}\n`)
+    else if (hasShebang())
+      s.appendLeft(s.original.indexOf('\n') + 1, `\n${newEntries}\n`)
+    else
+      s.prepend(`${newEntries}\n`)
   }
 
   return {
