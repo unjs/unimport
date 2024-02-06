@@ -16,6 +16,8 @@ export interface ImportCommon {
   disabled?: boolean
   /** Won't output import in declaration file if true */
   dtsDisabled?: boolean
+  /** Import declaration like const / var / enum */
+  declaration?: string
   /**
    * Metadata of the import
    */

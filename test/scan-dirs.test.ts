@@ -20,6 +20,18 @@ describe('scan-dirs', () => {
             "name": "bump",
           },
           {
+            "as": "CustomEnum",
+            "from": "index.ts",
+            "name": "CustomEnum",
+          },
+          {
+            "as": "CustomEnum",
+            "declaration": "enum",
+            "from": "index.ts",
+            "name": "CustomEnum",
+            "type": true,
+          },
+          {
             "as": "CustomInterface1",
             "from": "index.ts",
             "name": "CustomInterface1",
