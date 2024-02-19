@@ -19,12 +19,22 @@ export default (): Preset => {
       const indexesJson = JSON.parse(readFileSync(path!, 'utf-8'))
       _cache = defineUnimportPreset({
         from: '@vueuse/core',
-        imports: indexesJson
-          .functions
-          .filter((i: any) => ['core', 'shared'].includes(i.package))
-          .map((i: any) => i.name as string)
-          // only include functions with 4 characters or more
-          .filter((i: string) => i && i.length >= 4 && !excluded.includes(i)),
+        imports: [
+          ...indexesJson
+            .functions
+            .filter((i: any) => ['core', 'shared'].includes(i.package))
+            .map((i: any) => i.name as string)
+            // only include functions with 4 characters or more
+            .filter((i: string) => i && i.length >= 4 && !excluded.includes(i)),
+          'breakpointsTailwind',
+          'breakpointsBootstrapV5',
+          'breakpointsVuetify',
+          'breakpointsAntDesign',
+          'breakpointsQuasar',
+          'breakpointsSematic',
+          'breakpointsMasterCss',
+          'breakpointsPrimeFlex',
+        ],
       })
     }
     catch (error) {
