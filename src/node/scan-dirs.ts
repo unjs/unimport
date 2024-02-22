@@ -92,7 +92,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
     imports.push({ name: 'default', as, from: filepath })
   }
 
-  async function toImport(exports: (ESMExport & { declaration?: string })[], additional?: Partial<Import>) {
+  async function toImport(exports: ESMExport[], additional?: Partial<Import>) {
     for (const exp of exports) {
       if (exp.type === 'named') {
         for (const name of exp.names)
@@ -101,8 +101,8 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
       else if (exp.type === 'declaration') {
         if (exp.name) {
           imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
-          if (exp.declaration === 'enum')
-            imports.push({ name: exp.name, as: exp.name, from: filepath, type: true, declaration: exp.declaration, ...additional })
+          if (exp.declarationType === 'enum')
+            imports.push({ name: exp.name, as: exp.name, from: filepath, type: true, declaration: exp.declarationType, ...additional })
         }
       }
       else if (exp.type === 'star' && exp.specifier) {
