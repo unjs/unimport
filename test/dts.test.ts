@@ -62,6 +62,7 @@ it('dts', async () => {
       "export {}
       declare global {
         const $: typeof import('jquery')['$']
+        const CustomEnum: typeof import('<root>/playground/composables/index')['CustomEnum']
         const PascalCased: typeof import('<root>/playground/composables/PascalCased')['PascalCased']
         const THREE: typeof import('three')
         const bar: typeof import('<root>/playground/composables/nested/bar/index')['bar']
@@ -100,7 +101,7 @@ it('dts', async () => {
         export type { JQuery } from 'jquery'
         import('jquery')
         // @ts-ignore
-        export type { CustomType1, CustomInterface1 } from '<root>/playground/composables/index'
+        export type { CustomEnum, CustomType1, CustomInterface1 } from '<root>/playground/composables/index'
         import('<root>/playground/composables/index')
         // @ts-ignore
         export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index'

@@ -61,6 +61,10 @@ export function dedupeDtsExports(exports: Import[]) {
     if (!i.type)
       return true
 
+    // import enum as both value and type
+    if (i.declarationType === 'enum')
+      return true
+
     return !exports.find(e => e.as === i.as && e.name === i.name && !e.type)
   })
 }
@@ -95,8 +99,11 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           imports.push({ name, as: name, from: filepath, ...additional })
       }
       else if (exp.type === 'declaration') {
-        if (exp.name)
+        if (exp.name) {
           imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
+          if (exp.declarationType === 'enum')
+            imports.push({ name: exp.name, as: exp.name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
+        }
       }
       else if (exp.type === 'star' && exp.specifier) {
         if (exp.name) {

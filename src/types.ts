@@ -1,4 +1,5 @@
 import type MagicString from 'magic-string'
+import type { ESMExport } from 'mlly'
 import type { BuiltinPresetName } from './presets'
 
 export type ModuleId = string
@@ -16,6 +17,8 @@ export interface ImportCommon {
   disabled?: boolean
   /** Won't output import in declaration file if true */
   dtsDisabled?: boolean
+  /** Import declaration type like const / var / enum */
+  declarationType?: ESMExport['declarationType']
   /**
    * Metadata of the import
    */
