@@ -26,7 +26,7 @@ describe('scan-dirs', () => {
           },
           {
             "as": "CustomEnum",
-            "declaration": "enum",
+            "declarationType": "enum",
             "from": "index.ts",
             "name": "CustomEnum",
             "type": true,
