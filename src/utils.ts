@@ -74,7 +74,8 @@ export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
     }
 
     const other = imports[map.get(name)!]
-    if (other.from === i.from && i?.declaration !== 'enum') {
+
+    if (other.from === i.from) {
       indexToRemove.add(idx)
       return
     }
