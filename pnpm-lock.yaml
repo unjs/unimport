@@ -60,6 +60,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^1.2.2
         version: 1.2.2(vitest@1.2.2)
+      auto-extract-test-case:
+        specifier: workspace:^
+        version: link:auto-extract-test-case
       bumpp:
         specifier: ^9.3.0
         version: 9.3.0
@@ -90,6 +93,8 @@ importers:
       vue-tsc:
         specifier: ^1.8.27
         version: 1.8.27(typescript@5.3.3)
+
+  auto-extract-test-case: {}
 
   playground:
     dependencies:

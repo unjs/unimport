@@ -42,4 +42,18 @@ describe('auto-extract', () => {
       ]
     `)
   })
+  it('local package', async () => {
+    const result = await resolvePreset({
+      package: 'auto-extract-test-case',
+    })
+
+    expect(result).toMatchInlineSnapshot(`
+      [
+        {
+          "from": "auto-extract-test-case",
+          "name": "function1",
+        },
+      ]
+    `)
+  })
 })

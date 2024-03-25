@@ -4,6 +4,7 @@ import { resolveModuleExportNames } from 'mlly'
 import { readPackageJSON, resolvePackageJSON } from 'pkg-types'
 import { dirname, join } from 'pathe'
 import type { Import, PackagePreset } from '../types'
+import { scanExports } from './scan-dirs'
 
 const CACHE_PATH = /* #__PURE__ */ join(os.tmpdir(), 'unimport')
 let CACHE_WRITEABLE: boolean | undefined
@@ -36,6 +37,7 @@ async function extractExports(name: string, url?: string, cache = true) {
   const packageJson = await readPackageJSON(packageJsonPath)
   const version = packageJson.version
   const cachePath = join(CACHE_PATH, `${name}@${version}`, 'exports.json')
+  const mainPath = join(dirname(packageJsonPath), packageJson.main ?? '')
 
   /* c8 ignore next 8 */
   if (cache && CACHE_WRITEABLE === undefined) {
@@ -51,7 +53,10 @@ async function extractExports(name: string, url?: string, cache = true) {
   if (useCache && existsSync(cachePath))
     return JSON.parse(await fsp.readFile(cachePath, 'utf-8'))
 
-  const scanned = await resolveModuleExportNames(name, { url })
+  const scanned = isUntranspiled(mainPath)
+    ? (await scanExports(mainPath, true)).map(i => i.name)
+    : await resolveModuleExportNames(name, { url })
+
   /* c8 ignore next 4 */
   if (useCache) {
     await fsp.mkdir(dirname(cachePath), { recursive: true })
@@ -69,4 +74,8 @@ function isWritable(filename: string): boolean {
   catch (e) {
     return false
   }
+}
+
+function isUntranspiled(path: string) {
+  return path.match(/\.tsx?$/)
 }
