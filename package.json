@@ -65,7 +65,7 @@
     "@types/node": "^20.12.11",
     "@vitest/coverage-v8": "^1.6.0",
     "bumpp": "^9.4.1",
-    "conventional-changelog-cli": "^4.1.0",
+    "conventional-changelog-cli": "^5.0.0",
     "eslint": "8.57.0",
     "h3": "^1.11.1",
     "jquery": "^3.7.1",
