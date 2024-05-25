@@ -1,3 +1,13 @@
+## [3.7.2](https://github.com/unjs/unimport/compare/v3.7.1...v3.7.2) (2024-05-25)
+
+
+### Bug Fixes
+
+* distinguish enums by `declarationType` ([#329](https://github.com/unjs/unimport/issues/329)) ([a4a5e0a](https://github.com/unjs/unimport/commit/a4a5e0a13ae76654a18a0cb5f841512f24bc3313))
+* insert imports after shebang ([#324](https://github.com/unjs/unimport/issues/324)) ([da1733b](https://github.com/unjs/unimport/commit/da1733b7ef0fe7504c8c530a13f4e0912ac306c8))
+
+
+
 ## [3.7.1](https://github.com/unjs/unimport/compare/v3.7.0...v3.7.1) (2023-12-28)
 
 
