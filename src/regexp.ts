@@ -3,12 +3,13 @@ import { stripLiteral } from 'strip-literal'
 
 export const excludeRE = [
   // imported/exported from other module
-  /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
+  /\b(import|export)\b([\s\w$*{},]+)\sfrom\b/g,
   // defined as function
-  /\bfunction\s*([\w_$]+?)\s*\(/gs,
+  /\bfunction\s*([\w$]+)\s*\(/g,
   // defined as class
-  /\bclass\s*([\w_$]+?)\s*{/gs,
+  /\bclass\s*([\w$]+)\s*\{/g,
   // defined as local variable
+  // eslint-disable-next-line regexp/no-super-linear-backtracking
   /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs,
 ]
 
@@ -20,9 +21,11 @@ export const separatorRE = /[,[\]{}\n]|\bimport\b/g
  *                    destructing   case&ternary    non-call     inheritance   |  id   |
  *                         ↓             ↓             ↓             ↓         |       |
  */
-export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w_$\/)]|(?:\bextends)\s+)([\w_$]+)\s*(?=[.()[\]}}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+{)/g
+// eslint-disable-next-line regexp/no-super-linear-backtracking
+export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w$/)]|\bextends\s+)([\w$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+\{)/g
 
-const regexRE = /\/[^\s]*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
+// eslint-disable-next-line regexp/no-super-linear-backtracking
+const regexRE = /\/\S*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 
 export function stripCommentsAndStrings(code: string, options?: StripLiteralOptions) {
   return stripLiteral(code, options)

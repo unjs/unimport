@@ -100,11 +100,11 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
   return Object.entries(map)
     .flatMap(([name, imports]) => {
       if (isFilePath(name))
-        name = name.replace(/\.[a-zA-Z]+$/, '')
+        name = name.replace(/\.[a-z]+$/i, '')
 
       if (fileDir && isAbsolute(name)) {
         name = relative(fileDir, name)
-        if (!name.match(/^[.\/]/))
+        if (!name.match(/^[./]/))
           name = `./${name}`
       }
       const entries: string[] = []
@@ -124,7 +124,7 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
 }
 
 export function stripFileExtension(path: string) {
-  return path.replace(/\.[a-zA-Z]+$/, '')
+  return path.replace(/\.[a-z]+$/i, '')
 }
 
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
@@ -263,7 +263,7 @@ export function addImportToCode(
 
     for (const [target, items] of map.entries()) {
       const strings = items.map(i => `${stringifyImportAlias(i)}, `)
-      const importLength = target.code.match(/^\s*import\s*{/)?.[0]?.length
+      const importLength = target.code.match(/^\s*import\s*\{/)?.[0]?.length
       if (importLength)
         s.appendLeft(target.start + importLength, ` ${strings.join('').trim()}`)
     }
