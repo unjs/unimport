@@ -90,16 +90,16 @@ export interface UnimportContext {
   dynamicImports: Import[]
   addons: Addon[]
 
-  getImports(): Promise<Import[]>
-  getImportMap(): Promise<Map<string, Import>>
-  getMetadata(): UnimportMeta | undefined
+  getImports: () => Promise<Import[]>
+  getImportMap: () => Promise<Map<string, Import>>
+  getMetadata: () => UnimportMeta | undefined
 
-  modifyDynamicImports(fn: (imports: Import[]) => Thenable<void | Import[]>): Promise<void>
-  clearDynamicImports(): void
-  replaceImports(imports: UnimportOptions['imports']): Promise<Import[]>
+  modifyDynamicImports: (fn: (imports: Import[]) => Thenable<void | Import[]>) => Promise<void>
+  clearDynamicImports: () => void
+  replaceImports: (imports: UnimportOptions['imports']) => Promise<Import[]>
 
-  invalidate(): void
-  resolveId(id: string, parentId?: string): Thenable<string | null | undefined | void>
+  invalidate: () => void
+  resolveId: (id: string, parentId?: string) => Thenable<string | null | undefined | void>
 }
 
 export interface DetectImportResult {
@@ -112,7 +112,7 @@ export interface DetectImportResult {
 
 export interface Unimport {
   readonly version: string
-  init(): Promise<void>
+  init: () => Promise<void>
 
   clearDynamicImports: UnimportContext['clearDynamicImports']
   getImportMap: UnimportContext['getImportMap']
@@ -125,19 +125,19 @@ export interface Unimport {
   /**
    * Get un-imported usages from code
    */
-  detectImports(code: string | MagicString): Promise<DetectImportResult>
+  detectImports: (code: string | MagicString) => Promise<DetectImportResult>
   /**
    * Insert missing imports statements to code
    */
-  injectImports(code: string | MagicString, id?: string, options?: InjectImportsOptions): Promise<ImportInjectionResult>
+  injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => Promise<ImportInjectionResult>
 
-  scanImportsFromDir(dir?: string[], options?: ScanDirExportsOptions): Promise<Import[]>
-  scanImportsFromFile(file: string, includeTypes?: boolean): Promise<Import[]>
+  scanImportsFromDir: (dir?: string[], options?: ScanDirExportsOptions) => Promise<Import[]>
+  scanImportsFromFile: (file: string, includeTypes?: boolean) => Promise<Import[]>
 
   /**
    * @deprecated
    */
-  toExports(filepath?: string, includeTypes?: boolean): Promise<string>
+  toExports: (filepath?: string, includeTypes?: boolean) => Promise<string>
 }
 
 export interface InjectionUsageRecord {
