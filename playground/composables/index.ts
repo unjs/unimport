@@ -23,3 +23,5 @@ export type CustomType1 = string | number
 export interface CustomInterface1 {
   name: string
 }
+
+export enum CustomEnum {}
