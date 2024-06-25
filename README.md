@@ -111,6 +111,20 @@ Will be injected as:
 import _ from 'lodash'
 ```
 
+###### Namespace import
+
+```ts
+imports: [
+  { name: '*', as: '_', from: 'lodash' }
+]
+```
+
+Will be injected as:
+
+```ts
+import * as _ from 'lodash'
+```
+
 ###### Custom Presets
 
 Presets are provided as a shorthand for declaring imports from the same package:
