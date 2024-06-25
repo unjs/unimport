@@ -1,9 +1,11 @@
-import { isAbsolute, relative } from 'pathe'
+import { isAbsolute, relative, resolve } from 'pathe'
 import type { StaticImport } from 'mlly'
 import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
 import MagicString from 'magic-string'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
 import { stripCommentsAndStrings } from './regexp'
+import fs from "fs"
+const files = new Map()
 
 export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
@@ -122,18 +124,42 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
     })
     .join('\n')
 }
+export function extractJSDoc(modulePath: string, functionName: string) {
+  try {
+    const jsDocRE = new RegExp(`(\\/\\*\\*[?;,.:\/@\\-\\s\\w\\{\\}\\[\\]\\(\\)\\<\\>\\"\`\|*]*\\*\\/)(?:\nexport d?e?c?l?a?r?e? (?:function|const) ${functionName})`,'i')
+    modulePath = resolve(modulePath.slice(6))
+    if (!files.has(modulePath)) {
+      if (fs.existsSync(modulePath + "/package.json")) {
+        const pkg = JSON.parse(fs.readFileSync(modulePath + "/package.json", "utf8"))
+        files.set(modulePath, readFileSync(modulePath + "/" + pkg.main, "utf8"))
+      }
+      else {
+        for (const ext of [".ts",".js",".mjs",".cjs"]) {
+          if (fs.existsSync(modulePath + ext)) {
+            files.set(modulePath, fs.readFileSync(modulePath+ext, "utf8"))
+            break
+          }
+        }
+      }
+    }
+    const jsDoc = files.get(modulePath)?.match(jsDocRE)
+    return jsDoc;
+  }
+  catch (err) {
+    throw new Error(err)
+  }
+}
 
 export function stripFileExtension(path: string) {
   return path.replace(/\.[a-z]+$/i, '')
 }
 
-export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
-  return imports
-    .map((i) => {
-      const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
-    })
-    .sort()
+export function toTypeDeclarationItems (imports: Import[], options?: TypeDeclarationOptions) {
+  return imports.map((i) => {
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
+    const jsDoc = extractJSDoc(from, i.as)
+    return `${jsDoc === null || jsDoc === undefined ? '' : jsDoc[0].slice(0, jsDoc[0].indexOf("*/\nexport")+3) + "\n\t"}const ${i.as}: typeof import('${from}')${i.name !== "*" ? `['${i.name}']` : ""}`;
+  }).sort();
 }
 
 export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarationOptions) {
