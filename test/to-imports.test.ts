@@ -86,4 +86,28 @@ describe('toImports', () => {
         require('sideeffects');"
       `)
   })
+
+  it('with', () => {
+    const imports: Import[] = [
+      { from: 'test1', name: '*', as: 'foo', with: { type: 'macro' } },
+      { from: 'test1', name: '*', as: 'foo', with: { 'type': 'macro', 'invalid': { value: true }, 'boolean value': true } as any },
+      { from: 'test1', name: '*', as: 'bar', with: { type: 'macro' } },
+      { from: 'test1', name: 'foo', as: 'foo', with: { type: 'macro' } },
+      { from: 'test1', name: 'bar', as: 'bar', with: { type: 'macro' } },
+      { from: 'test2', name: 'foobar', as: 'foobar', with: { type: 'macro' } },
+      { from: 'test2', name: 'default', as: 'defaultAlias', with: { type: 'macro' } },
+      { from: 'sideeffects', name: '', as: '', with: { type: 'macro' } },
+    ]
+
+    expect(stringifyImports(imports, false)).toMatchInlineSnapshot(`
+      "import * as foo from 'test1' with { type: "macro" };
+      import * as foo from 'test1' with { type: "macro", invalid: "[object Object]", "boolean value": "true" };
+      import * as bar from 'test1' with { type: "macro" };
+      import { foo } from 'test1' with { type: "macro" };
+      import { bar } from 'test1' with { type: "macro" };
+      import { foobar } from 'test2' with { type: "macro" };
+      import defaultAlias from 'test2' with { type: "macro" };
+      import 'sideeffects' with { type: "macro" };"
+    `)
+  })
 })
