@@ -1,3 +1,17 @@
+# [3.8.0](https://github.com/unjs/unimport/compare/v3.7.2...v3.8.0) (2024-07-16)
+
+
+### Bug Fixes
+
+* change scanning of multi-part filenames ([#350](https://github.com/unjs/unimport/issues/350)) ([#351](https://github.com/unjs/unimport/issues/351)) ([fd70231](https://github.com/unjs/unimport/commit/fd70231d382aa8e1980ec693e9f4015c8a893ea3))
+
+
+### Features
+
+* add support for import attributes ([#348](https://github.com/unjs/unimport/issues/348)) ([984649a](https://github.com/unjs/unimport/commit/984649a1b9e44d3af3155b419d038e6efbb7de12))
+
+
+
 ## [3.7.2](https://github.com/unjs/unimport/compare/v3.7.1...v3.7.2) (2024-05-25)
 
 
