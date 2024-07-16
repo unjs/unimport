@@ -60,6 +60,8 @@ module.exports = {
 
 ### Programmatic Usage
 
+<!-- eslint-skip -->
+
 ```js
 // ESM
 import { createUnimport } from 'unimport'

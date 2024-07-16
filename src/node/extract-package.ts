@@ -66,7 +66,7 @@ function isWritable(filename: string): boolean {
     accessSync(filename, constants.W_OK)
     return true
   }
-  catch (e) {
+  catch {
     return false
   }
 }
