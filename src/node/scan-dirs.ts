@@ -115,16 +115,14 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           const subfile = exp.specifier
           let subfilepath = resolve(dirname(filepath), subfile)
 
-          if (!extname(subfilepath)) {
-            for (const ext of FileExtensionLookup) {
-              if (existsSync(`${subfilepath}${ext}`)) {
-                subfilepath = `${subfilepath}${ext}`
-                break
-              }
-              else if (existsSync(`${subfilepath}/index${ext}`)) {
-                subfilepath = `${subfilepath}/index${ext}`
-                break
-              }
+          for (const ext of FileExtensionLookup) {
+            if (existsSync(`${subfilepath}${ext}`)) {
+              subfilepath = `${subfilepath}${ext}`
+              break
+            }
+            else if (existsSync(`${subfilepath}/index${ext}`)) {
+              subfilepath = `${subfilepath}/index${ext}`
+              break
             }
           }
 
