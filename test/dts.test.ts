@@ -7,6 +7,7 @@ it('dts', async () => {
     imports: [
       { name: 'default', from: 'default', as: 'customDefault' },
       { name: 'foobar', from: 'foobar', as: 'foobar' },
+      { name: 'doTheThing', from: 'my-macro-library', with: { type: 'macro' } },
     ],
     presets: [
       {
@@ -69,6 +70,7 @@ it('dts', async () => {
         const bump: typeof import('<root>/playground/composables/index')['bump']
         const computed: typeof import('vue')['computed']
         const customDefault: typeof import('default')['default']
+        const doTheThing: typeof import('my-macro-library', { with: { type: "macro" } })['doTheThing']
         const foo: typeof import('<root>/playground/composables/foo')['default']
         const foobar: typeof import('foobar')['foobar']
         const localA: typeof import('<root>/playground/composables/index')['localA']

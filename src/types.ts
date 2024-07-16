@@ -45,6 +45,12 @@ export interface Import extends ImportCommon {
   name: ImportName
   /** Import as this name */
   as?: ImportName
+  /**
+   * With properties
+   *
+   * Ignored for CJS imports.
+   */
+  with?: Record<string, string>
 }
 
 export type PresetImport = Omit<Import, 'from'> | ImportName | [name: ImportName, as?: ImportName, from?: ModuleId]

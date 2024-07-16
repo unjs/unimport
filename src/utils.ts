@@ -9,6 +9,20 @@ export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
+const safePropertyName = /^[a-z$_][\w$]*$/i
+
+function stringifyWith(withValues: Record<string, string>) {
+  let withDefs = ''
+  for (let entries = Object.entries(withValues), l = entries.length, i = 0; i < l; i++) {
+    const [prop, value] = entries[i]
+    withDefs += safePropertyName.test(prop) ? prop : JSON.stringify(prop)
+    withDefs += `: ${JSON.stringify(String(value))}`
+    if ((i + 1) !== l)
+      withDefs += ', '
+  }
+  return `{ ${withDefs} }`
+}
+
 export function stringifyImports(imports: Import[], isCJS = false) {
   const map = toImportModuleMap(imports)
   return Object.entries(map)
@@ -18,27 +32,62 @@ export function stringifyImports(imports: Import[], isCJS = false) {
         .filter((i) => {
           // handle special imports
           if (!i.name || i.as === '') {
-            entries.push(
-              isCJS
-                ? `require('${name}');`
-                : `import '${name}';`,
-            )
+            let importStr
+            if (isCJS) {
+              importStr = `require('${name}');`
+            }
+            else {
+              importStr = `import '${name}'`
+
+              if (i.with)
+                importStr += ` with ${stringifyWith(i.with)}`
+
+              importStr += ';'
+            }
+
+            entries.push(importStr)
+
             return false
           }
           else if (i.name === 'default') {
-            entries.push(
-              isCJS
-                ? `const { default: ${i.as} } = require('${name}');`
-                : `import ${i.as} from '${name}';`,
-            )
+            let importStr
+            if (isCJS) {
+              importStr = `const { default: ${i.as} } = require('${name}');`
+            }
+            else {
+              importStr = `import ${i.as} from '${name}'`
+
+              if (i.with)
+                importStr += ` with ${stringifyWith(i.with)}`
+
+              importStr += ';'
+            }
+
+            entries.push(importStr)
+
             return false
           }
           else if (i.name === '*') {
-            entries.push(
-              isCJS
-                ? `const ${i.as} = require('${name}');`
-                : `import * as ${i.as} from '${name}';`,
-            )
+            let importStr
+            if (isCJS) {
+              importStr = `const ${i.as} = require('${name}');`
+            }
+            else {
+              importStr = `import * as ${i.as} from '${name}'`
+
+              if (i.with)
+                importStr += ` with ${stringifyWith(i.with)}`
+
+              importStr += ';'
+            }
+
+            entries.push(importStr)
+
+            return false
+          }
+          else if (!isCJS && i.with) {
+            entries.push(`import { ${stringifyImportAlias(i)} } from '${name}' with ${stringifyWith(i.with)};`)
+
             return false
           }
 
@@ -47,6 +96,7 @@ export function stringifyImports(imports: Import[], isCJS = false) {
 
       if (imports.length) {
         const importsAs = imports.map(i => stringifyImportAlias(i, isCJS))
+
         entries.push(
           isCJS
             ? `const { ${importsAs.join(', ')} } = require('${name}');`
@@ -131,7 +181,16 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
   return imports
     .map((i) => {
       const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      return `const ${i.as}: typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}`
+      let typeDef = ''
+      if (i.with)
+        typeDef += `import('${from}', { with: ${stringifyWith(i.with)} })`
+      else
+        typeDef += `import('${from}')`
+
+      if (i.name !== '*')
+        typeDef += `['${i.name}']`
+
+      return `const ${i.as}: typeof ${typeDef}`
     })
     .sort()
 }
