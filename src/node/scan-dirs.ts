@@ -1,10 +1,11 @@
 import { readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import process from 'node:process'
+import { fileURLToPath } from 'node:url'
 import fg from 'fast-glob'
 import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import type { ESMExport } from 'mlly'
-import { findExports, findTypeExports } from 'mlly'
+import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
 import { camelCase } from 'scule'
 import type { Import, ScanDirExportsOptions } from '../types'
 
@@ -114,6 +115,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           // export * from './foo', scan deeper
           const subfile = exp.specifier
           let subfilepath = resolve(dirname(filepath), subfile)
+          let subfilepathResolved = false
 
           for (const ext of FileExtensionLookup) {
             if (existsSync(`${subfilepath}${ext}`)) {
@@ -126,7 +128,22 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
             }
           }
 
-          if (!existsSync(subfilepath)) {
+          if (existsSync(subfilepath)) {
+            subfilepathResolved = true
+          }
+          else {
+            // Try to resolve the module
+            try {
+              subfilepath = await mllyResolve(exp.specifier)
+              subfilepath = fileURLToPath(subfilepath)
+              if (existsSync(subfilepath)) {
+                subfilepathResolved = true
+              }
+            }
+            catch {}
+          }
+
+          if (!subfilepathResolved) {
             console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
             continue
           }
