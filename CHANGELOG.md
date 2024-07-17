@@ -1,3 +1,12 @@
+# [3.9.0](https://github.com/unjs/unimport/compare/v3.8.0...v3.9.0) (2024-07-17)
+
+
+### Bug Fixes
+
+* correct path handling for * exports in `scanExports` when exporting from module ([#354](https://github.com/unjs/unimport/issues/354)) ([9d4ffb0](https://github.com/unjs/unimport/commit/9d4ffb0eb306c2c26c952c20764bfc54990b93cb)), closes [#353](https://github.com/unjs/unimport/issues/353)
+
+
+
 # [3.8.0](https://github.com/unjs/unimport/compare/v3.7.2...v3.8.0) (2024-07-16)
 
 
