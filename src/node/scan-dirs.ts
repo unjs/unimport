@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import fg from 'fast-glob'
@@ -135,7 +136,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
             // Try to resolve the module
             try {
               subfilepath = await mllyResolve(exp.specifier)
-              subfilepath = fileURLToPath(subfilepath)
+              subfilepath = fileURLToPath(subfilepath).replaceAll(path.sep, '/')
               if (existsSync(subfilepath)) {
                 subfilepathResolved = true
               }
