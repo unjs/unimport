@@ -1,3 +1,12 @@
+## [3.9.1](https://github.com/unjs/unimport/compare/v3.9.0...v3.9.1) (2024-07-27)
+
+
+### Bug Fixes
+
+* resolve module path conversion issue in scanExports on Windows ([#356](https://github.com/unjs/unimport/issues/356)) ([b134001](https://github.com/unjs/unimport/commit/b1340019871804b849ff60819b23f02194ee5c98))
+
+
+
 # [3.9.0](https://github.com/unjs/unimport/compare/v3.8.0...v3.9.0) (2024-07-17)
 
 
