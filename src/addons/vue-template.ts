@@ -81,7 +81,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
 ${extendItems}
   }
-}` // Workaround for Vue 3.3
+}`
     },
   }
 
