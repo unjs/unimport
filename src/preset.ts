@@ -6,7 +6,14 @@ import type { Import, ImportCommon, InlinePreset, Preset } from './types'
 /**
  * Common propreties for import item and preset
  */
-const commonProps: (keyof ImportCommon)[] = ['from', 'priority', 'disabled', 'meta', 'type']
+const commonProps: (keyof ImportCommon)[] = [
+  'from',
+  'priority',
+  'disabled',
+  'dtsDisabled',
+  'meta',
+  'type',
+]
 
 export async function resolvePreset(preset: Preset): Promise<Import[]> {
   const imports: Import[] = []
