@@ -81,14 +81,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
 ${extendItems}
   }
-}` // Workaround for Vue 3.3
-+ `
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-${extendItems}
-  }
-}
-`
+}`
     },
   }
 
