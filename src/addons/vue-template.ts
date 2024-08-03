@@ -64,7 +64,7 @@ export function vueTemplateAddon(): Addon {
       const imports = await this.getImports()
       const items = imports
         .map((i) => {
-          if (i.type)
+          if (i.type || i.dtsDisabled)
             return ''
           const from = options?.resolvePath?.(i) || i.from
           return `readonly ${i.as}: UnwrapRef<typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}>`
