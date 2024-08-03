@@ -82,13 +82,7 @@ describe('vue-template', () => {
         interface ComponentCustomProperties {
           readonly foo: UnwrapRef<typeof import('foo')['foo']>
         }
-      }
-      declare module '@vue/runtime-core' {
-        interface ComponentCustomProperties {
-          readonly foo: UnwrapRef<typeof import('foo')['foo']>
-        }
-      }
-      "
+      }"
     `)
   })
 
