@@ -1,3 +1,13 @@
+# [3.10.0](https://github.com/unjs/unimport/compare/v3.9.1...v3.10.0) (2024-08-03)
+
+
+### Bug Fixes
+
+* drop `declare module '@vue/runtime-core'` ([#359](https://github.com/unjs/unimport/issues/359)) ([4f309e1](https://github.com/unjs/unimport/commit/4f309e15d2cb780861b5a9e3bc880adb6aa8bfd0))
+* dtsDisabled option is not working ([#360](https://github.com/unjs/unimport/issues/360)) ([e6186e9](https://github.com/unjs/unimport/commit/e6186e9c2054bc08cf8344c05cd9efa7a28d4054))
+
+
+
 ## [3.9.1](https://github.com/unjs/unimport/compare/v3.9.0...v3.9.1) (2024-07-27)
 
 
