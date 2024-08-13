@@ -113,6 +113,22 @@ Will be injected as:
 import _ from 'lodash'
 ```
 
+###### Export assignment import
+
+```ts
+imports: [
+  { name: '=', as: 'browser', from: 'webextension-polyfill' }
+]
+```
+
+Will be injected as:
+
+```ts
+import browser from 'webextension-polyfill'
+// with types
+const browser: typeof import('webextension-polyfill')
+```
+
 ###### Namespace import
 
 ```ts

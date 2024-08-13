@@ -49,10 +49,12 @@ export function stringifyImports(imports: Import[], isCJS = false) {
 
             return false
           }
-          else if (i.name === 'default') {
+          else if (i.name === 'default' || i.name === '=') {
             let importStr
             if (isCJS) {
-              importStr = `const { default: ${i.as} } = require('${name}');`
+              importStr = i.name === 'default'
+                ? `const { default: ${i.as} } = require('${name}');`
+                : `const ${i.as} = require('${name}');`
             }
             else {
               importStr = `import ${i.as} from '${name}'`
@@ -187,7 +189,7 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
       else
         typeDef += `import('${from}')`
 
-      if (i.name !== '*')
+      if (i.name !== '*' && i.name !== '=')
         typeDef += `['${i.name}']`
 
       return `const ${i.as}: typeof ${typeDef}`
