@@ -77,7 +77,7 @@ export function vueTemplateAddon(): Addon {
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
-declare module 'vue' {
+declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
 ${extendItems}
   }
