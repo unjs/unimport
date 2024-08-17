@@ -46,3 +46,29 @@ describe('regex for extract local variable', () => {
     })
   }
 })
+
+describe('regex for extract imported/exported variables', () => {
+  const cases: { input: string, output: string[] }[] = [
+    { input: `import { ref,    computed as foo,watch} from "vue"`, output: ['ref', 'foo', 'watch'] },
+    { input: `import {  }from= 'vue'`, output: [] },
+    { input: `export {  }from= 'vue'`, output: [] },
+    { input: `export{ref, watch} from 'vue'`, output: ['ref', 'watch'] },
+    { input: `export{ref as bar} from 'vue'`, output: ['bar'] },
+  ]
+  for (const item of cases) {
+    it(item.input, () => {
+      const strippedCode = stripCommentsAndStrings(item.input)
+      const identifiers: string[] = []
+
+      for (const match of strippedCode.matchAll(excludeRE[0])) {
+        const segments = [...match[1]?.split(separatorRE) || [], ...match[2]?.split(separatorRE) || []]
+        for (const segment of segments) {
+          const identifier = segment.replace(importAsRE, '').trim()
+          identifiers.push(identifier)
+        }
+      }
+      const result = identifiers.filter(Boolean)
+      expect(result).toEqual(item.output)
+    })
+  }
+})

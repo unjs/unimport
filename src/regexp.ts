@@ -3,7 +3,8 @@ import { stripLiteral } from 'strip-literal'
 
 export const excludeRE = [
   // imported/exported from other module
-  /\b(import|export)\b([\s\w$*{},]+)\sfrom\b/g,
+  // eslint-disable-next-line regexp/no-super-linear-backtracking
+  /\b(import|export)\b\s*([\w$*{},\s]+?)\s*from\b/g,
   // defined as function
   /\bfunction\s*([\w$]+)\s*\(/g,
   // defined as class
@@ -14,7 +15,7 @@ export const excludeRE = [
 ]
 
 export const importAsRE = /^.*\sas\s+/
-export const separatorRE = /[,[\]{}\n]|\bimport\b/g
+export const separatorRE = /[,[\]{}\n]|\b(?:import|export)\b/g
 
 /**
  *                                                                             |       |
