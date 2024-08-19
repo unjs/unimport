@@ -50,8 +50,8 @@ describe('regex for extract local variable', () => {
 describe('regex for extract imported/exported variables', () => {
   const cases: { input: string, output: string[] }[] = [
     { input: `import { ref,    computed as foo,watch} from "vue"`, output: ['ref', 'foo', 'watch'] },
-    { input: `import {  }from= 'vue'`, output: [] },
-    { input: `export {  }from= 'vue'`, output: [] },
+    { input: `import {  }from 'vue'`, output: [] },
+    { input: `export {  }from 'vue'`, output: [] },
     { input: `export{ref, watch} from 'vue'`, output: ['ref', 'watch'] },
     { input: `export{ref as bar} from 'vue'`, output: ['bar'] },
     { input: `export{ref}from'vue'`, output: ['ref'] },
