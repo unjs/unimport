@@ -73,8 +73,7 @@ export function vueTemplateAddon(): Addon {
         .sort()
 
       const extendItems = items.map(i => `    ${i}`).join('\n')
-      return `${dts
-}
+      return `${dts}
 // for vue template auto import
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
