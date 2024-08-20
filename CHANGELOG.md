@@ -1,3 +1,12 @@
+## [3.10.1](https://github.com/unjs/unimport/compare/v3.10.0...v3.10.1) (2024-08-20)
+
+
+### Bug Fixes
+
+* match imported/exported variables correctly in minified code, fix [#362](https://github.com/unjs/unimport/issues/362) ([#366](https://github.com/unjs/unimport/issues/366)) ([194bcfc](https://github.com/unjs/unimport/commit/194bcfcb7b46d5e0b68a92f2badeb7c211cf6fc8))
+
+
+
 # [3.10.0](https://github.com/unjs/unimport/compare/v3.9.1...v3.10.0) (2024-08-03)
 
 
