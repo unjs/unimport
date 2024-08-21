@@ -60,9 +60,9 @@
     "unplugin": "^1.12.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.26.0",
+    "@antfu/eslint-config": "^2.27.0",
     "@types/estree": "^1.0.5",
-    "@types/node": "^22.4.1",
+    "@types/node": "^22.5.0",
     "@vitest/coverage-v8": "^2.0.5",
     "bumpp": "^9.5.1",
     "conventional-changelog-cli": "^5.0.0",
