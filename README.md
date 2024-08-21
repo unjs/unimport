@@ -127,6 +127,28 @@ Will be injected as:
 import * as _ from 'lodash'
 ```
 
+###### Export assignment import
+
+This is a special case for libraries authored with [TypeScript's `export =` syntax](https://www.typescriptlang.org/docs/handbook/modules/reference.html#export--and-import--require). You don't need it the most of the time.
+
+```ts
+imports: [
+  { name: '=', as: 'browser', from: 'webextension-polyfill' }
+]
+```
+
+Will be injected as:
+
+```ts
+import browser from 'webextension-polyfill'
+```
+
+And the type declaration will be added as:
+
+```ts
+const browser: typeof import('webextension-polyfill')
+```
+
 ###### Custom Presets
 
 Presets are provided as a shorthand for declaring imports from the same package:

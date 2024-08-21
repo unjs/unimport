@@ -18,6 +18,7 @@ import { } from 'specifier5'
     { name: 'import4', from: 'specifier4' },
     { name: 'foo', as: 'import5', from: 'specifier5' },
     { name: 'import10', from: 'specifier10' },
+    { name: '=', as: 'browser', from: 'webextension-polyfill' },
   ]
 
   it('no merge', () => {
@@ -29,6 +30,7 @@ import { } from 'specifier5'
         import { import4 } from 'specifier4';
         import { foo as import5 } from 'specifier5';
         import { import10 } from 'specifier10';
+        import browser from 'webextension-polyfill';
 
         import { foo } from 'specifier1'
         import { bar } from 'specifier1'
@@ -46,6 +48,7 @@ import { } from 'specifier5'
         "import { import2 } from 'specifier2';
         import { import4 } from 'specifier4';
         import { import10 } from 'specifier10';
+        import browser from 'webextension-polyfill';
 
         import { import1, foo } from 'specifier1'
         import { bar } from 'specifier1'

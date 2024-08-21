@@ -114,3 +114,20 @@ it('dts', async () => {
       }"
     `)
 })
+
+it('should compat with `export =`', async () => {
+  const { generateTypeDeclarations, init } = createUnimport({
+    imports: [
+      { name: '=', as: 'browser', from: 'webextension-polyfill' },
+    ],
+  })
+
+  await init()
+
+  await expect(generateTypeDeclarations()).resolves.toMatchInlineSnapshot(`
+    "export {}
+    declare global {
+      const browser: typeof import('webextension-polyfill')
+    }"
+  `)
+})
