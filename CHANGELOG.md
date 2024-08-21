@@ -1,3 +1,12 @@
+# [3.11.0](https://github.com/unjs/unimport/compare/v3.10.1...v3.11.0) (2024-08-21)
+
+
+### Features
+
+* support libraries with `export =` syntax ([#363](https://github.com/unjs/unimport/issues/363)) ([d877d50](https://github.com/unjs/unimport/commit/d877d50404ae4b3a00a0e8ccd0a60f65dfff31f2))
+
+
+
 ## [3.10.1](https://github.com/unjs/unimport/compare/v3.10.0...v3.10.1) (2024-08-20)
 
 
