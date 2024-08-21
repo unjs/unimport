@@ -52,9 +52,9 @@ export function stringifyImports(imports: Import[], isCJS = false) {
           else if (i.name === 'default' || i.name === '=') {
             let importStr
             if (isCJS) {
-              importStr = i.name === 'default'
-                ? `const { default: ${i.as} } = require('${name}');`
-                : `const ${i.as} = require('${name}');`
+              importStr = i.name === '='
+                ? `const ${i.as} = require('${name}');`
+                : `const { default: ${i.as} } = require('${name}');`
             }
             else {
               importStr = `import ${i.as} from '${name}'`

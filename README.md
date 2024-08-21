@@ -113,22 +113,6 @@ Will be injected as:
 import _ from 'lodash'
 ```
 
-###### Export assignment import
-
-```ts
-imports: [
-  { name: '=', as: 'browser', from: 'webextension-polyfill' }
-]
-```
-
-Will be injected as:
-
-```ts
-import browser from 'webextension-polyfill'
-// with types
-const browser: typeof import('webextension-polyfill')
-```
-
 ###### Namespace import
 
 ```ts
@@ -141,6 +125,28 @@ Will be injected as:
 
 ```ts
 import * as _ from 'lodash'
+```
+
+###### Export assignment import
+
+This is a special case for libraries authored with [TypeScript's `export =` syntax](https://www.typescriptlang.org/docs/handbook/modules/reference.html#export--and-import--require). You don't need it the most of the time.
+
+```ts
+imports: [
+  { name: '=', as: 'browser', from: 'webextension-polyfill' }
+]
+```
+
+Will be injected as:
+
+```ts
+import browser from 'webextension-polyfill'
+```
+
+And the type declaration will be added as:
+
+```ts
+const browser: typeof import('webextension-polyfill')
 ```
 
 ###### Custom Presets
