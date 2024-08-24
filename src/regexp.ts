@@ -3,7 +3,7 @@ import { stripLiteral } from 'strip-literal'
 
 export const excludeRE = [
   // imported/exported from other module
-  /\b(import|export)\b([\w$*{},\s]+?)\bfrom\b/g,
+  /\b(import|export)\b([\w$*{},\s]+?)\bfrom\s*["']/g,
   // defined as function
   /\bfunction\s*([\w$]+)\s*\(/g,
   // defined as class

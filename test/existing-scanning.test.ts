@@ -56,6 +56,7 @@ describe('regex for extract imported/exported variables', () => {
     { input: `export{ref as bar} from 'vue'`, output: ['bar'] },
     { input: `export{ref}from'vue'`, output: ['ref'] },
     { input: `export{ref,watch}from'vue'`, output: ['ref', 'watch'] },
+    { input: `export{from}from'rxjs'`, output: ['from'] },
   ]
   for (const item of cases) {
     it(item.input, () => {
