@@ -1,3 +1,12 @@
+## [3.11.1](https://github.com/unjs/unimport/compare/v3.11.0...v3.11.1) (2024-08-24)
+
+
+### Bug Fixes
+
+* **regexp:** `from` named import false-negative ([e2b7fe5](https://github.com/unjs/unimport/commit/e2b7fe5b8bdc250ec9d73936a693e716e685e3e6))
+
+
+
 # [3.11.0](https://github.com/unjs/unimport/compare/v3.10.1...v3.11.0) (2024-08-21)
 
 
