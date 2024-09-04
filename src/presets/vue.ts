@@ -86,5 +86,13 @@ export default defineUnimportPreset({
     'onRenderTriggered',
     'resolveComponent',
     'useCssVars',
+
+    // vue3.4+
+    'useModel',
+
+    // vue3.5+
+    'onWatcherCleanup',
+    'useId',
+    'useTemplateRef',
   ],
 })
