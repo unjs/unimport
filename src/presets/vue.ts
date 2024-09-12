@@ -88,7 +88,6 @@ export default defineUnimportPreset({
     'useCssVars',
 
     // vue3.4+
-    'defineModel',
     'useModel',
 
     // vue3.5+
