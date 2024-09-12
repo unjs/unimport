@@ -12,4 +12,5 @@ coverage
 dist
 node_modules
 types
+.idea
 playground/unimport.d.ts
