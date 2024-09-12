@@ -4,7 +4,7 @@ import type {
 } from '../types'
 
 const contextRE = /resolveDirective as _resolveDirective/
-const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w-.]+)"\);?/g
+const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?/g
 
 export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
   const directivesPromise = Promise.all(directives.map(async (directive) => {
@@ -29,7 +29,7 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
   })
 
   return {
-    async transform(s, id) {
+    async transform(s) {
       if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
         return s
 
