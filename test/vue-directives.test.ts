@@ -41,7 +41,7 @@ describe('vue-directives', () => {
       }"
     `)
     expect((await ctx.injectImports(result.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-      "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      "import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
       export function render(_ctx, _cache) {
                                                                                    
