@@ -17,6 +17,16 @@ export default defineConfig({
       ],
       addons: {
         vueTemplate: true,
+        vueDirectives: [{
+          from: '/src/directives.ts',
+          directives: [{
+            name: 'v-custom-directive',
+            as: 'CustomDirective',
+          }, {
+            name: 'v-awesome-directive',
+            as: 'AwesomeDirective',
+          }],
+        }],
       },
     }),
     inspect(),

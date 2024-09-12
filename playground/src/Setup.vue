@@ -9,10 +9,10 @@ function inc() {
 <template>
   <div>
     <h1>{{ count }} x {{ multiplier }} = {{ count * multiplier }}</h1>
-    <button @click="inc">
+    <button v-custom-directive @click="inc">
       Inc
     </button>
-    <button @click="bump">
+    <button v-awesome-directive @click="bump">
       x1
     </button>
     <div>

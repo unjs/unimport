@@ -40,6 +40,24 @@ export interface ImportCommon {
   typeFrom?: ModuleId
 }
 
+export interface DirectiveImportName {
+  /** The directive name to be detected */
+  name: Lowercase<string>
+  /** Import as this name: if `undefined` will assume `default` export from the module */
+  as?: ImportName
+}
+export type SingleDirectiveImportName = DirectiveImportName
+export type MultipleDirectiveImportName = Required<DirectiveImportName>[]
+
+export interface DirectiveImport {
+  /** Module specifier to import from */
+  from: ModuleId
+  /**
+   * Directive names from the module.
+   */
+  directives: Thenable<SingleDirectiveImportName> | Thenable<MultipleDirectiveImportName>
+}
+
 export interface Import extends ImportCommon {
   /** Import name to be detected */
   name: ImportName
@@ -163,6 +181,10 @@ export interface AddonsOptions {
    * @default false
    */
   vueTemplate?: boolean
+  /**
+   * Enable auto import directives for Vue's SFC.
+   */
+  vueDirectives?: DirectiveImport[]
 }
 
 export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {

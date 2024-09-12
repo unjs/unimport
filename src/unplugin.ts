@@ -43,6 +43,8 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
     autoImport = true,
   } = options
 
+  let findVitePlugin: undefined | ((name: string) => null | any)
+
   return {
     name: 'unimport',
     enforce: 'post',
@@ -69,6 +71,20 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
 
       if (dts)
         return fs.writeFile(dts, await ctx.generateTypeDeclarations(), 'utf-8')
+    },
+    findVitePlugin: (name: string) => findVitePlugin?.(name),
+    vite: {
+      configResolved(viteConfig) {
+        findVitePlugin = (name: string) => {
+          viteConfig.plugins.find(plugin => plugin.name === name)
+        }
+        /* const plugins = viteConfig.plugins.map(p => p.name)
+        console.log(plugins)
+        console.log(ctx)
+        ctx.findVitePlugin = (name: string) => {
+          return viteConfig.plugins.find(plugin => plugin.name === name)
+        } */
+      },
     },
   }
 })
