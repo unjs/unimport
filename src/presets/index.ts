@@ -30,6 +30,15 @@ import solidAppRouter from './solid-app-router'
 import vueRouterComposables from './vue-router-composables'
 import rxjs from './rxjs'
 import dateFns from './date-fns'
+import {
+  adapterFetch,
+  alovaClient,
+  alovaCore,
+  alovaServer,
+  statesHookReact,
+  statesHookSvelte,
+  statesHookVue,
+} from './alova'
 
 export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
@@ -62,6 +71,13 @@ export const builtinPresets = {
   'solid-app-router': solidAppRouter,
   'rxjs': rxjs,
   'date-fns': dateFns,
+  'alova': alovaCore,
+  'alova/client': alovaClient,
+  'alova/server': alovaServer,
+  'alova/vue': statesHookVue,
+  'alova/react': statesHookReact,
+  'alova/svelte': statesHookSvelte,
+  'alova/fetch': adapterFetch,
 }
 
 export type BuiltinPresetName = keyof typeof builtinPresets
