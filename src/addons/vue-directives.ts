@@ -4,6 +4,7 @@ import type {
 } from '../types'
 
 const contextRE = /resolveDirective as _resolveDirective/
+const contextText = `${contextRE.source}, `
 const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?/g
 
 export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
@@ -33,10 +34,6 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
       if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
         return s
 
-      const match = s.original.match(contextRE)
-      if (!match)
-        return s
-
       const directivesMap = await directivesPromise
       // We have something like this:
       // var/const _directive_click_outside = _resolveDirective("click-outside");?
@@ -56,7 +53,7 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
           set = []
           importsMap.set(from, set)
         }
-        // clear the directive declaration
+        // clear the directive declaration: replace them with spaces, otherwise we need to recalculate the indexes
         s.overwrite(
           regex.index,
           regex.index + all.length,
@@ -69,10 +66,11 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
       if (!matches)
         return s
 
-      // TODO: cleanup resolveDirective import
+      // cleanup resolveDirective import
+      s.replace(contextText, '')
 
       // inject the imports
-      // TODO: try using imports
+      // TODO: try using imports and try using prepend instead append
       for (const [from, symbols] of importsMap) {
         if (symbols.length > 1) {
           s.append(`\nimport { ${symbols.join(', ')} } from '${from}'`)
