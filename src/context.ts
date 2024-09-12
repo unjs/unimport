@@ -1,11 +1,12 @@
 import type MagicString from 'magic-string'
-import { version } from '../package.json'
 import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, Unimport, UnimportContext, UnimportMeta, UnimportOptions } from './types'
-import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
-import { resolveBuiltinPresets } from './preset'
+
+import { version } from '../package.json'
 import { vueTemplateAddon } from './addons'
-import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
 import { detectImports } from './detect'
+import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
+import { resolveBuiltinPresets } from './preset'
+import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 
 export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   const ctx = createInternalContext(opts)

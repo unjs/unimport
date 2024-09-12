@@ -1,8 +1,8 @@
-import { isAbsolute, relative } from 'pathe'
 import type { StaticImport } from 'mlly'
-import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
-import MagicString from 'magic-string'
 import type { Import, InlinePreset, MagicStringResult, TypeDeclarationOptions } from './types'
+import MagicString from 'magic-string'
+import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
+import { isAbsolute, relative } from 'pathe'
 import { stripCommentsAndStrings } from './regexp'
 
 export function defineUnimportPreset(preset: InlinePreset): InlinePreset {

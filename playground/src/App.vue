@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Setup from './Setup.vue'
 import Options from './Options.vue'
+import Setup from './Setup.vue'
 </script>
 
 <template>

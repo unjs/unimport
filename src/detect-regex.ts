@@ -1,8 +1,9 @@
-import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import type MagicString from 'magic-string'
 import type { DetectImportResult, Import, InjectImportsOptions, UnimportContext } from './types'
-import { getMagicString } from './utils'
+
+import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import { excludeRE, importAsRE, matchRE, separatorRE, stripCommentsAndStrings } from './regexp'
+import { getMagicString } from './utils'
 
 export async function detectImportsRegex(
   code: string | MagicString,

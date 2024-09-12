@@ -1,3 +1,12 @@
+# [3.12.0](https://github.com/unjs/unimport/compare/v3.11.1...v3.12.0) (2024-09-12)
+
+
+### Features
+
+* add vue v3.4 v3.5 new api ([#370](https://github.com/unjs/unimport/issues/370)) ([961399c](https://github.com/unjs/unimport/commit/961399cb2ab2ecae318dca05e0b36a6838e19012))
+
+
+
 ## [3.11.1](https://github.com/unjs/unimport/compare/v3.11.0...v3.11.1) (2024-08-24)
 
 

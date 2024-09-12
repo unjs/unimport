@@ -1,7 +1,7 @@
+import type { Import } from '../src/types'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { describe, expect, it } from 'vitest'
-import type { Import } from '../src/types'
 import { toExports } from '../src/utils'
 
 describe('toExports', () => {

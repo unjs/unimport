@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import type { Import } from '../src/types'
+import { describe, expect, it } from 'vitest'
 import { addImportToCode } from '../src/utils'
 
 describe('add-import', () => {

@@ -1,14 +1,15 @@
-import { readFile } from 'node:fs/promises'
+import type { ESMExport } from 'mlly'
+import type { Import, ScanDirExportsOptions } from '../types'
+
 import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import fg from 'fast-glob'
-import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
-import type { ESMExport } from 'mlly'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
+import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import { camelCase } from 'scule'
-import type { Import, ScanDirExportsOptions } from '../types'
 
 export async function scanFilesFromDir(dir: string | string[], options?: ScanDirExportsOptions) {
   const dirs = (Array.isArray(dir) ? dir : [dir]).map(d => normalize(d))
