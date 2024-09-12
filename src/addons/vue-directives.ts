@@ -74,14 +74,14 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
       // inject the imports: check if some module exporting named directives and default one!
       for (const [from, symbols] of importsMap) {
         if (symbols.length > 1) {
-          s.append(`import { ${symbols.join(', ')} } from '${from}'\n`)
+          s.append(`\nimport { ${symbols.join(', ')} } from '${from}'`)
         }
         else {
           if (symbols[0].includes(' as ')) {
-            s.append(`import { ${symbols[0]} } from '${from}'\n`)
+            s.append(`\nimport { ${symbols[0]} } from '${from}'`)
           }
           else {
-            s.append(`import ${symbols[0]} from '${from}'\n`)
+            s.append(`\nimport ${symbols[0]} from '${from}'`)
           }
         }
       }
