@@ -46,8 +46,6 @@ export interface DirectiveImportName {
   /** Import as this name: if `undefined` will assume `default` export from the module */
   as?: ImportName
 }
-export type SingleDirectiveImportName = DirectiveImportName
-export type MultipleDirectiveImportName = Required<DirectiveImportName>[]
 
 export interface DirectiveImport {
   /** Module specifier to import from */
@@ -55,7 +53,7 @@ export interface DirectiveImport {
   /**
    * Directive names from the module.
    */
-  directives: Thenable<SingleDirectiveImportName> | Thenable<MultipleDirectiveImportName>
+  directives: Thenable<DirectiveImportName | Required<DirectiveImportName>[]>
 }
 
 export interface Import extends ImportCommon {
