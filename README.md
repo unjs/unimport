@@ -95,8 +95,8 @@ imports: [
 Will be injected as:
 
 ```ts
-import { ref } from 'vue'
 import { useState as useSignal } from 'react'
+import { ref } from 'vue'
 ```
 
 ###### Default import

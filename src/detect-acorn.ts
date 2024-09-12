@@ -1,9 +1,9 @@
-import type MagicString from 'magic-string'
 import type { BlockStatement, Node } from 'estree'
-import { parse } from 'acorn'
-import { walk } from 'estree-walker'
+import type MagicString from 'magic-string'
 import type { ArgumentsType } from 'vitest'
 import type { DetectImportResult, Import, InjectImportsOptions, UnimportContext } from './types'
+import { parse } from 'acorn'
+import { walk } from 'estree-walker'
 import { getMagicString } from './utils'
 
 export async function detectImportsAcorn(

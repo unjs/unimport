@@ -1,9 +1,10 @@
-import { promises as fs } from 'node:fs'
-import { createUnplugin } from 'unplugin'
 import type { FilterPattern } from '@rollup/pluginutils'
+import type { UnimportOptions } from './types'
+
+import { promises as fs } from 'node:fs'
 import { createFilter } from '@rollup/pluginutils'
 import MagicString from 'magic-string'
-import type { UnimportOptions } from './types'
+import { createUnplugin } from 'unplugin'
 import { createUnimport } from './context'
 
 export interface UnimportPluginOptions extends UnimportOptions {

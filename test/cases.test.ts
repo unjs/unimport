@@ -1,11 +1,11 @@
 /// <reference types="vite/client" />
 
+import type { UnimportOptions } from '../src'
 import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
 import { resolve } from 'pathe'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src/context'
-import type { UnimportOptions } from '../src'
 
 const UNMODIFIED_MARK = '@test-unmodified'
 

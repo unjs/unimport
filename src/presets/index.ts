@@ -1,9 +1,13 @@
+import dateFns from './date-fns'
 import pinia from './pinia'
 import preact from './preact'
 import quasar from './quasar'
 import react from './react'
 import reactRouter from './react-router'
 import reactRouterDom from './react-router-dom'
+import rxjs from './rxjs'
+import solid from './solid'
+import solidAppRouter from './solid-app-router'
 import {
   svelte,
   svelteAnimate,
@@ -12,24 +16,20 @@ import {
   svelteStore,
   svelteTransition,
 } from './svelte'
+import uniApp from './uni-app'
 import veeValidate from './vee-validate'
 import vitepress from './vitepress'
+import vitest from './vitest'
 import vue from './vue'
-import vueMacros from './vue-macros'
+import vueCompositionApi from './vue-composition-api'
 import vueDemi from './vue-demi'
 import vueI18n from './vue-i18n'
+import vueMacros from './vue-macros'
 import vueRouter from './vue-router'
-import vueCompositionApi from './vue-composition-api'
+import vueRouterComposables from './vue-router-composables'
 import vueuseCore from './vueuse-core'
 import vueuseHead from './vueuse-head'
 import vuex from './vuex'
-import vitest from './vitest'
-import uniApp from './uni-app'
-import solid from './solid'
-import solidAppRouter from './solid-app-router'
-import vueRouterComposables from './vue-router-composables'
-import rxjs from './rxjs'
-import dateFns from './date-fns'
 
 export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,

@@ -55,8 +55,7 @@ const a = computed()
 import { notExist } from '#imports'
     `.trim()
 
-    await expect(ctx.injectImports(fixture)).rejects
-      .toMatchInlineSnapshot('[Error: [unimport] failed to find "notExist" imported from "#imports"]')
+    await expect(ctx.injectImports(fixture)).rejects.toMatchInlineSnapshot('[Error: [unimport] failed to find "notExist" imported from "#imports"]')
   })
 
   it('comment false-positive', async () => {

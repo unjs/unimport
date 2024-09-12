@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
 import { parse } from 'acorn'
-import { traveseScopes } from '../src/detect-acorn'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
+import { traveseScopes } from '../src/detect-acorn'
 
 describe('detect-acorn', () => {
   it('scopes', async () => {
@@ -189,8 +189,7 @@ const a = computed()
 import { notExist } from '#imports'
     `.trim()
 
-    await expect(ctx.injectImports(fixture)).rejects
-      .toMatchInlineSnapshot('[Error: [unimport] failed to find "notExist" imported from "#imports"]')
+    await expect(ctx.injectImports(fixture)).rejects.toMatchInlineSnapshot('[Error: [unimport] failed to find "notExist" imported from "#imports"]')
   })
 
   it('comment false-positive', async () => {

@@ -1,8 +1,8 @@
+import type { Preset } from '../types'
 import { readFileSync } from 'node:fs'
 import process from 'node:process'
 import { resolveModule } from 'local-pkg'
 import { defineUnimportPreset } from '../utils'
-import type { Preset } from '../types'
 
 let _cache: Preset | undefined
 

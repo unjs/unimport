@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import type { Import } from '../src/types'
+import { describe, expect, it } from 'vitest'
 import { stringifyImports } from '../src/utils'
 
 describe('toImports', () => {

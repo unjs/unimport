@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import type { Import } from '../src'
+import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
 
 describe('disable import in dts generation', () => {
