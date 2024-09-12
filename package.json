@@ -1,7 +1,7 @@
 {
   "name": "unimport",
   "type": "module",
-  "version": "3.11.1",
+  "version": "3.12.0",
   "packageManager": "pnpm@9.10.0",
   "description": "Unified utils for auto importing APIs in modules",
   "license": "MIT",
