@@ -61,8 +61,8 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
             regex.index + all.length,
             '',
           )
-          // add the target import
           if (asStmt) {
+            // add named import
             targets.push({
               name: asStmt,
               as: symbol,
@@ -70,7 +70,7 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
             })
           }
           else {
-            // add the directive to the targets
+            // add default export
             targets.push({
               name: 'default',
               as: symbol,
