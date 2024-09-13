@@ -30,7 +30,7 @@ export default defineComponent({
     <button v-awesome-directive @click="bump">
       x1
     </button>
-    <div>
+    <div v-named-mixed-directive v-default-mixed-directive>
       {{ nested() }}
     </div>
   </div>

@@ -13,6 +13,17 @@ const defaultDirective = compileTemplate({
   },
 })
 
+const sindleMixedDirectives = compileTemplate({
+  id: 'template.vue',
+  filename: 'template.vue',
+  source: `
+    <div v-named-mixed-directive v-default-mixed-directive @click="foo"></div>
+  `,
+  compilerOptions: {
+    hoistStatic: false,
+  },
+})
+
 const multipleDirectives = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
@@ -26,7 +37,7 @@ const multipleDirectives = compileTemplate({
 })
 
 describe('vue-directives', () => {
-  describe('default directive', () => {
+  describe('single default directive', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: {
@@ -106,7 +117,56 @@ describe('vue-directives', () => {
     })
   })
 
-  describe('mixed directives', () => {
+  describe('single mixed directives', () => {
+    const ctx = createUnimport({
+      addons: {
+        vueDirectives: [{
+          from: '/src/directives/mixed-directives.ts',
+          directives: [{
+            directive: 'v-named-mixed-directive',
+            name: 'NamedMixedDirective',
+            // as: 'NamedMixedDirective',
+          }, {
+            directive: 'v-default-mixed-directive',
+            name: 'default',
+          }],
+        }],
+      },
+    })
+
+    it('inject', async () => {
+      expect(sindleMixedDirectives.code).toMatchInlineSnapshot(`
+        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_named_mixed_directive = _resolveDirective("named-mixed-directive")
+          const _directive_default_mixed_directive = _resolveDirective("default-mixed-directive")
+
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_named_mixed_directive],
+            [_directive_default_mixed_directive]
+          ])
+        }"
+      `)
+      expect((await ctx.injectImports(sindleMixedDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
+        "import _directive_default_mixed_directive from '/src/directives/mixed-directives.ts';
+        import { NamedMixedDirective as _directive_named_mixed_directive } from '/src/directives/mixed-directives.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_named_mixed_directive],
+            [_directive_default_mixed_directive]
+          ])
+        }"
+      `)
+    })
+  })
+
+  describe('multiple mixed directives', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: [{

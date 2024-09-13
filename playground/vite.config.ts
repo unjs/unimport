@@ -28,6 +28,16 @@ export default defineConfig({
             name: 'AwesomeDirective',
             // as: 'AwesomeDirective',
           }],
+        }, {
+          from: '/src/directives/mixed-directives.ts',
+          directives: [{
+            directive: 'v-named-mixed-directive',
+            name: 'NamedMixedDirective',
+            // as: 'NamedMixedDirective',
+          }, {
+            directive: 'v-default-mixed-directive',
+            name: 'default',
+          }],
         }],
       },
     }),
