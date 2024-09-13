@@ -64,6 +64,44 @@ describe('vue-directives', () => {
     })
   })
 
+  describe('single named directive', () => {
+    const ctx = createUnimport({
+      addons: {
+        vueDirectives: [{
+          from: '/src/directives/awesome-directive.ts',
+          directives: { name: 'v-awesome-directive', as: 'AwesomeDirective' },
+        }],
+      },
+    })
+    it('inject', async () => {
+      expect(defaultDirective.code).toMatchInlineSnapshot(`
+        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_awesome_directive = _resolveDirective("awesome-directive")
+
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive]
+          ])
+        }"
+      `)
+      expect((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
+        "import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive]
+          ])
+        }
+        import { AwesomeDirective as _directive_awesome_directive } from '/src/directives/awesome-directive.ts'"
+      `)
+    })
+  })
+
   describe('multiple directives', () => {
     const ctx = createUnimport({
       addons: {
