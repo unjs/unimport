@@ -100,6 +100,72 @@ describe('vue-directives', () => {
     })
   })
 
+  describe('mixed directives', () => {
+    const ctx = createUnimport({
+      addons: {
+        vueDirectives: [{
+          from: '/src/directives/custom-directive.ts',
+          directives: {
+            name: 'v-custom-directive',
+            as: 'CustomDirective',
+          },
+        }, {
+          from: '/src/directives/awesome-directive.ts',
+          directives: {
+            name: 'v-awesome-directive',
+          },
+        }],
+      },
+    })
+
+    it('inject', async () => {
+      expect(multipleDirectives.code).toMatchInlineSnapshot(`
+        "import { resolveDirective as _resolveDirective, createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_awesome_directive = _resolveDirective("awesome-directive")
+          const _directive_custom_directive = _resolveDirective("custom-directive")
+
+          return (_openBlock(), _createElementBlock(_Fragment, null, [
+            _withDirectives(_createElementVNode("div", {
+              onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+            }, null, 512 /* NEED_PATCH */), [
+              [_directive_awesome_directive],
+              [_directive_custom_directive]
+            ]),
+            _withDirectives(_createElementVNode("div", {
+              onClick: _cache[1] || (_cache[1] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+            }, null, 512 /* NEED_PATCH */), [
+              [_directive_awesome_directive],
+              [_directive_custom_directive]
+            ])
+          ], 64 /* STABLE_FRAGMENT */))
+        }"
+      `)
+      expect((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
+        "import { CustomDirective as _directive_custom_directive } from '/src/directives/custom-directive.ts';
+        import _directive_awesome_directive from '/src/directives/awesome-directive.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          return (_openBlock(), _createElementBlock(_Fragment, null, [
+            _withDirectives(_createElementVNode("div", {
+              onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+            }, null, 512 /* NEED_PATCH */), [
+              [_directive_awesome_directive],
+              [_directive_custom_directive]
+            ]),
+            _withDirectives(_createElementVNode("div", {
+              onClick: _cache[1] || (_cache[1] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+            }, null, 512 /* NEED_PATCH */), [
+              [_directive_awesome_directive],
+              [_directive_custom_directive]
+            ])
+          ], 64 /* STABLE_FRAGMENT */))
+        }"
+      `)
+    })
+  })
+
   describe('multiple directives', () => {
     const ctx = createUnimport({
       addons: {
