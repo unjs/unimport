@@ -29,10 +29,13 @@ describe('vue-directives', () => {
   describe('default directive', () => {
     const ctx = createUnimport({
       addons: {
-        vueDirectives: [{
+        vueDirectives: {
           from: '/src/directives/awesome-directive.ts',
-          directives: { name: 'v-awesome-directive' },
-        }],
+          directives: {
+            name: 'default',
+            directive: 'v-awesome-directive',
+          },
+        },
       },
     })
     it('inject', async () => {
@@ -68,7 +71,10 @@ describe('vue-directives', () => {
       addons: {
         vueDirectives: [{
           from: '/src/directives/awesome-directive.ts',
-          directives: { name: 'v-awesome-directive', as: 'AwesomeDirective' },
+          directives: {
+            name: 'AwesomeDirective',
+            directive: 'v-awesome-directive',
+          },
         }],
       },
     })
@@ -106,13 +112,14 @@ describe('vue-directives', () => {
         vueDirectives: [{
           from: '/src/directives/custom-directive.ts',
           directives: {
-            name: 'v-custom-directive',
-            as: 'CustomDirective',
+            name: 'CustomDirective',
+            directive: 'v-custom-directive',
           },
         }, {
           from: '/src/directives/awesome-directive.ts',
           directives: {
-            name: 'v-awesome-directive',
+            name: 'default',
+            directive: 'v-awesome-directive',
           },
         }],
       },
@@ -172,11 +179,11 @@ describe('vue-directives', () => {
         vueDirectives: [{
           from: '/src/directives/index.ts',
           directives: [{
-            name: 'v-custom-directive',
-            as: 'CustomDirective',
+            name: 'CustomDirective',
+            directive: 'v-custom-directive',
           }, {
-            name: 'v-awesome-directive',
-            as: 'AwesomeDirective',
+            name: 'AwesomeDirective',
+            directive: 'v-awesome-directive',
           }],
         }],
       },

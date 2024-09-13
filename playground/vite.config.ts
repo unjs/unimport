@@ -20,11 +20,13 @@ export default defineConfig({
         vueDirectives: [{
           from: '/src/directives/index.ts',
           directives: [{
-            name: 'v-custom-directive',
-            as: 'CustomDirective',
+            directive: 'v-custom-directive',
+            name: 'CustomDirective',
+            // as: 'CustomDirective',
           }, {
-            name: 'v-awesome-directive',
-            as: 'AwesomeDirective',
+            directive: 'v-awesome-directive',
+            name: 'AwesomeDirective',
+            // as: 'AwesomeDirective',
           }],
         }],
       },

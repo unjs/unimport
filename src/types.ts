@@ -40,20 +40,12 @@ export interface ImportCommon {
   typeFrom?: ModuleId
 }
 
-export interface DirectiveImportName {
+export interface DirectiveImport extends Omit<Import, 'from'> {
   /** The directive name to be detected */
-  name: `v-${Lowercase<string>}`
-  /** Import as this name: if `undefined` will assume `default` export from the module */
-  as?: ImportName
+  directive: `v-${Lowercase<string>}`
 }
-
-export interface DirectiveImport {
-  /** Module specifier to import from */
-  from: ModuleId
-  /**
-   * Directive names from the module.
-   */
-  directives: Thenable<DirectiveImportName | Required<DirectiveImportName>[]>
+export interface DirectivePreset extends ImportCommon {
+  directives: Thenable<DirectiveImport | DirectiveImport[]>
 }
 
 export interface Import extends ImportCommon {
@@ -182,7 +174,7 @@ export interface AddonsOptions {
   /**
    * Enable auto import directives for Vue's SFC.
    */
-  vueDirectives?: DirectiveImport[]
+  vueDirectives?: DirectivePreset | DirectivePreset[]
 }
 
 export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {

@@ -1,37 +1,39 @@
 import type {
   Addon,
   DirectiveImport,
+  DirectivePreset,
   Import,
 } from '../types'
+
 import { stringifyImports } from '../utils'
 
 const contextRE = /resolveDirective as _resolveDirective/
 const contextText = `${contextRE.source}, `
 const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*/g
 
-type DirectiveDef = [from: string, name?: string]
+type DirectiveType = [directive: DirectiveImport, preset: DirectivePreset]
 
-export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
-  const directivesPromise = Promise.all(directives.map(async (directive) => {
-    const { from, directives } = directive
-    const resolved = await directives
-    return Array.isArray(resolved)
-      ? [true, from, new Set(resolved)] as const
-      : [false, from, resolved] as const
-  })).then((entries) => {
-    const map = new Map<string, DirectiveDef>()
-    for (const [multiple, from, entry] of entries) {
-      if (multiple) {
-        for (const directive of entry) {
-          map.set(directive.name, [from, directive.as])
+export function vueDirectivesAddon(directives: DirectivePreset[]): Addon {
+  const directivesArray = Array.isArray(directives) ? directives : [directives]
+  const directivesPromise = Promise
+    .all(directivesArray.map(async (preset) => {
+      const directives = await preset.directives
+      return [preset, directives] as const
+    }))
+    .then((entries) => {
+      const map = new Map<string, DirectiveType>()
+      for (const [preset, directive] of entries) {
+        if (Array.isArray(directive)) {
+          for (const entry of directive) {
+            map.set(entry.directive, [entry, preset])
+          }
+        }
+        else {
+          map.set(directive.directive, [directive, preset])
         }
       }
-      else {
-        map.set(entry.name, [from, entry.as])
-      }
-    }
-    return map
-  })
+      return map
+    })
 
   const self = {
     async transform(s, id) {
@@ -54,27 +56,29 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
           if (!entry)
             return acc
 
-          const [from, asStmt] = entry
+          const [directive, preset] = entry
+          const importName = directive.name
+          const asStmt = directive.as
           // remove the directive declaration
           s.overwrite(
             regex.index,
             regex.index + all.length,
             '',
           )
-          if (asStmt) {
+          if (importName !== 'default') {
             // add named import
             targets.push({
-              name: asStmt,
+              ...preset,
+              name: asStmt ?? importName,
               as: symbol,
-              from,
             })
           }
           else {
             // add default export
             targets.push({
+              ...preset,
               name: 'default',
               as: symbol,
-              from,
             })
           }
           return acc + 1

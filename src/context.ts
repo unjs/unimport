@@ -109,7 +109,7 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
   else {
     if (opts.addons?.vueTemplate)
       addons.push(vueTemplateAddon())
-    if (opts.addons?.vueDirectives?.length)
+    if (opts.addons?.vueDirectives)
       addons.push(vueDirectivesAddon(opts.addons.vueDirectives))
   }
 
