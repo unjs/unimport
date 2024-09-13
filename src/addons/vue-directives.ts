@@ -5,7 +5,7 @@ import type {
 
 const contextRE = /resolveDirective as _resolveDirective/
 const contextText = `${contextRE.source}, `
-const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?/g
+const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*/g
 
 export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
   const directivesPromise = Promise.all(directives.map(async (directive) => {
@@ -40,28 +40,31 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
       // We need to remove the declaration and replace it with the corresponding import
       // extracting the symbol and the directive name
       const importsMap = new Map<string, string[]>()
-      const matches = Array.from(s.original.matchAll(directiveRE)).reduce((acc, regex) => {
-        const [all, symbol, name] = regex
-        const directiveName = `v-${name}`
-        const entry = directivesMap.get(directiveName)
-        if (!entry)
-          return acc
+      const matches = Array
+        .from(s.original.matchAll(directiveRE))
+        .sort((a, b) => b.index - a.index)
+        .reduce((acc, regex) => {
+          const [all, symbol, name] = regex
+          const directiveName = `v-${name}`
+          const entry = directivesMap.get(directiveName)
+          if (!entry)
+            return acc
 
-        const [from, asStmt] = entry
-        let set = importsMap.get(from)
-        if (!set) {
-          set = []
-          importsMap.set(from, set)
-        }
-        // clear the directive declaration: replace them with spaces, otherwise we need to recalculate the indexes
-        s.overwrite(
-          regex.index,
-          regex.index + all.length,
-          Array.from({ length: all.length }, () => ' ').join(''),
-        )
-        set.push(asStmt ? `${asStmt} as ${symbol}` : symbol)
-        return acc + 1
-      }, 0)
+          const [from, asStmt] = entry
+          let set = importsMap.get(from)
+          if (!set) {
+            set = []
+            importsMap.set(from, set)
+          }
+          // remove the directive declaration
+          s.overwrite(
+            regex.index,
+            regex.index + all.length,
+            '',
+          )
+          set.push(asStmt ? `${asStmt} as ${symbol}` : symbol)
+          return acc + 1
+        }, 0)
 
       if (!matches)
         return s
