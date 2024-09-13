@@ -42,7 +42,7 @@ export interface ImportCommon {
 
 export interface DirectiveImportName {
   /** The directive name to be detected */
-  name: Lowercase<string>
+  name: `v-${Lowercase<string>}`
   /** Import as this name: if `undefined` will assume `default` export from the module */
   as?: ImportName
 }
