@@ -13,7 +13,7 @@ const defaultDirective = compileTemplate({
   },
 })
 
-const sindleMixedDirectives = compileTemplate({
+const singleMixedDirectives = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
   source: `
@@ -135,7 +135,7 @@ describe('vue-directives', () => {
     })
 
     it('inject', async () => {
-      expect(sindleMixedDirectives.code).toMatchInlineSnapshot(`
+      expect(singleMixedDirectives.code).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -150,7 +150,7 @@ describe('vue-directives', () => {
           ])
         }"
       `)
-      expect((await ctx.injectImports(sindleMixedDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
+      expect((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
         "import _directive_default_mixed_directive from '/src/directives/mixed-directives.ts';
         import { NamedMixedDirective as _directive_named_mixed_directive } from '/src/directives/mixed-directives.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
