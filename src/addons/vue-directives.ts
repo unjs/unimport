@@ -13,12 +13,11 @@ const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*
 
 type DirectiveType = [directive: DirectiveImport, preset: DirectivePreset]
 
-export function vueDirectivesAddon(directives: DirectivePreset[]): Addon {
+export function vueDirectivesAddon(directives: DirectivePreset | DirectivePreset[]): Addon {
   const directivesArray = Array.isArray(directives) ? directives : [directives]
   const directivesPromise = Promise
     .all(directivesArray.map(async (preset) => {
-      const directives = await preset.directives
-      return [preset, directives] as const
+      return [preset, await preset.directives] as const
     }))
     .then((entries) => {
       const map = new Map<string, DirectiveType>()
