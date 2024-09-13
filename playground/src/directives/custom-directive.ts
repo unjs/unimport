@@ -21,7 +21,4 @@ export const CustomDirective = {
   updated,
 }
 
-export function AwesomeDirective(el: HTMLElement, binding: DirectiveBinding) {
-  // eslint-disable-next-line no-console
-  console.log('AwesomeDirective', el, binding)
-}
+export default CustomDirective
