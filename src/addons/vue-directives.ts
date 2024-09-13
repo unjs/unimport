@@ -1,11 +1,15 @@
 import type {
   Addon,
   DirectiveImport,
+  Import,
 } from '../types'
+import { stringifyImports } from '../utils'
 
 const contextRE = /resolveDirective as _resolveDirective/
 const contextText = `${contextRE.source}, `
 const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*/g
+
+type DirectiveDef = [from: string, name?: string]
 
 export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
   const directivesPromise = Promise.all(directives.map(async (directive) => {
@@ -15,7 +19,7 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
       ? [true, from, new Set(resolved)] as const
       : [false, from, resolved] as const
   })).then((entries) => {
-    const map = new Map<string, [from: string, name?: string]>()
+    const map = new Map<string, DirectiveDef>()
     for (const [multiple, from, entry] of entries) {
       if (multiple) {
         for (const directive of entry) {
@@ -29,17 +33,17 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
     return map
   })
 
-  return {
-    async transform(s) {
+  const self = {
+    async transform(s, id) {
       if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
         return s
 
       const directivesMap = await directivesPromise
+      let targets: Import[] = []
       // We have something like this:
       // var/const _directive_click_outside = _resolveDirective("click-outside");?
       // We need to remove the declaration and replace it with the corresponding import
-      // extracting the symbol and the directive name
-      const importsMap = new Map<string, string[]>()
+      // extracting the symbol and the directive name from the declaration
       const matches = Array
         .from(s.original.matchAll(directiveRE))
         .sort((a, b) => b.index - a.index)
@@ -51,45 +55,57 @@ export function vueDirectivesAddon(directives: DirectiveImport[]): Addon {
             return acc
 
           const [from, asStmt] = entry
-          let set = importsMap.get(from)
-          if (!set) {
-            set = []
-            importsMap.set(from, set)
-          }
           // remove the directive declaration
           s.overwrite(
             regex.index,
             regex.index + all.length,
             '',
           )
-          set.push(asStmt ? `${asStmt} as ${symbol}` : symbol)
+          // add the target import
+          if (asStmt) {
+            targets.push({
+              name: asStmt,
+              as: symbol,
+              from,
+            })
+          }
+          else {
+            // add the directive to the targets
+            targets.push({
+              name: 'default',
+              as: symbol,
+              from,
+            })
+          }
           return acc + 1
         }, 0)
 
       if (!matches)
         return s
 
-      // cleanup resolveDirective import
+      // remove resolveDirective import
       s.replace(contextText, '')
 
-      // inject the imports
-      // TODO: try using imports and try using prepend instead append
-      for (const [from, symbols] of importsMap) {
-        if (symbols.length > 1) {
-          s.append(`\nimport { ${symbols.join(', ')} } from '${from}'`)
-        }
-        else {
-          if (symbols[0].includes(' as ')) {
-            s.append(`\nimport { ${symbols[0]} } from '${from}'`)
-          }
-          else {
-            s.append(`\nimport ${symbols[0]} from '${from}'`)
-          }
-        }
+      for (const addon of this.addons) {
+        if (addon === self)
+          continue
+
+        targets = await addon.injectImportsResolved?.call(this, targets, s, id) ?? targets
       }
+
+      let injection = stringifyImports(targets)
+      for (const addon of this.addons) {
+        if (addon === self)
+          continue
+
+        injection = await addon.injectImportsStringified?.call(this, injection, targets, s, id) ?? injection
+      }
+
+      s.prepend(injection)
 
       return s
     },
-
   } satisfies Addon
+
+  return self
 }
