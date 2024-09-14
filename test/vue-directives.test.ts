@@ -41,7 +41,7 @@ describe('vue-directives', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: {
-          from: '/src/directives/awesome-directive.ts',
+          from: './src/directives/awesome-directive.ts',
           directives: {
             name: 'default',
             directive: 'v-awesome-directive',
@@ -75,13 +75,31 @@ describe('vue-directives', () => {
         }"
       `)
     })
+
+    it('dts', async () => {
+      expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
+        "export {}
+        declare global {
+
+        }
+        // for vue directives auto import
+        declare module 'vue' {
+          interface ComponentCustomProperties {
+            vAwesomeDirective: typeof import('/src/directives/awesome-directive')['default']
+          }
+          interface GlobalDirectives {
+            vAwesomeDirective: typeof import('/src/directives/awesome-directive')['default']
+          }
+        }"
+      `)
+    })
   })
 
   describe('single named directive', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: [{
-          from: '/src/directives/awesome-directive.ts',
+          from: './src/directives/awesome-directive.ts',
           directives: {
             name: 'AwesomeDirective',
             directive: 'v-awesome-directive',
@@ -121,7 +139,7 @@ describe('vue-directives', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: [{
-          from: '/src/directives/mixed-directives.ts',
+          from: './src/directives/mixed-directives.ts',
           directives: [{
             directive: 'v-named-mixed-directive',
             name: 'NamedMixedDirective',
@@ -170,13 +188,13 @@ describe('vue-directives', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: [{
-          from: '/src/directives/custom-directive.ts',
+          from: './src/directives/custom-directive.ts',
           directives: {
             name: 'CustomDirective',
             directive: 'v-custom-directive',
           },
         }, {
-          from: '/src/directives/awesome-directive.ts',
+          from: './src/directives/awesome-directive.ts',
           directives: {
             name: 'default',
             directive: 'v-awesome-directive',
@@ -237,7 +255,7 @@ describe('vue-directives', () => {
     const ctx = createUnimport({
       addons: {
         vueDirectives: [{
-          from: '/src/directives/index.ts',
+          from: './src/directives/index.ts',
           directives: [{
             name: 'CustomDirective',
             directive: 'v-custom-directive',
