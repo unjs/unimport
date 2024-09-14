@@ -329,7 +329,7 @@ describe('vue-directives', () => {
     })
   })
 
-  describe('preset vue directives', () => {
+  describe('preset and sub-presets with single vue directives', () => {
     const ctx = createUnimport({
       presets: [{
         // for string preset on addons (coverage)
@@ -361,6 +361,11 @@ describe('vue-directives', () => {
         },
       }],
       addons: {
+        // for addons in addons test (coverage)
+        addons: [{
+          name: 'dummy-addon',
+          declaration: dts => dts,
+        }],
         vueDirectives: {
           from: './src/directives/mixed-directive.ts',
           directives: {
@@ -368,6 +373,75 @@ describe('vue-directives', () => {
             directive: 'v-mixed-directive',
           },
         },
+      },
+    })
+    it('inject', async () => {
+      expect(replaceRoot(allDirectives.code)).toMatchInlineSnapshot(`
+        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_awesome_directive = _resolveDirective("awesome-directive")
+          const _directive_custom_directive = _resolveDirective("custom-directive")
+          const _directive_mixed_directive = _resolveDirective("mixed-directive")
+
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive],
+            [_directive_custom_directive],
+            [_directive_mixed_directive]
+          ])
+        }"
+      `)
+      expect(replaceRoot((await ctx.injectImports(allDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import _directive_mixed_directive from '<root>/src/directives/mixed-directive.ts';
+        import _directive_custom_directive from '<root>/src/directives/custom-directive.ts';
+        import _directive_awesome_directive from '<root>/src/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive],
+            [_directive_custom_directive],
+            [_directive_mixed_directive]
+          ])
+        }"
+      `)
+    })
+  })
+
+  describe('preset and sub-presets with array vue directives', () => {
+    const ctx = createUnimport({
+      presets: [{
+        from: 'preset',
+        imports: [{
+          from: 'subpreset',
+          imports: [],
+          vueDirectives: [{
+            from: './src/directives/custom-directive.ts',
+            directives: {
+              name: 'default',
+              directive: 'v-custom-directive',
+            },
+          }],
+        }],
+        vueDirectives: [{
+          from: './src/directives/awesome-directive.ts',
+          directives: {
+            name: 'default',
+            directive: 'v-awesome-directive',
+          },
+        }],
+      }],
+      addons: {
+        vueDirectives: [{
+          from: './src/directives/mixed-directive.ts',
+          directives: {
+            name: 'default',
+            directive: 'v-mixed-directive',
+          },
+        }],
       },
     })
     it('inject', async () => {
