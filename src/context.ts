@@ -113,15 +113,13 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
   let _combinedImports: Import[] | undefined
   const _map = new Map()
 
-  const addonsMap = new Map<string, Addon>()
+  const addons: Addon[] = []
 
   if (Array.isArray(opts.addons)) {
-    let i = 0
-    for (const addon of opts.addons) {
-      addonsMap.set(addon.name || `external:custom-${i++}`, addon)
-    }
+    addons.push(...opts.addons)
   }
   else {
+    const addonsMap = new Map<string, Addon>()
     if (opts.addons?.addons?.length) {
       let i = 0
       for (const addon of opts.addons.addons) {
@@ -150,9 +148,8 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
         addonsMap.set(VUE_DIRECTIVES_NAME, vueDirectivesAddon(directives))
       }
     }
+    addons.push(...addonsMap.values())
   }
-
-  const addons = Array.from(addonsMap.values())
 
   opts.addons = addons
   opts.commentsDisable = opts.commentsDisable ?? ['@unimport-disable', '@imports-disable']
