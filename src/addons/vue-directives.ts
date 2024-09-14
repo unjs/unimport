@@ -127,8 +127,7 @@ export function vueDirectivesAddon(
           // This will prevent Volar suggesting the directive in the template.
           return !d.disabled && !p.disabled && !d.dtsDisabled && !p.dtsDisabled
         })
-        .map(([_, entry]) => {
-          const [directive, preset] = entry
+        .map(([_, [directive, preset]]) => {
           const from = resolvePath(cwd, directive.typeFrom ?? preset.typeFrom ?? preset.from)
           return `${camelCase(directive.directive)}: typeof import('${from}')['${directive.name}']`
         })
