@@ -116,7 +116,7 @@ export function vueDirectivesAddon(
       return s
     },
     async declaration(dts, options) {
-      // the directive present or the directive can be disabled
+      // the preset or the directive can be disabled
       const items = Array.from(await directivesPromise)
         .filter(([_, [d, p]]) => !d.dtsDisabled && !p.dtsDisabled)
         .map(([_, dir]) => {
