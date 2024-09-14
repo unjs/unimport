@@ -332,8 +332,16 @@ describe('vue-directives', () => {
   describe('preset vue directives', () => {
     const ctx = createUnimport({
       presets: [{
+        // for string preset on addons (coverage)
+        from: 'vue',
+        imports: [],
+      }, {
         from: 'preset',
         imports: [{
+          // for string preset on addons (coverage)
+          from: 'pinia',
+          imports: [],
+        }, {
           from: 'subpreset',
           imports: [],
           vueDirectives: {
