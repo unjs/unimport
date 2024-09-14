@@ -18,7 +18,7 @@ export default defineConfig({
       addons: {
         vueTemplate: true,
         vueDirectives: [{
-          from: '/src/directives/index.ts',
+          from: './src/directives/index.ts',
           directives: [{
             directive: 'v-custom-directive',
             name: 'CustomDirective',
@@ -29,7 +29,8 @@ export default defineConfig({
             // as: 'AwesomeDirective',
           }],
         }, {
-          from: '/src/directives/mixed-directives.ts',
+          from: './src/directives/mixed-directives.ts',
+          // dtsDisabled: true,
           directives: [{
             directive: 'v-named-mixed-directive',
             name: 'NamedMixedDirective',
@@ -37,6 +38,7 @@ export default defineConfig({
           }, {
             directive: 'v-default-mixed-directive',
             name: 'default',
+            // dtsDisabled: true,
           }],
         }],
       },

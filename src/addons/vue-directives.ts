@@ -4,7 +4,8 @@ import type {
   DirectivePreset,
   Import,
 } from '../types'
-
+import process from 'node:process'
+import { resolve } from 'pathe'
 import { camelCase } from 'scule'
 import { stringifyImports } from '../utils'
 
@@ -14,7 +15,10 @@ const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*
 
 type DirectiveType = [directive: DirectiveImport, preset: DirectivePreset]
 
-export function vueDirectivesAddon(directives: DirectivePreset | DirectivePreset[]): Addon {
+export function vueDirectivesAddon(
+  directives: DirectivePreset | DirectivePreset[],
+  cwd = process.cwd(),
+): Addon {
   const directivesArray = Array.isArray(directives) ? directives : [directives]
   const directivesPromise = Promise
     .all(directivesArray.map(async (preset) => {
@@ -23,6 +27,8 @@ export function vueDirectivesAddon(directives: DirectivePreset | DirectivePreset
     .then((entries) => {
       const map = new Map<string, DirectiveType>()
       for (const [preset, directive] of entries) {
+        // resolve from to absoulte path
+        preset.from = resolvePath(cwd, preset.from)
         if (Array.isArray(directive)) {
           for (const entry of directive) {
             map.set(entry.directive, [entry, preset])
@@ -110,13 +116,21 @@ export function vueDirectivesAddon(directives: DirectivePreset | DirectivePreset
       return s
     },
     async declaration(dts, options) {
-      const dirs = Array.from(await directivesPromise)
-      const items = dirs.map(([_, dir]) => {
-        const from = options?.resolvePath?.({ ...dir[0], from: dir[1].from }) || ''
-        return `${camelCase(dir[0].directive)}: typeof import('.${from}')['${dir[0].name}']`
-      })
+      // the directive present or the directive can be disabled
+      const items = Array.from(await directivesPromise)
+        .filter(([_, [d, p]]) => !d.dtsDisabled && !p.dtsDisabled)
+        .map(([_, dir]) => {
+          const from = options?.resolvePath?.({ ...dir[0], from: dir[1].from })
+            ?? dir[1].from
+
+          return `${camelCase(dir[0].directive)}: typeof import('${from}')['${dir[0].name}']`
+        })
         .filter(Boolean)
         .sort()
+
+      if (!items.length)
+        return dts
+
       const extendItems = items.map(i => `    ${i}`).join('\n')
       return `${dts}
 // for vue directives auto import
@@ -132,4 +146,12 @@ ${extendItems}
   } satisfies Addon
 
   return self
+}
+
+function resolvePath(cwd: string, path: string) {
+  const normalized = path.replace(/\\/g, '/')
+  if (normalized.startsWith('./') || normalized.startsWith('../'))
+    return resolve(cwd, path)
+
+  return path
 }
