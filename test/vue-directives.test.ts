@@ -36,6 +36,11 @@ const multipleDirectives = compileTemplate({
   },
 })
 
+function replaceRoot(code: string) {
+  console.log(process.cwd().replace(/\\/g, '/'))
+  return code.replaceAll(process.cwd().replace(/\\/g, '/'), '<root>')
+}
+
 describe('vue-directives', () => {
   describe('single default directive', () => {
     const ctx = createUnimport({
@@ -50,7 +55,7 @@ describe('vue-directives', () => {
       },
     })
     it('inject', async () => {
-      expect(defaultDirective.code).toMatchInlineSnapshot(`
+      expect(replaceRoot(defaultDirective.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -63,8 +68,8 @@ describe('vue-directives', () => {
           ])
         }"
       `)
-      expect((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-        "import _directive_awesome_directive from 'C:/temp-working/unjs/unimport-main/src/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import _directive_awesome_directive from '<root>/src/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
@@ -77,7 +82,7 @@ describe('vue-directives', () => {
     })
 
     it('dts', async () => {
-      expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
+      expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
 
@@ -85,10 +90,10 @@ describe('vue-directives', () => {
         // for vue directives auto import
         declare module 'vue' {
           interface ComponentCustomProperties {
-            vAwesomeDirective: typeof import('C:/temp-working/unjs/unimport-main/src/directives/awesome-directive.ts')['default']
+            vAwesomeDirective: typeof import('<root>/src/directives/awesome-directive.ts')['default']
           }
           interface GlobalDirectives {
-            vAwesomeDirective: typeof import('C:/temp-working/unjs/unimport-main/src/directives/awesome-directive.ts')['default']
+            vAwesomeDirective: typeof import('<root>/src/directives/awesome-directive.ts')['default']
           }
         }"
       `)
@@ -108,7 +113,7 @@ describe('vue-directives', () => {
       },
     })
     it('inject', async () => {
-      expect(defaultDirective.code).toMatchInlineSnapshot(`
+      expect(replaceRoot(defaultDirective.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -121,8 +126,8 @@ describe('vue-directives', () => {
           ])
         }"
       `)
-      expect((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-        "import { AwesomeDirective as _directive_awesome_directive } from 'C:/temp-working/unjs/unimport-main/src/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import { AwesomeDirective as _directive_awesome_directive } from '<root>/src/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
@@ -153,7 +158,7 @@ describe('vue-directives', () => {
     })
 
     it('inject', async () => {
-      expect(singleMixedDirectives.code).toMatchInlineSnapshot(`
+      expect(replaceRoot(singleMixedDirectives.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -168,9 +173,9 @@ describe('vue-directives', () => {
           ])
         }"
       `)
-      expect((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-        "import _directive_default_mixed_directive from 'C:/temp-working/unjs/unimport-main/src/directives/mixed-directives.ts';
-        import { NamedMixedDirective as _directive_named_mixed_directive } from 'C:/temp-working/unjs/unimport-main/src/directives/mixed-directives.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      expect(replaceRoot((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import _directive_default_mixed_directive from '<root>/src/directives/mixed-directives.ts';
+        import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/src/directives/mixed-directives.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
@@ -204,7 +209,7 @@ describe('vue-directives', () => {
     })
 
     it('inject', async () => {
-      expect(multipleDirectives.code).toMatchInlineSnapshot(`
+      expect(replaceRoot(multipleDirectives.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -227,9 +232,9 @@ describe('vue-directives', () => {
           ], 64 /* STABLE_FRAGMENT */))
         }"
       `)
-      expect((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-        "import { CustomDirective as _directive_custom_directive } from 'C:/temp-working/unjs/unimport-main/src/directives/custom-directive.ts';
-        import _directive_awesome_directive from 'C:/temp-working/unjs/unimport-main/src/directives/awesome-directive.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      expect(replaceRoot((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import { CustomDirective as _directive_custom_directive } from '<root>/src/directives/custom-directive.ts';
+        import _directive_awesome_directive from '<root>/src/directives/awesome-directive.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return (_openBlock(), _createElementBlock(_Fragment, null, [
@@ -268,7 +273,7 @@ describe('vue-directives', () => {
     })
 
     it('inject', async () => {
-      expect(multipleDirectives.code).toMatchInlineSnapshot(`
+      expect(replaceRoot(multipleDirectives.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -291,8 +296,8 @@ describe('vue-directives', () => {
           ], 64 /* STABLE_FRAGMENT */))
         }"
       `)
-      expect((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
-        "import { CustomDirective as _directive_custom_directive, AwesomeDirective as _directive_awesome_directive } from 'C:/temp-working/unjs/unimport-main/src/directives/index.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      expect(replaceRoot((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import { CustomDirective as _directive_custom_directive, AwesomeDirective as _directive_awesome_directive } from '<root>/src/directives/index.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return (_openBlock(), _createElementBlock(_Fragment, null, [
