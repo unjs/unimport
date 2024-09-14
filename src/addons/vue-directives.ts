@@ -5,6 +5,7 @@ import type {
   Import,
 } from '../types'
 
+import { camelCase } from 'scule'
 import { stringifyImports } from '../utils'
 
 const contextRE = /resolveDirective as _resolveDirective/
