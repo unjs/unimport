@@ -203,10 +203,18 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
   debugLog: (msg: string) => void
 
   /**
-   * Unimport Addons
-   * To use built-in addons, use `addons: { vueTemplate: true }`
+   * Unimport Addons.
+   * To use built-in addons, use:
+   * ```js
+   * addons: {
+   *   addons: [<custom-addons-here>] // if you want to use also custom addons
+   *   vueTemplate: true,
+   *   vueDirectives: [<the-directives-here>]
+   * }
+   * ```
    *
    * Built-in addons:
+   * - vueDirectives: enable auto import directives for Vue's SFC
    * - vueTemplate: enable auto import inside for Vue's <template>
    *
    * @default {}
