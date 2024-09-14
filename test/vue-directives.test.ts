@@ -37,7 +37,6 @@ const multipleDirectives = compileTemplate({
 })
 
 function replaceRoot(code: string) {
-  console.log(process.cwd().replace(/\\/g, '/'))
   return code.replaceAll(process.cwd().replace(/\\/g, '/'), '<root>')
 }
 
