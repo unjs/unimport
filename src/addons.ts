@@ -1,2 +1,2 @@
-export * from './addons/vue-directives'
-export * from './addons/vue-template'
+export { vueDirectivesAddon } from './addons/vue-directives'
+export { vueTemplateAddon } from './addons/vue-template'
