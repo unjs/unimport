@@ -4,8 +4,11 @@ import { stringifyImports } from '../utils'
 const contextRE = /\b_ctx\.([$\w]+)\b/g
 const UNREF_KEY = '__unimport_unref_'
 
+export const VUE_TEMPLATE_NAME = 'unimport:vue-template'
+
 export function vueTemplateAddon(): Addon {
   const self: Addon = {
+    name: VUE_TEMPLATE_NAME,
     async transform(s, id) {
       if (!s.original.includes('_ctx.') || s.original.includes(UNREF_KEY))
         return s

@@ -165,6 +165,7 @@ export interface UnimportMeta {
 }
 
 export interface AddonsOptions {
+  addons?: Addon[]
   /**
    * Enable auto import inside for Vue's <template>
    *
@@ -345,6 +346,7 @@ export interface InjectImportsOptions {
 export type Thenable<T> = Promise<T> | T
 
 export interface Addon {
+  name?: string
   transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
   declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>

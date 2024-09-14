@@ -1,8 +1,20 @@
 import type MagicString from 'magic-string'
-import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, Unimport, UnimportContext, UnimportMeta, UnimportOptions } from './types'
+import type {
+  Addon,
+  DirectivePreset,
+  Import,
+  ImportInjectionResult,
+  InjectImportsOptions,
+  Thenable,
+  TypeDeclarationOptions,
+  Unimport,
+  UnimportContext,
+  UnimportMeta,
+  UnimportOptions,
+} from './types'
 
 import { version } from '../package.json'
-import { vueDirectivesAddon, vueTemplateAddon } from './addons'
+import { VUE_DIRECTIVES_NAME, VUE_TEMPLATE_NAME, vueDirectivesAddon, vueTemplateAddon } from './addons'
 import { detectImports } from './detect'
 import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
@@ -101,17 +113,46 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
   let _combinedImports: Import[] | undefined
   const _map = new Map()
 
-  const addons: Addon[] = []
+  const addonsMap = new Map<string, Addon>()
 
   if (Array.isArray(opts.addons)) {
-    addons.push(...opts.addons)
+    let i = 0
+    for (const addon of opts.addons) {
+      addonsMap.set(addon.name || `external:custom-${i++}`, addon)
+    }
   }
   else {
-    if (opts.addons?.vueTemplate)
-      addons.push(vueTemplateAddon())
-    if (opts.addons?.vueDirectives)
-      addons.push(vueDirectivesAddon(opts.addons.vueDirectives))
+    if (opts.addons?.addons?.length) {
+      let i = 0
+      for (const addon of opts.addons.addons) {
+        addonsMap.set(addon.name || `external:custom-${i++}`, addon)
+      }
+    }
+
+    if (opts.addons?.vueTemplate) {
+      if (!addonsMap.has(VUE_TEMPLATE_NAME)) {
+        addonsMap.set(VUE_TEMPLATE_NAME, vueTemplateAddon())
+      }
+    }
+
+    if (!addonsMap.has(VUE_DIRECTIVES_NAME)) {
+      const directives: DirectivePreset[] = []
+      if (opts.addons?.vueDirectives) {
+        directives.push(...(Array.isArray(opts.addons.vueDirectives)
+          ? opts.addons.vueDirectives
+          : [opts.addons.vueDirectives]),
+        )
+      }
+
+      // TODO: check for presets to add directives here
+
+      if (directives.length) {
+        addonsMap.set(VUE_DIRECTIVES_NAME, vueDirectivesAddon(directives))
+      }
+    }
   }
+
+  const addons = Array.from(addonsMap.values())
 
   opts.addons = addons
   opts.commentsDisable = opts.commentsDisable ?? ['@unimport-disable', '@imports-disable']

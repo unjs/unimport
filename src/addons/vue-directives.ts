@@ -15,6 +15,8 @@ const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*
 
 type DirectiveType = [directive: DirectiveImport, preset: DirectivePreset]
 
+export const VUE_DIRECTIVES_NAME = 'unimport:vue-directives'
+
 export function vueDirectivesAddon(
   directives: DirectivePreset | DirectivePreset[],
   cwd = process.cwd(),
@@ -46,6 +48,7 @@ export function vueDirectivesAddon(
     })
 
   const self = {
+    name: VUE_DIRECTIVES_NAME,
     async transform(s, id) {
       if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
         return s
