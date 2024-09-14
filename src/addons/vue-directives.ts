@@ -109,6 +109,26 @@ export function vueDirectivesAddon(directives: DirectivePreset | DirectivePreset
 
       return s
     },
+    async declaration(dts, options) {
+      const dirs = Array.from(await directivesPromise)
+      const items = dirs.map(([_, dir]) => {
+        const from = options?.resolvePath?.({ ...dir[0], from: dir[1].from }) || ''
+        return `${camelCase(dir[0].directive)}: typeof import('.${from}')['${dir[0].name}']`
+      })
+        .filter(Boolean)
+        .sort()
+      const extendItems = items.map(i => `    ${i}`).join('\n')
+      return `${dts}
+// for vue directives auto import
+declare module 'vue' {
+  interface ComponentCustomProperties {
+${extendItems}
+  }
+  interface GlobalDirectives {
+${extendItems}
+  }
+}`
+    },
   } satisfies Addon
 
   return self
