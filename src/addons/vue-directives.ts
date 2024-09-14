@@ -119,17 +119,18 @@ export function vueDirectivesAddon(
 
       return s
     },
-    async declaration(dts, options) {
-      // the preset or the directive can be disabled: we also filter out the disabled ones
+    async declaration(dts) {
+      // The preset or the directive can be disabled: we also filter out the disabled ones
       const items = Array.from(await directivesPromise)
         .filter(([_, [d, p]]) => {
+          // No makes sense to disable the auto import and having the directive declaration.
+          // This will prevent Volar suggesting the directive in the template.
           return !d.disabled && !p.disabled && !d.dtsDisabled && !p.dtsDisabled
         })
-        .map(([_, dir]) => {
-          const from = options?.resolvePath?.({ ...dir[0], from: dir[1].from })
-            ?? dir[1].from
-
-          return `${camelCase(dir[0].directive)}: typeof import('${from}')['${dir[0].name}']`
+        .map(([_, entry]) => {
+          const [directive, preset] = entry
+          const from = resolvePath(cwd, directive.typeFrom ?? preset.typeFrom ?? preset.from)
+          return `${camelCase(directive.directive)}: typeof import('${from}')['${directive.name}']`
         })
         .filter(Boolean)
         .sort()
@@ -155,9 +156,5 @@ ${extendItems}
 }
 
 function resolvePath(cwd: string, path: string) {
-  const normalized = path.replace(/\\/g, '/')
-  if (normalized.startsWith('./') || normalized.startsWith('../'))
-    return resolve(cwd, path)
-
-  return path
+  return path[0] === '.' ? resolve(cwd, path) : path
 }
