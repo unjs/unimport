@@ -142,7 +142,19 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
         )
       }
 
-      // TODO: check for presets to add directives here
+      if (opts.presets) {
+        for (const preset of opts.presets) {
+          if (typeof preset === 'string')
+            continue
+
+          if ('vueDirectives' in preset && preset.vueDirectives) {
+            directives.push(...(Array.isArray(preset.vueDirectives)
+              ? preset.vueDirectives
+              : [preset.vueDirectives]),
+            )
+          }
+        }
+      }
 
       if (directives.length) {
         addonsMap.set(VUE_DIRECTIVES_NAME, vueDirectivesAddon(directives))

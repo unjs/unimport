@@ -65,6 +65,7 @@ export type PresetImport = Omit<Import, 'from'> | ImportName | [name: ImportName
 
 export interface InlinePreset extends ImportCommon {
   imports: (PresetImport | InlinePreset)[]
+  vueDirectives?: DirectivePreset | DirectivePreset[]
 }
 
 /**
