@@ -142,6 +142,7 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
         )
       }
 
+      // check for vue directives in the presets
       if (opts.presets) {
         for (const preset of opts.presets) {
           if (typeof preset === 'string')
@@ -152,6 +153,17 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
               ? preset.vueDirectives
               : [preset.vueDirectives]),
             )
+            for (const imp of preset.imports) {
+              if (typeof imp === 'string')
+                continue
+
+              if ('vueDirectives' in imp && imp.vueDirectives) {
+                directives.push(...(Array.isArray(imp.vueDirectives)
+                  ? imp.vueDirectives
+                  : [imp.vueDirectives]),
+                )
+              }
+            }
           }
         }
       }
