@@ -27,15 +27,19 @@ export function vueDirectivesAddon(
     .then((entries) => {
       const map = new Map<string, DirectiveType>()
       for (const [preset, directive] of entries) {
+        if (preset.disabled)
+          continue
+
         // resolve from to absoulte path
         preset.from = resolvePath(cwd, preset.from)
         if (Array.isArray(directive)) {
-          for (const entry of directive) {
+          for (const entry of directive.filter(d => !d.disabled)) {
             map.set(entry.directive, [entry, preset])
           }
         }
         else {
-          map.set(directive.directive, [directive, preset])
+          if (!directive.disabled)
+            map.set(directive.directive, [directive, preset])
         }
       }
       return map
@@ -116,9 +120,11 @@ export function vueDirectivesAddon(
       return s
     },
     async declaration(dts, options) {
-      // the preset or the directive can be disabled
+      // the preset or the directive can be disabled: we also filter out the disabled ones
       const items = Array.from(await directivesPromise)
-        .filter(([_, [d, p]]) => !d.dtsDisabled && !p.dtsDisabled)
+        .filter(([_, [d, p]]) => {
+          return !d.disabled && !p.disabled && !d.dtsDisabled && !p.dtsDisabled
+        })
         .map(([_, dir]) => {
           const from = options?.resolvePath?.({ ...dir[0], from: dir[1].from })
             ?? dir[1].from
