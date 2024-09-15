@@ -1,4 +1,4 @@
-import type { Addon, DirectivePreset, UnimportOptions } from '../types'
+import type { Addon, DirectivePreset, InlinePreset, PresetImport, UnimportOptions } from '../types'
 import { VUE_DIRECTIVES_NAME, vueDirectivesAddon } from './vue-directives'
 import { VUE_TEMPLATE_NAME, vueTemplateAddon } from './vue-template'
 
@@ -43,18 +43,10 @@ export function configureAddons(opts: Partial<UnimportOptions>) {
               ? preset.vueDirectives
               : [preset.vueDirectives]),
             )
-            for (const imp of preset.imports) {
-              if (typeof imp === 'string')
-                continue
-
-              if ('vueDirectives' in imp && imp.vueDirectives) {
-                directives.push(...(Array.isArray(imp.vueDirectives)
-                  ? imp.vueDirectives
-                  : [imp.vueDirectives]),
-                )
-              }
-            }
           }
+
+          if ('imports' in preset)
+            traverseImports(directives, preset.imports)
         }
       }
 
@@ -66,4 +58,24 @@ export function configureAddons(opts: Partial<UnimportOptions>) {
   }
 
   return addons
+}
+
+function traverseImports(
+  directives: DirectivePreset[],
+  imports: (PresetImport | InlinePreset)[],
+) {
+  for (const imp of imports) {
+    if (typeof imp === 'string')
+      continue
+
+    if ('vueDirectives' in imp && imp.vueDirectives) {
+      directives.push(...(Array.isArray(imp.vueDirectives)
+        ? imp.vueDirectives
+        : [imp.vueDirectives]),
+      )
+    }
+
+    if ('imports' in imp)
+      traverseImports(directives, imp.imports)
+  }
 }
