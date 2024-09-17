@@ -11,36 +11,30 @@ export default defineConfig({
       dts: true,
       presets: [
         'vue',
+        // comment this inline preset and uncomment the directives in dirs
+        /* {
+          from: '/directives/awesome-directive.ts',
+          imports: [
+            {
+              name: 'default',
+              meta: {
+                vueDirective: true,
+              },
+            },
+          ],
+        }, */
       ],
       dirs: [
         './composables/**',
+        './directives/**',
       ],
       addons: {
         vueTemplate: true,
-        vueDirectives: [{
-          from: './src/directives/index.ts',
-          directives: [{
-            directive: 'v-custom-directive',
-            name: 'CustomDirective',
-            // as: 'CustomDirective',
-          }, {
-            directive: 'v-awesome-directive',
-            name: 'AwesomeDirective',
-            // as: 'AwesomeDirective',
-          }],
-        }, {
-          from: './src/directives/mixed-directives.ts',
-          // dtsDisabled: true,
-          directives: [{
-            directive: 'v-named-mixed-directive',
-            name: 'NamedMixedDirective',
-            // as: 'NamedMixedDirective',
-          }, {
-            directive: 'v-default-mixed-directive',
-            name: 'default',
-            // dtsDisabled: true,
-          }],
-        }],
+        vueDirectives: {
+          isDirective(normalizeImportFrom, _importEntry) {
+            return normalizeImportFrom.includes('/directives/')
+          },
+        },
       },
     }),
     inspect(),

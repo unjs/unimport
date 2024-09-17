@@ -15,7 +15,7 @@ function inc() {
     <button v-awesome-directive @click="bump">
       x1
     </button>
-    <div v-named-mixed-directive v-default-mixed-directive>
+    <div v-named-mixed-directive v-mixed-directive>
       {{ nested() }}
     </div>
   </div>

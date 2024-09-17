@@ -40,14 +40,6 @@ export interface ImportCommon {
   typeFrom?: ModuleId
 }
 
-export interface DirectiveImport extends Omit<Import, 'from'> {
-  /** The directive name to be detected */
-  directive: `v-${Lowercase<string>}`
-}
-export interface DirectivePreset extends ImportCommon {
-  directives: Thenable<DirectiveImport | DirectiveImport[]>
-}
-
 export interface Import extends ImportCommon {
   /** Import name to be detected */
   name: ImportName
@@ -65,7 +57,6 @@ export type PresetImport = Omit<Import, 'from'> | ImportName | [name: ImportName
 
 export interface InlinePreset extends ImportCommon {
   imports: (PresetImport | InlinePreset)[]
-  vueDirectives?: DirectivePreset | DirectivePreset[]
 }
 
 /**
@@ -175,8 +166,13 @@ export interface AddonsOptions {
   vueTemplate?: boolean
   /**
    * Enable auto import directives for Vue's SFC.
+   *
+   * When using a local directives folder, provide the `isDirective`
+   * callback to check if the import is a Vue directive.
    */
-  vueDirectives?: DirectivePreset | DirectivePreset[]
+  vueDirectives?: true | {
+    isDirective: (normalizedImportFrom: string, importEntry: Import) => boolean
+  }
 }
 
 export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {

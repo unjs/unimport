@@ -1,51 +1,22 @@
-import type {
-  Addon,
-  DirectiveImport,
-  DirectivePreset,
-  Import,
-} from '../types'
+import type { Addon, Import } from '../types'
+import { basename } from 'node:path'
 import process from 'node:process'
 import { resolve } from 'pathe'
-import { camelCase } from 'scule'
+import { camelCase, kebabCase } from 'scule'
 import { stringifyImports } from '../utils'
 
 const contextRE = /resolveDirective as _resolveDirective/
 const contextText = `${contextRE.source}, `
 const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*/g
 
-type DirectiveType = [directive: DirectiveImport, preset: DirectivePreset]
-
 export const VUE_DIRECTIVES_NAME = 'unimport:vue-directives'
 
 export function vueDirectivesAddon(
-  directives: DirectivePreset | DirectivePreset[],
-  cwd = process.cwd(),
+  filter?: (normalizedImportFrom: string, importEntry: Import) => boolean,
 ): Addon {
-  const directivesArray = Array.isArray(directives) ? directives : [directives]
-  const directivesPromise = Promise
-    .all(directivesArray.map(async (preset) => {
-      return [preset, await preset.directives] as const
-    }))
-    .then((entries) => {
-      const map = new Map<string, DirectiveType>()
-      for (const [preset, directive] of entries) {
-        if (preset.disabled)
-          continue
-
-        // resolve from to absoulte path
-        preset.from = resolvePath(cwd, preset.from)
-        if (Array.isArray(directive)) {
-          for (const entry of directive.filter(d => !d.disabled)) {
-            map.set(entry.directive, [entry, preset])
-          }
-        }
-        else {
-          if (!directive.disabled)
-            map.set(directive.directive, [directive, preset])
-        }
-      }
-      return map
-    })
+  function isDirective(importEntry: Import) {
+    return importEntry.meta?.vueDirective === true || (filter?.(normalizePath(process.cwd(), importEntry.from), importEntry) ?? false)
+  }
 
   const self = {
     name: VUE_DIRECTIVES_NAME,
@@ -53,51 +24,31 @@ export function vueDirectivesAddon(
       if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
         return s
 
-      const directivesMap = await directivesPromise
-      let targets: Import[] = []
-      // We have something like this:
-      // var/const _directive_click_outside = _resolveDirective("click-outside");?
-      // We need to remove the declaration and replace it with the corresponding import
-      // extracting the symbol and the directive name from the declaration
       const matches = Array
         .from(s.original.matchAll(directiveRE))
         .sort((a, b) => b.index - a.index)
-        .reduce((acc, regex) => {
-          const [all, symbol, name] = regex
-          const directiveName = `v-${name}`
-          const entry = directivesMap.get(directiveName)
-          if (!entry)
-            return acc
 
-          const [directive, preset] = entry
-          const importName = directive.name
-          const asStmt = directive.as
-          // remove the directive declaration
-          s.overwrite(
-            regex.index,
-            regex.index + all.length,
-            '',
-          )
-          if (importName !== 'default') {
-            // add named import
-            targets.push({
-              ...preset,
-              name: asStmt ?? importName,
-              as: symbol,
-            })
-          }
-          else {
-            // add default export
-            targets.push({
-              ...preset,
-              name: 'default',
-              as: symbol,
-            })
-          }
-          return acc + 1
-        }, 0)
+      if (!matches.length)
+        return s
 
-      if (!matches)
+      let targets: Import[] = []
+      for await (
+        const [
+          begin,
+          end,
+          importEntry,
+        ] of findDirectives(
+          isDirective,
+          matches,
+          this.getImports(),
+        )
+      ) {
+        // remove the directive declaration
+        s.overwrite(begin, end, '')
+        targets.push(importEntry)
+      }
+
+      if (!targets.length)
         return s
 
       // remove resolveDirective import
@@ -122,33 +73,44 @@ export function vueDirectivesAddon(
 
       return s
     },
-    async declaration(dts) {
-      // The preset or the directive can be disabled: we also filter out the disabled ones
-      const items = Array.from(await directivesPromise)
-        .filter(([_, [d, p]]) => {
-          // No makes sense to disable the auto import and having the directive declaration.
-          // This will prevent Volar suggesting the directive in the template.
-          return !d.disabled && !p.disabled && !d.dtsDisabled && !p.dtsDisabled
-        })
-        .map(([_, [directive, preset]]) => {
-          const from = resolvePath(cwd, directive.typeFrom ?? preset.typeFrom ?? preset.from)
-          return `${camelCase(directive.directive)}: typeof import('${from}')['${directive.name}']`
-        })
-        .filter(Boolean)
-        .sort()
+    async declaration(dts, options) {
+      const directivesMap = await this.getImports().then((imports) => {
+        return imports.filter(isDirective).reduce((acc, i) => {
+          if (i.type || i.dtsDisabled)
+            return acc
 
-      if (!items.length)
+          let name: string
+          if (i.name === 'default' && (i.as === 'default' || !i.as)) {
+            const file = basename(i.from)
+            const idx = file.indexOf('.')
+            name = camelCase(`v-${idx > -1 ? file.slice(0, idx) : file}`)
+          }
+          else {
+            name = camelCase(`v-${i.as ?? i.name}`)
+          }
+          if (!acc.has(name)) {
+            acc.set(name, i)
+          }
+          return acc
+        }, new Map<string, Import>())
+      })
+
+      if (!directivesMap.size)
         return dts
 
-      const extendItems = items.map(i => `    ${i}`).join('\n')
+      const directives = Array
+        .from(directivesMap.entries())
+        .map(([name, i]) => `    ${`${name}: typeof import('${options?.resolvePath?.(i) || i.from}')['${i.name}']`}`)
+        .sort()
+        .join('\n')
       return `${dts}
 // for vue directives auto import
 declare module 'vue' {
   interface ComponentCustomProperties {
-${extendItems}
+${directives}
   }
   interface GlobalDirectives {
-${extendItems}
+${directives}
   }
 }`
     },
@@ -159,4 +121,68 @@ ${extendItems}
 
 function resolvePath(cwd: string, path: string) {
   return path[0] === '.' ? resolve(cwd, path) : path
+}
+
+function normalizePath(cwd: string, path: string) {
+  return resolvePath(cwd, path).replace(/\\/g, '/')
+}
+
+type DirectiveData = [begin: number, end: number, importName: string]
+type DirectiveImport = [begin: number, end: number, import: Import]
+
+async function* findDirectives(
+  isDirective: (importEntry: Import) => boolean,
+  regexArray: RegExpExecArray[],
+  importsPromise: Promise<Import[]>,
+): AsyncGenerator<DirectiveImport> {
+  const imports = (await importsPromise).filter(isDirective)
+  if (!imports.length)
+    return
+
+  const symbols = regexArray.reduce((acc, regex) => {
+    const [all, symbol, resolveDirectiveName] = regex
+    if (acc.has(symbol))
+      return acc
+
+    acc.set(symbol, [
+      regex.index,
+      regex.index + all.length,
+      kebabCase(resolveDirectiveName),
+    ] as const)
+    return acc
+  }, new Map<string, DirectiveData>())
+  if (!symbols.size)
+    return
+
+  for (const [symbol, data] of symbols.entries()) {
+    yield * findDirective(imports, symbol, data)
+  }
+}
+
+function* findDirective(
+  imports: Import[],
+  symbol: string,
+  [begin, end, importName]: DirectiveData,
+): Generator<DirectiveImport> {
+  let resolvedName: string
+  for (const i of imports) {
+    if (i.name === 'default' && (i.as === 'default' || !i.as)) {
+      const file = basename(i.from)
+      const idx = file.indexOf('.')
+      resolvedName = kebabCase(idx > -1 ? file.slice(0, idx) : file)
+    }
+    else {
+      resolvedName = kebabCase(i.as ?? i.name)
+    }
+    if (resolvedName === importName) {
+      yield [
+        begin,
+        end,
+        { ...i, name: i.name, as: symbol },
+        // symbol,
+        // i.name,
+      ]
+      return
+    }
+  }
 }
