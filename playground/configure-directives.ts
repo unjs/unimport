@@ -41,6 +41,7 @@ else {
     from: 'directives/awesome-directive.ts',
     imports: [{
       name: 'default',
+      as: 'AwesomeDirective',
       meta: {
         vueDirective: true,
       },

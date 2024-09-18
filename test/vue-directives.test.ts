@@ -86,6 +86,7 @@ describe('vue-directives', () => {
         from: 'directives/awesome-directive.ts',
         imports: [{
           name: 'default',
+          as: 'AwesomeDirective',
           meta: {
             vueDirective: true,
           },
@@ -166,9 +167,9 @@ describe('vue-directives', () => {
       expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
+          const AwesomeDirective: typeof import('<root>/directives/awesome-directive')['default']
           const FocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
           const NamedDirective: typeof import('<root>/directives/named-directive')['NamedDirective']
-          const default: typeof import('<root>/directives/awesome-directive')['default']
           const vRippleDirective: typeof import('<root>/directives/ripple-directive')['vRippleDirective']
         }
         // for vue directives auto import
@@ -244,6 +245,7 @@ describe('vue-directives', () => {
           },
         }, {
           name: 'default',
+          as: 'MixedDirective',
           meta: {
             vueDirective: true,
           },
@@ -300,6 +302,7 @@ describe('vue-directives', () => {
         from: 'directives/awesome-directive.ts',
         imports: [{
           name: 'default',
+          as: 'AwesomeDirective',
           meta: {
             vueDirective: true,
           },
