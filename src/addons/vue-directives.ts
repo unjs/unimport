@@ -1,4 +1,4 @@
-import type { Addon, Import } from '../types'
+import type { Addon, AddonVueDirectivesOptions, Import } from '../types'
 import { basename } from 'node:path'
 import process from 'node:process'
 import { resolve } from 'pathe'
@@ -12,10 +12,11 @@ const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*
 export const VUE_DIRECTIVES_NAME = 'unimport:vue-directives'
 
 export function vueDirectivesAddon(
-  filter?: (normalizedImportFrom: string, importEntry: Import) => boolean,
+  options: AddonVueDirectivesOptions = {},
 ): Addon {
   function isDirective(importEntry: Import) {
-    return importEntry.meta?.vueDirective === true || (filter?.(normalizePath(process.cwd(), importEntry.from), importEntry) ?? false)
+    return importEntry.meta?.vueDirective === true
+      || (options.isDirective?.(normalizePath(process.cwd(), importEntry.from), importEntry) ?? false)
   }
 
   const self = {

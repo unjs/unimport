@@ -172,19 +172,21 @@ export interface AddonsOptions {
    * When using a local directives folder, provide the `isDirective`
    * callback to check if the import is a Vue directive.
    */
-  vueDirectives?: true | {
-    /**
-     * Checks if the import is a Vue directive.
-     *
-     * **NOTES**:
-     * - imports from a library should include `meta.vueDirective: true`.
-     * - this callback is only invoked for local directives (only when meta.vueDirective is not set).
-     *
-     * @param normalizedImportFrom The path of the import normalized.
-     * @param importEntry The import entry.
-     */
-    isDirective: (normalizedImportFrom: string, importEntry: Import) => boolean
-  }
+  vueDirectives?: true | AddonVueDirectivesOptions
+}
+
+export interface AddonVueDirectivesOptions {
+  /**
+   * Checks if the import is a Vue directive.
+   *
+   * **NOTES**:
+   * - imports from a library should include `meta.vueDirective: true`.
+   * - this callback is only invoked for local directives (only when meta.vueDirective is not set).
+   *
+   * @param from The path of the import normalized.
+   * @param importEntry The import entry.
+   */
+  isDirective?: (from: string, importEntry: Import) => boolean
 }
 
 export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {
