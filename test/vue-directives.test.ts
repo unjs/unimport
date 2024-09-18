@@ -6,7 +6,7 @@ const defaultDirective = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
   source: `
-    <div v-awesome-directive @click="foo"></div>
+    <div v-awesome-directive v-named-directive @click="foo"></div>
   `,
   compilerOptions: {
     hoistStatic: false,
@@ -62,6 +62,14 @@ describe('vue-directives', () => {
             vueDirective: true,
           },
         }],
+      }, {
+        from: '/directives/named-directive.ts',
+        imports: [{
+          name: 'NamedDirective',
+          meta: {
+            vueDirective: true,
+          },
+        }],
       }],
       addons: {
         vueDirectives: true,
@@ -73,22 +81,26 @@ describe('vue-directives', () => {
 
         export function render(_ctx, _cache) {
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
+          const _directive_named_directive = _resolveDirective("named-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive]
+            [_directive_awesome_directive],
+            [_directive_named_directive]
           ])
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import _directive_awesome_directive from '/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import { NamedDirective as _directive_named_directive } from '/directives/named-directive.ts';
+        import _directive_awesome_directive from '/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive]
+            [_directive_awesome_directive],
+            [_directive_named_directive]
           ])
         }"
       `)
@@ -98,15 +110,18 @@ describe('vue-directives', () => {
       expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
+          const NamedDirective: typeof import('/directives/named-directive')['NamedDirective']
           const default: typeof import('/directives/awesome-directive')['default']
         }
         // for vue directives auto import
         declare module 'vue' {
           interface ComponentCustomProperties {
             vAwesomeDirective: typeof import('/directives/awesome-directive')['default']
+            vNamedDirective: typeof import('/directives/named-directive')['NamedDirective']
           }
           interface GlobalDirectives {
             vAwesomeDirective: typeof import('/directives/awesome-directive')['default']
+            vNamedDirective: typeof import('/directives/named-directive')['NamedDirective']
           }
         }"
       `)
@@ -134,11 +149,13 @@ describe('vue-directives', () => {
 
         export function render(_ctx, _cache) {
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
+          const _directive_named_directive = _resolveDirective("named-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive]
+            [_directive_awesome_directive],
+            [_directive_named_directive]
           ])
         }"
       `)
@@ -146,10 +163,13 @@ describe('vue-directives', () => {
         "import { AwesomeDirective as _directive_awesome_directive } from '/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
+          const _directive_named_directive = _resolveDirective("named-directive")
+
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive]
+            [_directive_awesome_directive],
+            [_directive_named_directive]
           ])
         }"
       `)

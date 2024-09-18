@@ -27,7 +27,7 @@ export default defineComponent({
     <button v-custom-directive @click="inc">
       Inc
     </button>
-    <button v-awesome-directive @click="bump">
+    <button v-awesome-directive v-named-directive @click="bump">
       x1
     </button>
     <div v-named-mixed-directive v-mixed-directive>
