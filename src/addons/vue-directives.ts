@@ -133,6 +133,33 @@ function normalizePath(cwd: string, path: string) {
 type DirectiveData = [begin: number, end: number, importName: string]
 type DirectiveImport = [begin: number, end: number, import: Import]
 
+async function* findDirectives(
+  isDirective: (importEntry: Import) => boolean,
+  regexArray: RegExpExecArray[],
+  importsPromise: Promise<Import[]>,
+): AsyncGenerator<DirectiveImport> {
+  const imports = (await importsPromise).filter(isDirective)
+  if (!imports.length)
+    return
+
+  const symbols = regexArray.reduce((acc, regex) => {
+    const [all, symbol, resolveDirectiveName] = regex
+    if (acc.has(symbol))
+      return acc
+
+    acc.set(symbol, [
+      regex.index,
+      regex.index + all.length,
+      kebabCase(resolveDirectiveName),
+    ] as const)
+    return acc
+  }, new Map<string, DirectiveData>())
+
+  for (const [symbol, data] of symbols.entries()) {
+    yield * findDirective(imports, symbol, data)
+  }
+}
+
 function* findDirective(
   imports: Import[],
   symbol: string,
@@ -159,32 +186,5 @@ function* findDirective(
       ]
       return
     }
-  }
-}
-
-async function* findDirectives(
-  isDirective: (importEntry: Import) => boolean,
-  regexArray: RegExpExecArray[],
-  importsPromise: Promise<Import[]>,
-): AsyncGenerator<DirectiveImport> {
-  const imports = (await importsPromise).filter(isDirective)
-  if (!imports.length)
-    return
-
-  const symbols = regexArray.reduce((acc, regex) => {
-    const [all, symbol, resolveDirectiveName] = regex
-    if (acc.has(symbol))
-      return acc
-
-    acc.set(symbol, [
-      regex.index,
-      regex.index + all.length,
-      kebabCase(resolveDirectiveName),
-    ] as const)
-    return acc
-  }, new Map<string, DirectiveData>())
-
-  for (const [symbol, data] of symbols.entries()) {
-    yield * findDirective(imports, symbol, data)
   }
 }
