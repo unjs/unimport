@@ -375,8 +375,8 @@ Unimport.vite({
   dirs: ['./directives/**'],
   addons: {
     vueDirectives: {
-      isDirective: (normalizedImportName, _importEntry) => {
-        return normalizedImportName.includes('/directives/')
+      isDirective: (normalizedImportFrom, _importEntry) => {
+        return normalizedImportFrom.includes('/directives/')
       }
     }
   }
