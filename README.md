@@ -336,8 +336,8 @@ import type { InlinePreset } from 'unimport'
 import { defineUnimportPreset } from 'unimport'
 
 export const composables = defineUnimportPreset({
-    from: 'my-unimport-library/composables',
-    /* imports and other options */
+  from: 'my-unimport-library/composables',
+  /* imports and other options */
 })
 
 export const directives = defineUnimportPreset({
