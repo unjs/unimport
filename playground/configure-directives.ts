@@ -42,10 +42,10 @@ if (useDirs) {
   unimportViteOptions.dirsScanOptions = {
     cwd: process.cwd().replace(/\\/g, '/'),
   }
-  unimportViteOptions.dirs.push('./directives/**')
+  unimportViteOptions.dirs!.push('./directives/**')
 }
 else {
-  unimportViteOptions.presets.push(...resolvePresets([{
+  unimportViteOptions.presets!.push(...resolvePresets([{
     from: 'directives/awesome-directive.ts',
     imports: [{
       name: 'default',
