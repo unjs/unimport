@@ -8,7 +8,7 @@ const defaultDirective = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
   source: `
-    <div v-awesome-directive v-named-directive v-focus-directive v-ripple-directive @click="foo"></div>
+    <div v-missing v-awesome-directive v-named-directive v-focus-directive v-ripple-directive @click="foo"></div>
   `,
   compilerOptions: {
     hoistStatic: false,
@@ -77,7 +77,6 @@ describe('vue-directives', () => {
       presets: resolvePresets([{
         from: 'directives/awesome-directive.ts',
         imports: [{
-          // DON'T ADD `as` here: for coverage
           name: 'default',
           meta: {
             vueDirective: true,
@@ -121,6 +120,7 @@ describe('vue-directives', () => {
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
+          const _directive_missing = _resolveDirective("missing")
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
           const _directive_named_directive = _resolveDirective("named-directive")
           const _directive_focus_directive = _resolveDirective("focus-directive")
@@ -129,6 +129,7 @@ describe('vue-directives', () => {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
+            [_directive_missing],
             [_directive_awesome_directive],
             [_directive_named_directive],
             [_directive_focus_directive],
@@ -143,9 +144,11 @@ describe('vue-directives', () => {
         import _directive_awesome_directive from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
+          const _directive_missing = _resolveDirective("missing")
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
+            [_directive_missing],
             [_directive_awesome_directive],
             [_directive_named_directive],
             [_directive_focus_directive],
