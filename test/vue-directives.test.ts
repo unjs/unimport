@@ -7,6 +7,7 @@ import { createUnimport } from '../src'
 const defaultDirective = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
+  // DONT'T REMOVE v-missing directive (for coverage)
   source: `
     <div v-missing v-awesome-directive v-named-directive v-focus-directive v-ripple-directive @click="foo"></div>
   `,
