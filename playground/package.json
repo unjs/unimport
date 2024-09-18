@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "USE_DIRS=true vite",
+    "dev:presets": "vite",
     "build": "vite build",
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview"

@@ -84,11 +84,12 @@ export function vueDirectivesAddon(
           if (i.name === 'default' && (i.as === 'default' || !i.as)) {
             const file = basename(i.from)
             const idx = file.indexOf('.')
-            name = camelCase(`v-${idx > -1 ? file.slice(0, idx) : file}`)
+            name = idx > -1 ? file.slice(0, idx) : file
           }
           else {
-            name = camelCase(`v-${i.as ?? i.name}`)
+            name = i.as ?? i.name
           }
+          name = name[0] === 'v' ? camelCase(name) : camelCase(`v-${name}`)
           if (!acc.has(name)) {
             acc.set(name, i)
           }
@@ -173,6 +174,9 @@ function* findDirective(
     }
     else {
       resolvedName = kebabCase(i.as ?? i.name)
+    }
+    if (resolvedName[0] === 'v') {
+      resolvedName = resolvedName.slice(resolvedName[1] === '-' ? 2 : 1)
     }
     if (resolvedName === importName) {
       yield [

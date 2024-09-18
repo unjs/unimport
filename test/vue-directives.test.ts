@@ -6,7 +6,7 @@ const defaultDirective = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
   source: `
-    <div v-awesome-directive v-named-directive @click="foo"></div>
+    <div v-awesome-directive v-named-directive v-focus-directive v-ripple-directive @click="foo"></div>
   `,
   compilerOptions: {
     hoistStatic: false,
@@ -40,7 +40,14 @@ const allDirectives = compileTemplate({
   id: 'template.vue',
   filename: 'template.vue',
   source: `
-    <div v-awesome-directive v-custom-directive v-mixed-directive @click="foo"></div>
+    <div
+      v-awesome-directive
+      v-custom-directive
+      v-mixed-directive
+      v-focus-directive
+      v-ripple-directive
+      @click="foo"
+    ></div>
   `,
   compilerOptions: {
     hoistStatic: false,
@@ -52,7 +59,7 @@ function replaceRoot(code: string) {
 }
 
 describe('vue-directives', () => {
-  describe('single default directive', () => {
+  describe('single default directive', async () => {
     const ctx = createUnimport({
       presets: [{
         from: '/directives/awesome-directive.ts',
@@ -70,11 +77,31 @@ describe('vue-directives', () => {
             vueDirective: true,
           },
         }],
+      }, {
+        from: '/directives/ripple-directive.ts',
+        imports: [{
+          name: 'vRippleDirective',
+          meta: {
+            vueDirective: true,
+          },
+        }],
+      }, {
+        from: '/directives/v-focus-directive.ts',
+        imports: [{
+          name: 'default',
+          as: 'FocusDirective',
+          meta: {
+            vueDirective: true,
+          },
+        }],
       }],
       addons: {
         vueDirectives: true,
       },
     })
+
+    await ctx.init()
+
     it('inject', async () => {
       expect(replaceRoot(defaultDirective.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
@@ -82,17 +109,23 @@ describe('vue-directives', () => {
         export function render(_ctx, _cache) {
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
           const _directive_named_directive = _resolveDirective("named-directive")
+          const _directive_focus_directive = _resolveDirective("focus-directive")
+          const _directive_ripple_directive = _resolveDirective("ripple-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
             [_directive_awesome_directive],
-            [_directive_named_directive]
+            [_directive_named_directive],
+            [_directive_focus_directive],
+            [_directive_ripple_directive]
           ])
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { NamedDirective as _directive_named_directive } from '/directives/named-directive.ts';
+        "import { vRippleDirective as _directive_ripple_directive } from '/directives/ripple-directive.ts';
+        import _directive_focus_directive from '/directives/v-focus-directive.ts';
+        import { NamedDirective as _directive_named_directive } from '/directives/named-directive.ts';
         import _directive_awesome_directive from '/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
@@ -100,7 +133,9 @@ describe('vue-directives', () => {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
             [_directive_awesome_directive],
-            [_directive_named_directive]
+            [_directive_named_directive],
+            [_directive_focus_directive],
+            [_directive_ripple_directive]
           ])
         }"
       `)
@@ -110,18 +145,24 @@ describe('vue-directives', () => {
       expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
+          const FocusDirective: typeof import('/directives/v-focus-directive')['default']
           const NamedDirective: typeof import('/directives/named-directive')['NamedDirective']
           const default: typeof import('/directives/awesome-directive')['default']
+          const vRippleDirective: typeof import('/directives/ripple-directive')['vRippleDirective']
         }
         // for vue directives auto import
         declare module 'vue' {
           interface ComponentCustomProperties {
             vAwesomeDirective: typeof import('/directives/awesome-directive')['default']
+            vFocusDirective: typeof import('/directives/v-focus-directive')['default']
             vNamedDirective: typeof import('/directives/named-directive')['NamedDirective']
+            vRippleDirective: typeof import('/directives/ripple-directive')['vRippleDirective']
           }
           interface GlobalDirectives {
             vAwesomeDirective: typeof import('/directives/awesome-directive')['default']
+            vFocusDirective: typeof import('/directives/v-focus-directive')['default']
             vNamedDirective: typeof import('/directives/named-directive')['NamedDirective']
+            vRippleDirective: typeof import('/directives/ripple-directive')['vRippleDirective']
           }
         }"
       `)
@@ -150,12 +191,16 @@ describe('vue-directives', () => {
         export function render(_ctx, _cache) {
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
           const _directive_named_directive = _resolveDirective("named-directive")
+          const _directive_focus_directive = _resolveDirective("focus-directive")
+          const _directive_ripple_directive = _resolveDirective("ripple-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
             [_directive_awesome_directive],
-            [_directive_named_directive]
+            [_directive_named_directive],
+            [_directive_focus_directive],
+            [_directive_ripple_directive]
           ])
         }"
       `)
@@ -164,12 +209,16 @@ describe('vue-directives', () => {
 
         export function render(_ctx, _cache) {
           const _directive_named_directive = _resolveDirective("named-directive")
+          const _directive_focus_directive = _resolveDirective("focus-directive")
+          const _directive_ripple_directive = _resolveDirective("ripple-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
             [_directive_awesome_directive],
-            [_directive_named_directive]
+            [_directive_named_directive],
+            [_directive_focus_directive],
+            [_directive_ripple_directive]
           ])
         }"
       `)
@@ -397,18 +446,24 @@ describe('vue-directives', () => {
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
           const _directive_custom_directive = _resolveDirective("custom-directive")
           const _directive_mixed_directive = _resolveDirective("mixed-directive")
+          const _directive_focus_directive = _resolveDirective("focus-directive")
+          const _directive_ripple_directive = _resolveDirective("ripple-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
             [_directive_awesome_directive],
             [_directive_custom_directive],
-            [_directive_mixed_directive]
+            [_directive_mixed_directive],
+            [_directive_focus_directive],
+            [_directive_ripple_directive]
           ])
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(allDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
+        "import { vRippleDirective as _directive_ripple_directive } from '<root>/playground/directives/ripple-directive.ts';
+        import _directive_focus_directive from '<root>/playground/directives/v-focus-directive.ts';
+        import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
         import _directive_custom_directive from '<root>/playground/directives/custom-directive.ts';
         import _directive_awesome_directive from '<root>/playground/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
@@ -418,7 +473,9 @@ describe('vue-directives', () => {
           }, null, 512 /* NEED_PATCH */)), [
             [_directive_awesome_directive],
             [_directive_custom_directive],
-            [_directive_mixed_directive]
+            [_directive_mixed_directive],
+            [_directive_focus_directive],
+            [_directive_ripple_directive]
           ])
         }"
       `)
@@ -442,37 +499,45 @@ describe('vue-directives', () => {
 
       it('inject', async () => {
         expect(replaceRoot(allDirectives.code)).toMatchInlineSnapshot(`
-        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+          "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
-        export function render(_ctx, _cache) {
-          const _directive_awesome_directive = _resolveDirective("awesome-directive")
-          const _directive_custom_directive = _resolveDirective("custom-directive")
-          const _directive_mixed_directive = _resolveDirective("mixed-directive")
+          export function render(_ctx, _cache) {
+            const _directive_awesome_directive = _resolveDirective("awesome-directive")
+            const _directive_custom_directive = _resolveDirective("custom-directive")
+            const _directive_mixed_directive = _resolveDirective("mixed-directive")
+            const _directive_focus_directive = _resolveDirective("focus-directive")
+            const _directive_ripple_directive = _resolveDirective("ripple-directive")
 
-          return _withDirectives((_openBlock(), _createElementBlock("div", {
-            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
-          }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive],
-            [_directive_custom_directive],
-            [_directive_mixed_directive]
-          ])
-        }"
-      `)
+            return _withDirectives((_openBlock(), _createElementBlock("div", {
+              onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+            }, null, 512 /* NEED_PATCH */)), [
+              [_directive_awesome_directive],
+              [_directive_custom_directive],
+              [_directive_mixed_directive],
+              [_directive_focus_directive],
+              [_directive_ripple_directive]
+            ])
+          }"
+        `)
         expect(replaceRoot((await ctx.injectImports(allDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
-        import _directive_custom_directive from '<root>/playground/directives/custom-directive.ts';
-        import _directive_awesome_directive from '<root>/playground/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+          "import { vRippleDirective as _directive_ripple_directive } from '<root>/playground/directives/ripple-directive.ts';
+          import _directive_focus_directive from '<root>/playground/directives/v-focus-directive.ts';
+          import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
+          import _directive_custom_directive from '<root>/playground/directives/custom-directive.ts';
+          import _directive_awesome_directive from '<root>/playground/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
-        export function render(_ctx, _cache) {
-          return _withDirectives((_openBlock(), _createElementBlock("div", {
-            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
-          }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive],
-            [_directive_custom_directive],
-            [_directive_mixed_directive]
-          ])
-        }"
-      `)
+          export function render(_ctx, _cache) {
+            return _withDirectives((_openBlock(), _createElementBlock("div", {
+              onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+            }, null, 512 /* NEED_PATCH */)), [
+              [_directive_awesome_directive],
+              [_directive_custom_directive],
+              [_directive_mixed_directive],
+              [_directive_focus_directive],
+              [_directive_ripple_directive]
+            ])
+          }"
+        `)
       })
     })
   })

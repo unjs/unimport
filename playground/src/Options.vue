@@ -22,9 +22,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
+  <div v-focus-directive>
     <h1>{{ count }} x {{ multiplier }} = {{ count * multiplier }}</h1>
-    <button v-custom-directive @click="inc">
+    <button v-custom-directive v-ripple-directive @click="inc">
       Inc
     </button>
     <button v-awesome-directive v-named-directive @click="bump">
