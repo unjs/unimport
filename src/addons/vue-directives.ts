@@ -100,9 +100,10 @@ export function vueDirectivesAddon(
 
       const directives = Array
         .from(directivesMap.entries())
-        .map(([name, i]) => `    ${`${name}: typeof import('${options?.resolvePath?.(i) || i.from}')['${i.name}']`}`)
+        .map(([name, i]) => `    ${name}: typeof import('${options?.resolvePath?.(i) || i.from}')['${i.name}']`)
         .sort()
         .join('\n')
+
       return `${dts}
 // for vue directives auto import
 declare module 'vue' {
