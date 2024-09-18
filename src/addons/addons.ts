@@ -27,7 +27,7 @@ export function configureAddons(opts: Partial<UnimportOptions>) {
       if (!addonsMap.has(VUE_DIRECTIVES_NAME)) {
         addonsMap.set(VUE_DIRECTIVES_NAME, vueDirectivesAddon(
           typeof opts.addons.vueDirectives === 'object'
-            ? opts.addons.vueDirectives.isDirective
+            ? opts.addons.vueDirectives
             : undefined,
         ))
       }

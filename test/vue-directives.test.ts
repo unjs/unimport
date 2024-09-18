@@ -428,7 +428,7 @@ describe('vue-directives', () => {
     describe('manual multiple directives with dirs', async () => {
       const addons = await import('../src/addons').then(({ vueTemplateAddon, vueDirectivesAddon }) => ([
         vueTemplateAddon(),
-        vueDirectivesAddon(importFrom => importFrom.includes('/directives/')),
+        vueDirectivesAddon({ isDirective: importFrom => importFrom.includes('/directives/') }),
       ]))
       const ctx = createUnimport({
         dirsScanOptions: {
