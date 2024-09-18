@@ -1,6 +1,14 @@
+import type { InlinePreset } from '../src'
 import type { UnimportPluginOptions } from '../src/unplugin'
 import * as process from 'node:process'
 import { resolve } from 'pathe'
+
+export function resolvePresets(presets: InlinePreset[]) {
+  return presets.map((preset) => {
+    preset.from = resolve(process.cwd(), preset.from)
+    return preset
+  })
+}
 
 const useDirs = process.env.USE_DIRS === 'true'
 
@@ -37,7 +45,7 @@ if (useDirs) {
   unimportViteOptions.dirs.push('./directives/**')
 }
 else {
-  unimportViteOptions.presets.push(...[{
+  unimportViteOptions.presets.push(...resolvePresets([{
     from: 'directives/awesome-directive.ts',
     imports: [{
       name: 'default',
@@ -93,10 +101,7 @@ else {
         vueDirective: true,
       },
     }],
-  }].map((i) => {
-    i.from = resolve(process.cwd(), i.from)
-    return i
-  }))
+  }]))
 }
 
 export { unimportViteOptions }

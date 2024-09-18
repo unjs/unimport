@@ -1,8 +1,7 @@
-import type { InlinePreset } from '../src'
 import process from 'node:process'
-import { resolve } from 'pathe'
 import { describe, expect, it } from 'vitest'
 import { compileTemplate } from 'vue/compiler-sfc'
+import { resolvePresets } from '../playground/configure-directives'
 import { createUnimport } from '../src'
 
 const defaultDirective = compileTemplate({
@@ -70,13 +69,6 @@ const allDirectives = compileTemplate({
 
 function replaceRoot(code: string) {
   return code.replaceAll(process.cwd().replace(/\\/g, '/'), '<root>')
-}
-
-function resolvePresets(presets: InlinePreset[]) {
-  return presets.map((preset) => {
-    preset.from = resolve(process.cwd(), preset.from)
-    return preset
-  })
 }
 
 describe('vue-directives', () => {
