@@ -77,6 +77,7 @@ describe('vue-directives', () => {
       presets: resolvePresets([{
         from: 'directives/awesome-directive.ts',
         imports: [{
+          // DON'T ADD `as` here: for coverage
           name: 'default',
           meta: {
             vueDirective: true,
