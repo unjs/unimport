@@ -1,5 +1,6 @@
 import type { UnimportPluginOptions } from '../src/unplugin'
 import * as process from 'node:process'
+import { resolve } from 'pathe'
 
 const useDirs = process.env.USE_DIRS === 'true'
 
@@ -11,13 +12,12 @@ const unimportViteOptions: Partial<UnimportPluginOptions> = {
   },
   presets: [
     'vue',
-    /* add this preset and add some reference to the dummy export in Options or Setup */
-    /* {
-      from: '/composables-preset/dummy.ts',
+    {
+      from: resolve(process.cwd(), 'composables-preset/dummy.ts'),
       imports: [{
         name: 'dummy',
       }],
-    }, */
+    },
   ],
   dirs: ['./composables/**'],
   addons: {
@@ -37,8 +37,8 @@ if (useDirs) {
   unimportViteOptions.dirs.push('./directives/**')
 }
 else {
-  unimportViteOptions.presets.push({
-    from: '/directives/awesome-directive.ts',
+  unimportViteOptions.presets.push(...[{
+    from: 'directives/awesome-directive.ts',
     imports: [{
       name: 'default',
       meta: {
@@ -46,7 +46,7 @@ else {
       },
     }],
   }, {
-    from: '/directives/named-directive.ts',
+    from: 'directives/named-directive.ts',
     imports: [{
       name: 'NamedDirective',
       meta: {
@@ -54,7 +54,7 @@ else {
       },
     }],
   }, {
-    from: '/directives/mixed-directive.ts',
+    from: 'directives/mixed-directive.ts',
     imports: [{
       name: 'NamedMixedDirective',
       meta: {
@@ -68,7 +68,7 @@ else {
       },
     }],
   }, {
-    from: '/directives/custom-directive.ts',
+    from: 'directives/custom-directive.ts',
     imports: [{
       name: 'CustomDirective',
       meta: {
@@ -76,7 +76,7 @@ else {
       },
     }],
   }, {
-    from: '/directives/ripple-directive.ts',
+    from: 'directives/ripple-directive.ts',
     imports: [{
       name: 'vRippleDirective',
       meta: {
@@ -84,7 +84,7 @@ else {
       },
     }],
   }, {
-    from: '/directives/v-focus-directive.ts',
+    from: 'directives/v-focus-directive.ts',
     imports: [{
       name: 'default',
       as: 'FocusDirective',
@@ -92,7 +92,10 @@ else {
         vueDirective: true,
       },
     }],
-  })
+  }].map((i) => {
+    i.from = resolve(process.cwd(), i.from)
+    return i
+  }))
 }
 
 export { unimportViteOptions }

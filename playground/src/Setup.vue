@@ -18,5 +18,6 @@ function inc() {
     <div v-named-mixed-directive v-mixed-directive>
       {{ nested() }}
     </div>
+    <pre>{{ dummy }}</pre>
   </div>
 </template>

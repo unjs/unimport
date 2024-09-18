@@ -1,3 +1,6 @@
+import type { InlinePreset } from '../src'
+import process from 'node:process'
+import { resolve } from 'pathe'
 import { describe, expect, it } from 'vitest'
 import { compileTemplate } from 'vue/compiler-sfc'
 import { createUnimport } from '../src'
@@ -7,6 +10,17 @@ const defaultDirective = compileTemplate({
   filename: 'template.vue',
   source: `
     <div v-awesome-directive v-named-directive v-focus-directive v-ripple-directive @click="foo"></div>
+  `,
+  compilerOptions: {
+    hoistStatic: false,
+  },
+})
+
+const singleNamedDirectives = compileTemplate({
+  id: 'template.vue',
+  filename: 'template.vue',
+  source: `
+    <div v-awesome-directive @click="foo"></div>
   `,
   compilerOptions: {
     hoistStatic: false,
@@ -58,11 +72,18 @@ function replaceRoot(code: string) {
   return code.replaceAll(process.cwd().replace(/\\/g, '/'), '<root>')
 }
 
+function resolvePresets(presets: InlinePreset[]) {
+  return presets.map((preset) => {
+    preset.from = resolve(process.cwd(), preset.from)
+    return preset
+  })
+}
+
 describe('vue-directives', () => {
   describe('single default directive', async () => {
     const ctx = createUnimport({
-      presets: [{
-        from: '/directives/awesome-directive.ts',
+      presets: resolvePresets([{
+        from: 'directives/awesome-directive.ts',
         imports: [{
           name: 'default',
           meta: {
@@ -70,7 +91,7 @@ describe('vue-directives', () => {
           },
         }],
       }, {
-        from: '/directives/named-directive.ts',
+        from: 'directives/named-directive.ts',
         imports: [{
           name: 'NamedDirective',
           meta: {
@@ -78,7 +99,7 @@ describe('vue-directives', () => {
           },
         }],
       }, {
-        from: '/directives/ripple-directive.ts',
+        from: 'directives/ripple-directive.ts',
         imports: [{
           name: 'vRippleDirective',
           meta: {
@@ -86,7 +107,7 @@ describe('vue-directives', () => {
           },
         }],
       }, {
-        from: '/directives/v-focus-directive.ts',
+        from: 'directives/v-focus-directive.ts',
         imports: [{
           name: 'default',
           as: 'FocusDirective',
@@ -94,7 +115,7 @@ describe('vue-directives', () => {
             vueDirective: true,
           },
         }],
-      }],
+      }]),
       addons: {
         vueDirectives: true,
       },
@@ -123,10 +144,10 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { vRippleDirective as _directive_ripple_directive } from '/directives/ripple-directive.ts';
-        import _directive_focus_directive from '/directives/v-focus-directive.ts';
-        import { NamedDirective as _directive_named_directive } from '/directives/named-directive.ts';
-        import _directive_awesome_directive from '/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import { vRippleDirective as _directive_ripple_directive } from '<root>/directives/ripple-directive.ts';
+        import _directive_focus_directive from '<root>/directives/v-focus-directive.ts';
+        import { NamedDirective as _directive_named_directive } from '<root>/directives/named-directive.ts';
+        import _directive_awesome_directive from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
@@ -145,24 +166,24 @@ describe('vue-directives', () => {
       expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
-          const FocusDirective: typeof import('/directives/v-focus-directive')['default']
-          const NamedDirective: typeof import('/directives/named-directive')['NamedDirective']
-          const default: typeof import('/directives/awesome-directive')['default']
-          const vRippleDirective: typeof import('/directives/ripple-directive')['vRippleDirective']
+          const FocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
+          const NamedDirective: typeof import('<root>/directives/named-directive')['NamedDirective']
+          const default: typeof import('<root>/directives/awesome-directive')['default']
+          const vRippleDirective: typeof import('<root>/directives/ripple-directive')['vRippleDirective']
         }
         // for vue directives auto import
         declare module 'vue' {
           interface ComponentCustomProperties {
-            vAwesomeDirective: typeof import('/directives/awesome-directive')['default']
-            vFocusDirective: typeof import('/directives/v-focus-directive')['default']
-            vNamedDirective: typeof import('/directives/named-directive')['NamedDirective']
-            vRippleDirective: typeof import('/directives/ripple-directive')['vRippleDirective']
+            vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['default']
+            vFocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
+            vNamedDirective: typeof import('<root>/directives/named-directive')['NamedDirective']
+            vRippleDirective: typeof import('<root>/directives/ripple-directive')['vRippleDirective']
           }
           interface GlobalDirectives {
-            vAwesomeDirective: typeof import('/directives/awesome-directive')['default']
-            vFocusDirective: typeof import('/directives/v-focus-directive')['default']
-            vNamedDirective: typeof import('/directives/named-directive')['NamedDirective']
-            vRippleDirective: typeof import('/directives/ripple-directive')['vRippleDirective']
+            vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['default']
+            vFocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
+            vNamedDirective: typeof import('<root>/directives/named-directive')['NamedDirective']
+            vRippleDirective: typeof import('<root>/directives/ripple-directive')['vRippleDirective']
           }
         }"
       `)
@@ -171,54 +192,41 @@ describe('vue-directives', () => {
 
   describe('single named directive', () => {
     const ctx = createUnimport({
-      presets: [{
-        from: '/directives/awesome-directive.ts',
+      presets: resolvePresets([{
+        from: 'directives/awesome-directive.ts',
         imports: [{
           name: 'AwesomeDirective',
           meta: {
             vueDirective: true,
           },
         }],
-      }],
+      }]),
       addons: {
         vueDirectives: true,
       },
     })
     it('inject', async () => {
-      expect(replaceRoot(defaultDirective.code)).toMatchInlineSnapshot(`
+      expect(replaceRoot(singleNamedDirectives.code)).toMatchInlineSnapshot(`
         "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           const _directive_awesome_directive = _resolveDirective("awesome-directive")
-          const _directive_named_directive = _resolveDirective("named-directive")
-          const _directive_focus_directive = _resolveDirective("focus-directive")
-          const _directive_ripple_directive = _resolveDirective("ripple-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive],
-            [_directive_named_directive],
-            [_directive_focus_directive],
-            [_directive_ripple_directive]
+            [_directive_awesome_directive]
           ])
         }"
       `)
-      expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { AwesomeDirective as _directive_awesome_directive } from '/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+      expect(replaceRoot((await ctx.injectImports(singleNamedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import { AwesomeDirective as _directive_awesome_directive } from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
-          const _directive_named_directive = _resolveDirective("named-directive")
-          const _directive_focus_directive = _resolveDirective("focus-directive")
-          const _directive_ripple_directive = _resolveDirective("ripple-directive")
-
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
-            [_directive_awesome_directive],
-            [_directive_named_directive],
-            [_directive_focus_directive],
-            [_directive_ripple_directive]
+            [_directive_awesome_directive]
           ])
         }"
       `)
@@ -227,8 +235,8 @@ describe('vue-directives', () => {
 
   describe('single mixed directives', () => {
     const ctx = createUnimport({
-      presets: [{
-        from: '/directives/mixed-directive.ts',
+      presets: resolvePresets([{
+        from: 'directives/mixed-directive.ts',
         imports: [{
           name: 'NamedMixedDirective',
           meta: {
@@ -240,7 +248,7 @@ describe('vue-directives', () => {
             vueDirective: true,
           },
         }],
-      }],
+      }]),
       addons: {
         vueDirectives: true,
       },
@@ -263,8 +271,8 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import _directive_mixed_directive from '/directives/mixed-directive.ts';
-        import { NamedMixedDirective as _directive_named_mixed_directive } from '/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import _directive_mixed_directive from '<root>/directives/mixed-directive.ts';
+        import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return _withDirectives((_openBlock(), _createElementBlock("div", {
@@ -280,8 +288,8 @@ describe('vue-directives', () => {
 
   describe('multiple mixed directives', () => {
     const ctx = createUnimport({
-      presets: [{
-        from: '/directives/custom-directive.ts',
+      presets: resolvePresets([{
+        from: 'directives/custom-directive.ts',
         imports: [{
           name: 'CustomDirective',
           meta: {
@@ -289,14 +297,14 @@ describe('vue-directives', () => {
           },
         }],
       }, {
-        from: '/directives/awesome-directive.ts',
+        from: 'directives/awesome-directive.ts',
         imports: [{
           name: 'default',
           meta: {
             vueDirective: true,
           },
         }],
-      }],
+      }]),
       addons: {
         vueDirectives: true,
       },
@@ -327,8 +335,8 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { CustomDirective as _directive_custom_directive } from '/directives/custom-directive.ts';
-        import _directive_awesome_directive from '/directives/awesome-directive.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import { CustomDirective as _directive_custom_directive } from '<root>/directives/custom-directive.ts';
+        import _directive_awesome_directive from '<root>/directives/awesome-directive.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return (_openBlock(), _createElementBlock(_Fragment, null, [
@@ -352,8 +360,8 @@ describe('vue-directives', () => {
 
   describe('multiple directives', () => {
     const ctx = createUnimport({
-      presets: [{
-        from: '/multiple-directives/index.ts',
+      presets: resolvePresets([{
+        from: 'multiple-directives/index.ts',
         imports: [{
           name: 'CustomDirective',
           meta: {
@@ -365,7 +373,7 @@ describe('vue-directives', () => {
             vueDirective: true,
           },
         }],
-      }],
+      }]),
       addons: {
         vueDirectives: true,
       },
@@ -396,7 +404,7 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(multipleDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { CustomDirective as _directive_custom_directive, AwesomeDirective as _directive_awesome_directive } from '/multiple-directives/index.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import { CustomDirective as _directive_custom_directive, AwesomeDirective as _directive_awesome_directive } from '<root>/multiple-directives/index.ts';import { createElementVNode as _createElementVNode, withDirectives as _withDirectives, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           return (_openBlock(), _createElementBlock(_Fragment, null, [
