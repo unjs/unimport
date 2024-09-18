@@ -183,8 +183,6 @@ function* findDirective(
         begin,
         end,
         { ...i, name: i.name, as: symbol },
-        // symbol,
-        // i.name,
       ]
       return
     }
