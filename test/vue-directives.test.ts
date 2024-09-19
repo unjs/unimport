@@ -548,4 +548,65 @@ describe('vue-directives', () => {
       })
     })
   })
+
+  describe('directives with dtsDisabled and meta.vueDirective from preset', () => {
+    const ctx = createUnimport({
+      presets: resolvePresets([{
+        from: 'directives/mixed-directive.ts',
+        dtsDisabled: true,
+        meta: {
+          vueDirective: true,
+        },
+        imports: [{
+          name: 'NamedMixedDirective',
+        }, {
+          name: 'default',
+          as: 'MixedDirective',
+        }],
+      }]),
+      addons: {
+        vueDirectives: true,
+      },
+    })
+
+    it('inject', async () => {
+      expect(replaceRoot(singleMixedDirectives.code)).toMatchInlineSnapshot(`
+        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_named_mixed_directive = _resolveDirective("named-mixed-directive")
+          const _directive_mixed_directive = _resolveDirective("mixed-directive")
+
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_named_mixed_directive],
+            [_directive_mixed_directive]
+          ])
+        }"
+      `)
+      expect(replaceRoot((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import _directive_mixed_directive from '<root>/directives/mixed-directive.ts';
+        import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          return _withDirectives((_openBlock(), _createElementBlock("div", {
+            onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
+          }, null, 512 /* NEED_PATCH */)), [
+            [_directive_named_mixed_directive],
+            [_directive_mixed_directive]
+          ])
+        }"
+      `)
+    })
+
+    it('dts', async () => {
+      expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
+        "export {}
+        declare global {
+
+        }"
+      `)
+    })
+  })
 })
