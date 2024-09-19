@@ -10,14 +10,12 @@ export function resolvePresets(presets: InlinePreset[]) {
   })
 }
 
-const useDirs = process.env.USE_DIRS === 'true'
+const usePresets = process.env.USE_PRESETS === 'true'
 
 const unimportViteOptions: Partial<UnimportPluginOptions> = {
   dts: true,
-  debugLog(msg) {
-    // eslint-disable-next-line no-console
-    console.log(msg)
-  },
+  // eslint-disable-next-line no-console
+  debugLog: console.log,
   presets: [
     'vue',
     {
@@ -38,7 +36,7 @@ const unimportViteOptions: Partial<UnimportPluginOptions> = {
   },
 }
 
-if (useDirs) {
+if (!usePresets) {
   unimportViteOptions.dirsScanOptions = {
     cwd: process.cwd().replace(/\\/g, '/'),
   }
