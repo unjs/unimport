@@ -240,9 +240,8 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
   const importsMap = makeTypeModulesMap(imports, options?.resolvePath)
   const code = Array.from(importsMap).flatMap(([from, module]) => {
     const { starTypeImport, typeImports } = module
-    // We need to prepend @ts-ignore before export string insert to prevent the error
-    // Because of TypeScript's limitation, it errors when re-exporting type in declare.
-    // But it actually works so we use @ts-ignore to dismiss the error.
+    // TypeScript incorrectly reports an error when re-exporting types in a d.ts file.
+    // We use @ts-ignore to suppress the error since it actually works.
     const strings: string[] = []
     if (typeImports.size) {
       const typeImportNames = Array.from(typeImports).map(({ name, as }) => {
@@ -263,8 +262,7 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
     }
     if (strings.length) {
       strings.push(
-        // If a module is only been re-exported as type, TypeScript will not initialize it for some reason.
-        // Adding an import statement will fix it.
+        // This is a workaround for a TypeScript issue where type-only re-exports are not properly initialized.
         `import('${from}')`,
       )
     }
