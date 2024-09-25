@@ -220,24 +220,40 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
     importsMap.set(from, list)
   })
 
-  const code = Array.from(importsMap.entries()).flatMap(([from, items]) => {
-    const names = items.map((i) => {
-      let name = i.name === '*' ? 'default' : i.name
-      if (i.as && i.as !== name)
-        name += ` as ${i.as}`
-
-      return name
-    })
-    return [
-      // Because of TypeScript's limitation, it errors when re-exporting type in declare.
-      // But it actually works so we use @ts-ignore to dismiss the error.
-      '// @ts-ignore',
-      // Re-export type
-      `export type { ${names.join(', ')} } from '${from}'`,
+  const code = Array.from(importsMap.entries()).flatMap(([from, imports]) => {
+    const strings = [
       // If a module is only been re-exported as type, TypeScript will not initialize it for some reason.
       // Adding an import statement will fix it.
       `import('${from}')`,
+      // We need to prepend @ts-ignore before export string insert to prevent the error
+      // Because of TypeScript's limitation, it errors when re-exporting type in declare.
+      // But it actually works so we use @ts-ignore to dismiss the error.
     ]
+    const starImportIndex = imports.findIndex(i => i.name === '*')
+    if (starImportIndex !== -1) {
+      const star = imports[starImportIndex]
+      imports = imports.toSpliced(starImportIndex, 1)
+      if (star.as) {
+        strings.unshift(
+          '// @ts-ignore',
+          `export type * as ${star.as} from '${from}'`,
+        )
+        if (!imports.length)
+          return strings
+      }
+    }
+    const typeImports = imports.map(({ name, as }) => {
+      if (as && as !== name)
+        name += ` as ${as}`
+      return name
+    })
+    if (typeImports.length) {
+      strings.unshift(
+        '// @ts-ignore',
+        `export type { ${typeImports.join(', ')} } from '${from}'`,
+      )
+    }
+    return strings
   })
   return `// for type re-export\ndeclare global {\n${code.map(i => `  ${i}`).join('\n')}\n}`
 }
