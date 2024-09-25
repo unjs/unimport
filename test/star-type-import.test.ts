@@ -1,19 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import { createUnimport, toTypeReExports } from '../src'
 
-// when imports element is { type: true, name: '*', as: 'bar' } export will be...
-// old behavior: export type { default as bar } from 'foo'
-// new behavior: export type * as bar from 'foo'
-// to save previous behavior, user must rename `name` property from '*' to 'default'
-// NOTE: with new behavior user should provide `as` property,
-// `  export type * from 'foo'` is invalid
-// NOTE: star type import can not be on same line with same `from` property :
+// when imports element is { from: 'foo-lib', name: '*', as: 'Foo', type: true  } export will be...
+// - old behavior: `export type { default as Foo } from 'foo-lib'`
+// - new behavior: `export type * as Foo from 'foo-lib'`
+// to save old behavior, user must rename `name` property from '*' to 'default'
+// NOTE: with new behavior user should provide `as` property, otherwise it will not be added
+//  `export type * from 'foo-lib'` is invalid
+// NOTE: wildcard type import can not be on same line with named type imports when `from` property is same
 // `
-//   export type * as bar, type { baz } from 'foo'
-// ` is invalid`
+//   export type * as Foo, type { Baz } from 'foo-lib'
+// ` is invalid
 // `
-//   export type * as bar from 'foo'
-//   export type { baz } from 'foo'
+//   export type * as Foo from 'foo-lib'
+//   export type { Baz } from 'foo-lib'
 // ` is valid
 
 describe('star type import', () => {
