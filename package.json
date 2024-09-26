@@ -2,7 +2,7 @@
   "name": "unimport",
   "type": "module",
   "version": "3.12.0",
-  "packageManager": "pnpm@9.10.0",
+  "packageManager": "pnpm@9.11.0",
   "description": "Unified utils for auto importing APIs in modules",
   "license": "MIT",
   "repository": "unjs/unimport",
@@ -45,7 +45,7 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@rollup/pluginutils": "^5.1.0",
+    "@rollup/pluginutils": "^5.1.2",
     "acorn": "^8.12.1",
     "escape-string-regexp": "^5.0.0",
     "estree-walker": "^3.0.3",
@@ -60,13 +60,13 @@
     "unplugin": "^1.14.1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.6.2",
-    "@types/estree": "^1.0.5",
+    "@antfu/eslint-config": "^3.7.2",
+    "@types/estree": "^1.0.6",
     "@types/node": "^22.5.5",
     "@vitest/coverage-v8": "^2.1.1",
     "bumpp": "^9.5.2",
     "conventional-changelog-cli": "^5.0.0",
-    "eslint": "^9.10.0",
+    "eslint": "^9.11.1",
     "h3": "^1.12.0",
     "jquery": "^3.7.1",
     "lit": "^3.2.0",
