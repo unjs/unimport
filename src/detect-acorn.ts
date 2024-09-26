@@ -1,10 +1,11 @@
 import type { BlockStatement, Node } from 'estree'
 import type MagicString from 'magic-string'
-import type { ArgumentsType } from 'vitest'
 import type { DetectImportResult, Import, InjectImportsOptions, UnimportContext } from './types'
 import { parse } from 'acorn'
 import { walk } from 'estree-walker'
 import { getMagicString } from './utils'
+
+export type ArgumentsType<T> = T extends (...args: infer U) => any ? U : never
 
 export async function detectImportsAcorn(
   code: string | MagicString,
@@ -236,7 +237,11 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
 export function createVirtualImportsAcronWalker(
   importMap: Map<string, Import>,
   virtualImports: string[] = [],
-) {
+): {
+    imports: Import[]
+    ranges: [number, number][]
+    walk: ArgumentsType<typeof walk>[1]
+  } {
   const imports: Import[] = []
   const ranges: [number, number][] = []
 
@@ -250,7 +255,7 @@ export function createVirtualImportsAcronWalker(
             // @ts-expect-error missing types
             ranges.push([node.start, node.end])
             node.specifiers.forEach((i) => {
-              if (i.type === 'ImportSpecifier') {
+              if (i.type === 'ImportSpecifier' && i.imported.type === 'Identifier') {
                 const original = importMap.get(i.imported.name)
                 if (!original)
                   throw new Error(`[unimport] failed to find "${i.imported.name}" imported from "${node.source.value}"`)
