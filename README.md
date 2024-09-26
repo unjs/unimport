@@ -312,6 +312,77 @@ export const counter = ref(0)
 
 We recommend using [Volar](https://github.com/johnsoncodehk/volar) for type checking, which will help you to identify the misusage.
 
+### Vue Directives Auto Import and TypeScript Declaration Generation
+
+In Vue's template, the usage of directives is in a different context than plain modules. Thus some custom transformations are required. To enable it, set `addons.vueDirectives` to `true`:
+
+```ts
+Unimport.vite({
+  addons: {
+    vueDirectives: true
+  }
+})
+```
+
+#### Library Authors
+
+When including directives in your presets, you should:
+- provide the corresponding imports with `meta.vueDirective` set to `true`, otherwise, `unimport` will not be able to detect your directives.
+- use named exports for your directives, or use default export and use `as` in the Import.
+- set `dtsDisabled` to `true` if you provide a type declaration for your directives.
+
+```ts
+import type { InlinePreset } from 'unimport'
+import { defineUnimportPreset } from 'unimport'
+
+export const composables = defineUnimportPreset({
+  from: 'my-unimport-library/composables',
+  /* imports and other options */
+})
+
+export const directives = defineUnimportPreset({
+  from: 'my-unimport-library/directives',
+  // disable dts generation globally
+  dtsEnabled: false,
+  // you can declare the vue directive globally
+  meta: {
+    vueDirective: true
+  },
+  imports: [{
+    name: 'ClickOutside',
+    // disable dts generation per import
+    dtsEnabled: false,
+    // you can declare the vue directive per import
+    meta: {
+      vueDirective: true
+    }
+  }, {
+    name: 'default',
+    // you should declare `as` for default exports
+    as: 'Focus'
+  }]
+})
+```
+
+#### Using Directory Scan and Local Directives
+
+If you add a directory scan for your local directives in the project, you need to:
+- provide `isDirective` in the `vueDirectives`: `unimport` will use it to detect them (will never be called for imports with `meta.vueDirective` set to `true`).
+- use always named exports for your directives.
+
+```ts
+Unimport.vite({
+  dirs: ['./directives/**'],
+  addons: {
+    vueDirectives: {
+      isDirective: (normalizedImportFrom, _importEntry) => {
+        return normalizedImportFrom.includes('/directives/')
+      }
+    }
+  }
+})
+```
+
 ## 💻 Development
 
 - Clone this repository

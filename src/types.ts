@@ -157,12 +157,36 @@ export interface UnimportMeta {
 }
 
 export interface AddonsOptions {
+  addons?: Addon[]
   /**
    * Enable auto import inside for Vue's <template>
    *
    * @default false
    */
   vueTemplate?: boolean
+  /**
+   * Enable auto import directives for Vue's SFC.
+   *
+   * Library authors should include `meta.vueDirective: true` in the import metadata.
+   *
+   * When using a local directives folder, provide the `isDirective`
+   * callback to check if the import is a Vue directive.
+   */
+  vueDirectives?: true | AddonVueDirectivesOptions
+}
+
+export interface AddonVueDirectivesOptions {
+  /**
+   * Checks if the import is a Vue directive.
+   *
+   * **NOTES**:
+   * - imports from a library should include `meta.vueDirective: true`.
+   * - this callback is only invoked for local directives (only when meta.vueDirective is not set).
+   *
+   * @param from The path of the import normalized.
+   * @param importEntry The import entry.
+   */
+  isDirective?: (from: string, importEntry: Import) => boolean
 }
 
 export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd' | 'mergeExisting' | 'parser'> {
@@ -189,10 +213,18 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
   debugLog: (msg: string) => void
 
   /**
-   * Unimport Addons
-   * To use built-in addons, use `addons: { vueTemplate: true }`
+   * Unimport Addons.
+   * To use built-in addons, use:
+   * ```js
+   * addons: {
+   *   addons: [<custom-addons-here>] // if you want to use also custom addons
+   *   vueTemplate: true,
+   *   vueDirectives: [<the-directives-here>]
+   * }
+   * ```
    *
    * Built-in addons:
+   * - vueDirectives: enable auto import directives for Vue's SFC
    * - vueTemplate: enable auto import inside for Vue's <template>
    *
    * @default {}
@@ -333,6 +365,7 @@ export interface InjectImportsOptions {
 export type Thenable<T> = Promise<T> | T
 
 export interface Addon {
+  name?: string
   transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
   declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>

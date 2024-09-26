@@ -1,8 +1,18 @@
 import type MagicString from 'magic-string'
-import type { Addon, Import, ImportInjectionResult, InjectImportsOptions, Thenable, TypeDeclarationOptions, Unimport, UnimportContext, UnimportMeta, UnimportOptions } from './types'
+import type {
+  Import,
+  ImportInjectionResult,
+  InjectImportsOptions,
+  Thenable,
+  TypeDeclarationOptions,
+  Unimport,
+  UnimportContext,
+  UnimportMeta,
+  UnimportOptions,
+} from './types'
 
 import { version } from '../package.json'
-import { vueTemplateAddon } from './addons'
+import { configureAddons } from './addons/addons'
 import { detectImports } from './detect'
 import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
@@ -101,12 +111,7 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
   let _combinedImports: Import[] | undefined
   const _map = new Map()
 
-  const addons: Addon[] = []
-
-  if (Array.isArray(opts.addons))
-    addons.push(...opts.addons)
-  else if (opts.addons?.vueTemplate)
-    addons.push(vueTemplateAddon())
+  const addons = configureAddons(opts)
 
   opts.addons = addons
   opts.commentsDisable = opts.commentsDisable ?? ['@unimport-disable', '@imports-disable']

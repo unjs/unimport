@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev:presets": "USE_PRESETS=true vite",
     "build": "vite build",
+    "build:presets": "USE_PRESETS=true vite build",
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview"
   },

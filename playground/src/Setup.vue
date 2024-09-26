@@ -7,16 +7,17 @@ function inc() {
 </script>
 
 <template>
-  <div>
+  <div v-focus-directive>
     <h1>{{ count }} x {{ multiplier }} = {{ count * multiplier }}</h1>
-    <button @click="inc">
+    <button v-custom-directive v-ripple-directive @click="inc">
       Inc
     </button>
-    <button @click="bump">
+    <button v-awesome-directive v-named-directive @click="bump">
       x1
     </button>
-    <div>
+    <div v-named-mixed-directive v-mixed-directive>
       {{ nested() }}
     </div>
+    <pre>{{ dummy }}</pre>
   </div>
 </template>
