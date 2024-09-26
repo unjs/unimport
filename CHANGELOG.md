@@ -1,3 +1,18 @@
+# [3.13.0](https://github.com/unjs/unimport/compare/v3.12.0...v3.13.0) (2024-09-26)
+
+
+### Bug Fixes
+
+* rename addons on root ([#373](https://github.com/unjs/unimport/issues/373)) ([ec544cb](https://github.com/unjs/unimport/commit/ec544cb709feb46e8b3229b0127b2ec5e9e7c4d2))
+
+
+### Features
+
+* **addon:** add auto-import vue directives ([#374](https://github.com/unjs/unimport/issues/374)) ([225eb69](https://github.com/unjs/unimport/commit/225eb6942f6ef19427d70701d6bb9ba448abf39a))
+* support `export type * as` syntax ([#379](https://github.com/unjs/unimport/issues/379)) ([1d346ff](https://github.com/unjs/unimport/commit/1d346ff8c189bdf072571b4284394c4be89f1ad8))
+
+
+
 # [3.12.0](https://github.com/unjs/unimport/compare/v3.11.1...v3.12.0) (2024-09-12)
 
 
