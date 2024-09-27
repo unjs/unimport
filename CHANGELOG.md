@@ -1,3 +1,12 @@
+## [3.13.1](https://github.com/unjs/unimport/compare/v3.13.0...v3.13.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* **addon:** wrong vue directives transform filter ([#380](https://github.com/unjs/unimport/issues/380)) ([cf374a5](https://github.com/unjs/unimport/commit/cf374a546a36ff3057aa94d5faddf2ace6c8b932))
+
+
+
 # [3.13.0](https://github.com/unjs/unimport/compare/v3.12.0...v3.13.0) (2024-09-26)
 
 
