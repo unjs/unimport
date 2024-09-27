@@ -22,7 +22,7 @@ export function vueDirectivesAddon(
   const self = {
     name: VUE_DIRECTIVES_NAME,
     async transform(s, id) {
-      if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
+      if (!s.original.match(contextRE))
         return s
 
       const matches = Array
