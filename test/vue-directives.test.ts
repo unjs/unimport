@@ -68,6 +68,17 @@ const allDirectives = compileTemplate({
   },
 })
 
+const onlySingleDirective = compileTemplate({
+  id: 'template.vue',
+  filename: 'template.vue',
+  source: `
+    <div v-awesome-directive></div>
+  `,
+  compilerOptions: {
+    hoistStatic: false,
+  },
+})
+
 function replaceRoot(code: string) {
   return code.replaceAll(process.cwd().replace(/\\/g, '/'), '<root>')
 }
@@ -606,6 +617,174 @@ describe('vue-directives', () => {
         declare global {
 
         }"
+      `)
+    })
+  })
+
+  describe('only single directive', async () => {
+    const ctx = createUnimport({
+      presets: resolvePresets([{
+        from: 'directives/awesome-directive.ts',
+        imports: [{
+          name: 'AwesomeDirective',
+          meta: {
+            vueDirective: true,
+          },
+        }],
+      }]),
+      addons: {
+        vueDirectives: true,
+      },
+    })
+
+    await ctx.init()
+
+    it('inject', async () => {
+      expect(replaceRoot(onlySingleDirective.code)).toMatchInlineSnapshot(`
+        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_awesome_directive = _resolveDirective("awesome-directive")
+
+          return _withDirectives((_openBlock(), _createElementBlock("div", null, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive]
+          ])
+        }"
+      `)
+      expect(replaceRoot((await ctx.injectImports(onlySingleDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+        "import { AwesomeDirective as _directive_awesome_directive } from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          return _withDirectives((_openBlock(), _createElementBlock("div", null, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive]
+          ])
+        }"
+      `)
+    })
+
+    it('dts', async () => {
+      expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
+        "export {}
+        declare global {
+          const AwesomeDirective: typeof import('<root>/directives/awesome-directive')['AwesomeDirective']
+        }
+        // for vue directives auto import
+        declare module 'vue' {
+          interface ComponentCustomProperties {
+            vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['AwesomeDirective']
+          }
+          interface GlobalDirectives {
+            vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['AwesomeDirective']
+          }
+        }"
+      `)
+    })
+  })
+
+  describe('directives from scan with meta.vueDirective set to true', async () => {
+    const cwd = `${process.cwd().replace(/\\/g, '/')}/playground`
+    const directives = `${cwd}/directives/`
+    const ctx = createUnimport({
+      dirsScanOptions: { cwd },
+      dirs: ['./directives/**'],
+      addons: {
+        // DON'T REMOVE: for coverage
+        addons: [{ declaration: dts => dts }],
+        // DON'T REMOVE: for coverage
+        vueTemplate: true,
+        vueDirectives: {
+          isDirective(normalizeImportFrom) {
+            return normalizeImportFrom.includes('/directives/')
+          },
+        },
+      },
+    })
+
+    await ctx.init()
+
+    it('meta.vueDirective set to true', async () => {
+      await ctx.injectImports(allDirectives.code, 'a.vue')
+      const imports = await ctx.getImports()
+        .then(imports => imports.filter(i => i.from.startsWith(directives)).map((i) => {
+          i.from = replaceRoot(i.from)
+          return i
+        }))
+      imports.map(i => expect(i.meta?.vueDirective).toBeTruthy())
+      expect(imports).toMatchInlineSnapshot(`
+        [
+          {
+            "as": "awesomeDirective",
+            "from": "<root>/playground/directives/awesome-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "default",
+          },
+          {
+            "as": "AwesomeDirective",
+            "from": "<root>/playground/directives/awesome-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "AwesomeDirective",
+          },
+          {
+            "as": "customDirective",
+            "from": "<root>/playground/directives/custom-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "default",
+          },
+          {
+            "as": "CustomDirective",
+            "from": "<root>/playground/directives/custom-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "CustomDirective",
+          },
+          {
+            "as": "mixedDirective",
+            "from": "<root>/playground/directives/mixed-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "default",
+          },
+          {
+            "as": "NamedMixedDirective",
+            "from": "<root>/playground/directives/mixed-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "NamedMixedDirective",
+          },
+          {
+            "as": "NamedDirective",
+            "from": "<root>/playground/directives/named-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "NamedDirective",
+          },
+          {
+            "as": "vRippleDirective",
+            "from": "<root>/playground/directives/ripple-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "vRippleDirective",
+          },
+          {
+            "as": "vFocusDirective",
+            "from": "<root>/playground/directives/v-focus-directive.ts",
+            "meta": {
+              "vueDirective": true,
+            },
+            "name": "default",
+          },
+        ]
       `)
     })
   })

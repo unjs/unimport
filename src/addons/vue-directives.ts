@@ -15,14 +15,24 @@ export function vueDirectivesAddon(
   options: AddonVueDirectivesOptions = {},
 ): Addon {
   function isDirective(importEntry: Import) {
-    return importEntry.meta?.vueDirective === true
-      || (options.isDirective?.(normalizePath(process.cwd(), importEntry.from), importEntry) ?? false)
+    let isDirective = importEntry.meta?.vueDirective === true
+    if (isDirective) {
+      return true
+    }
+
+    isDirective = options.isDirective?.(normalizePath(process.cwd(), importEntry.from), importEntry) ?? false
+    if (isDirective) {
+      importEntry.meta ??= {}
+      importEntry.meta.vueDirective = true
+    }
+
+    return isDirective
   }
 
   const self = {
     name: VUE_DIRECTIVES_NAME,
     async transform(s, id) {
-      if (!s.original.includes('_ctx.') || !s.original.match(contextRE))
+      if (!s.original.match(contextRE))
         return s
 
       const matches = Array
