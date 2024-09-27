@@ -681,7 +681,7 @@ describe('vue-directives', () => {
     })
   })
 
-  describe.only('directives from scan with meta.vueDirective set to true', async () => {
+  describe('directives from scan with meta.vueDirective set to true', async () => {
     const cwd = `${process.cwd().replace(/\\/g, '/')}/playground`
     const directives = `${cwd}/directives/`
     const ctx = createUnimport({
