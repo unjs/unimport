@@ -31,7 +31,7 @@ export function vueDirectivesAddon(
 
   const self = {
     name: VUE_DIRECTIVES_NAME,
-    async transform(s, id) {
+    async transform(s, id, imports) {
       if (!s.original.match(contextRE))
         return s
 
@@ -48,6 +48,7 @@ export function vueDirectivesAddon(
           begin,
           end,
           importEntry,
+          originalImport,
         ] of findDirectives(
           isDirective,
           matches,
@@ -57,6 +58,8 @@ export function vueDirectivesAddon(
         // remove the directive declaration
         s.overwrite(begin, end, '')
         targets.push(importEntry)
+        // add imports to allow collect info
+        imports?.push(originalImport)
       }
 
       if (!targets.length)
@@ -141,7 +144,7 @@ function normalizePath(cwd: string, path: string) {
 }
 
 type DirectiveData = [begin: number, end: number, importName: string]
-type DirectiveImport = [begin: number, end: number, import: Import]
+type DirectiveImport = [begin: number, end: number, import: Import, originalImport: Import]
 
 async function* findDirectives(
   isDirective: (importEntry: Import) => boolean,
@@ -193,6 +196,7 @@ function* findDirective(
         begin,
         end,
         { ...i, name: i.name, as: symbol },
+        i,
       ]
       return
     }

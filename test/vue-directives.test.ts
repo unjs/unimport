@@ -60,6 +60,7 @@ const allDirectives = compileTemplate({
       v-mixed-directive
       v-focus-directive
       v-ripple-directive
+      v-named-mixed-directive
       @click="foo"
     ></div>
   `,
@@ -466,6 +467,7 @@ describe('vue-directives', () => {
           const _directive_mixed_directive = _resolveDirective("mixed-directive")
           const _directive_focus_directive = _resolveDirective("focus-directive")
           const _directive_ripple_directive = _resolveDirective("ripple-directive")
+          const _directive_named_mixed_directive = _resolveDirective("named-mixed-directive")
 
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
@@ -474,14 +476,16 @@ describe('vue-directives', () => {
             [_directive_custom_directive],
             [_directive_mixed_directive],
             [_directive_focus_directive],
-            [_directive_ripple_directive]
+            [_directive_ripple_directive],
+            [_directive_named_mixed_directive]
           ])
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(allDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { vRippleDirective as _directive_ripple_directive } from '<root>/playground/directives/ripple-directive.ts';
+        "import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
+        import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/playground/directives/mixed-directive.ts';
+        import { vRippleDirective as _directive_ripple_directive } from '<root>/playground/directives/ripple-directive.ts';
         import _directive_focus_directive from '<root>/playground/directives/v-focus-directive.ts';
-        import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
         import _directive_custom_directive from '<root>/playground/directives/custom-directive.ts';
         import _directive_awesome_directive from '<root>/playground/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
@@ -493,7 +497,8 @@ describe('vue-directives', () => {
             [_directive_custom_directive],
             [_directive_mixed_directive],
             [_directive_focus_directive],
-            [_directive_ripple_directive]
+            [_directive_ripple_directive],
+            [_directive_named_mixed_directive]
           ])
         }"
       `)
@@ -525,6 +530,7 @@ describe('vue-directives', () => {
             const _directive_mixed_directive = _resolveDirective("mixed-directive")
             const _directive_focus_directive = _resolveDirective("focus-directive")
             const _directive_ripple_directive = _resolveDirective("ripple-directive")
+            const _directive_named_mixed_directive = _resolveDirective("named-mixed-directive")
 
             return _withDirectives((_openBlock(), _createElementBlock("div", {
               onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
@@ -533,14 +539,16 @@ describe('vue-directives', () => {
               [_directive_custom_directive],
               [_directive_mixed_directive],
               [_directive_focus_directive],
-              [_directive_ripple_directive]
+              [_directive_ripple_directive],
+              [_directive_named_mixed_directive]
             ])
           }"
         `)
         expect(replaceRoot((await ctx.injectImports(allDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-          "import { vRippleDirective as _directive_ripple_directive } from '<root>/playground/directives/ripple-directive.ts';
+          "import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
+          import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/playground/directives/mixed-directive.ts';
+          import { vRippleDirective as _directive_ripple_directive } from '<root>/playground/directives/ripple-directive.ts';
           import _directive_focus_directive from '<root>/playground/directives/v-focus-directive.ts';
-          import _directive_mixed_directive from '<root>/playground/directives/mixed-directive.ts';
           import _directive_custom_directive from '<root>/playground/directives/custom-directive.ts';
           import _directive_awesome_directive from '<root>/playground/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
@@ -552,7 +560,8 @@ describe('vue-directives', () => {
               [_directive_custom_directive],
               [_directive_mixed_directive],
               [_directive_focus_directive],
-              [_directive_ripple_directive]
+              [_directive_ripple_directive],
+              [_directive_named_mixed_directive]
             ])
           }"
         `)
@@ -786,6 +795,67 @@ describe('vue-directives', () => {
           },
         ]
       `)
+    })
+
+    describe('directives addon: injectImports returns addonsImports', async () => {
+      const cwd = `${process.cwd().replace(/\\/g, '/')}/playground`
+      const ctx = createUnimport({
+        dirsScanOptions: { cwd },
+        dirs: ['./directives/**'],
+        collectMeta: true,
+        addons: {
+          // DON'T REMOVE: for coverage
+          addons: [{ declaration: dts => dts }],
+          // DON'T REMOVE: for coverage
+          vueTemplate: true,
+          vueDirectives: {
+            isDirective(normalizeImportFrom) {
+              return normalizeImportFrom.includes('/directives/')
+            },
+          },
+        },
+      })
+
+      await ctx.init()
+      it('addonsImports', async () => {
+        const imports = await ctx.injectImports(allDirectives.code, 'a.vue').then(r => r.addonsImports)
+        expect(imports.length > 0).toBeTruthy()
+        const metadata = ctx.getMetadata()
+        expect(metadata).toBeDefined()
+        expect(Object.keys(metadata!.injectionUsage).length).toBe(imports.length)
+        imports.map(i => metadata!.injectionUsage[i.as ?? i.name]).map((e) => {
+          expect(e).toBeDefined()
+          expect(e.count).toBe(1)
+        })
+        expect(imports.map(i => [i.as ?? i.name, i.meta?.vueDirective === true])).toMatchInlineSnapshot(`
+          [
+            [
+              "NamedMixedDirective",
+              true,
+            ],
+            [
+              "vRippleDirective",
+              true,
+            ],
+            [
+              "vFocusDirective",
+              true,
+            ],
+            [
+              "mixedDirective",
+              true,
+            ],
+            [
+              "customDirective",
+              true,
+            ],
+            [
+              "awesomeDirective",
+              true,
+            ],
+          ]
+        `)
+      })
     })
   })
 })
