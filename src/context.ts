@@ -243,7 +243,7 @@ async function injectImports(
     // eslint-disable-next-line no-console
     const log = ctx.options.debugLog || console.log
     log(`[unimport] ${imports.length} imports detected in "${id}"${imports.length ? `: ${imports.map(i => i.name).join(', ')}` : ''}`)
-    log(`[unimport] ${addonsImports.length} directives imports detected in "${id}"${addonsImports.length ? `: ${addonsImports.map(i => i.as ?? i.name).join(', ')}` : ''}`)
+    log(`[unimport] ${addonsImports.length} addons imports detected in "${id}"${addonsImports.length ? `: ${addonsImports.map(i => i.as ?? i.name).join(', ')}` : ''}`)
   }
 
   return {
