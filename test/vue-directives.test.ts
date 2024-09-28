@@ -1,3 +1,4 @@
+import type { InjectionUsageRecord } from '../src'
 import process from 'node:process'
 import { describe, expect, it } from 'vitest'
 import { compileTemplate } from 'vue/compiler-sfc'
@@ -823,7 +824,10 @@ describe('vue-directives', () => {
         const metadata = ctx.getMetadata()
         expect(metadata).toBeDefined()
         expect(Object.keys(metadata!.injectionUsage).length).toBe(imports.length)
-        imports.map(i => metadata!.injectionUsage[i.as ?? i.name]).map((e) => {
+        imports.reduce((acc, i) => {
+          acc.push(metadata!.injectionUsage[i.as ?? i.name])
+          return acc
+        }, [] as InjectionUsageRecord[]).forEach((e) => {
           expect(e).toBeDefined()
           expect(e.count).toBe(1)
         })
