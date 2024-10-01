@@ -40,18 +40,17 @@ export async function detectImportsAcorn(
 
     if (enableAutoImport) {
       const identifiers = new Set(occurrenceMap.keys())
-      matchedImports.push(
-        ...Array.from(scopes.unmatched)
-          .map((name) => {
-            const item = map.get(name)
-            if (item && !item.disabled)
-              return item
+      const result = Array.from(scopes.unmatched)
+      .map((name) => {
+        const item = map.get(name)
+        if (item && !item.disabled)
+          return item
 
-            occurrenceMap.delete(name)
-            return null
-          })
-          .filter(Boolean) as Import[],
-      )
+        occurrenceMap.delete(name)
+        return null
+      })
+      
+      matchedImports.push(...result.filter(Boolean) as Import[])
 
       for (const addon of ctx.addons)
         matchedImports = await addon.matchImports?.call(ctx, identifiers, matchedImports) || matchedImports
