@@ -159,7 +159,6 @@ export default defineUnimportPreset({
     'lastDayOfWeek',
     'lastDayOfYear',
     'lightFormat',
-    'locale',
     'max',
     'milliseconds',
     'millisecondsToHours',
