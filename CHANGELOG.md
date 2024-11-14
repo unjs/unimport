@@ -1,3 +1,12 @@
+## [3.13.2](https://github.com/unjs/unimport/compare/v3.13.1...v3.13.2) (2024-11-14)
+
+
+### Bug Fixes
+
+* Remove non-existing 'locale' from date-fns preset ([#388](https://github.com/unjs/unimport/issues/388)) ([f67b88d](https://github.com/unjs/unimport/commit/f67b88dcebf3b4efb7028450569d11cdcd879383))
+
+
+
 ## [3.13.1](https://github.com/unjs/unimport/compare/v3.13.0...v3.13.1) (2024-09-27)
 
 
