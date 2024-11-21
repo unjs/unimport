@@ -64,8 +64,8 @@ export function dedupeDtsExports(exports: Import[]) {
     if (!i.type)
       return true
 
-    // import enum as both value and type
-    if (i.declarationType === 'enum')
+    // import enum and class as both value and type
+    if (i.declarationType === 'enum' || i.declarationType === 'class')
       return true
 
     return !exports.find(e => e.as === i.as && e.name === i.name && !e.type)
@@ -104,8 +104,9 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
       else if (exp.type === 'declaration') {
         if (exp.name) {
           imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
-          if (exp.declarationType === 'enum')
+          if (exp.declarationType === 'enum' || exp.declarationType === 'class') {
             imports.push({ name: exp.name, as: exp.name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
+          }
         }
       }
       else if (exp.type === 'star' && exp.specifier) {
@@ -170,7 +171,6 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
   }
   else {
     await toImport(exports)
-
     if (includeTypes)
       await toImport(findTypeExports(code), { type: true })
   }

@@ -69,6 +69,13 @@ describe('scan-dirs', () => {
             "name": "PascalCased",
           },
           {
+            "as": "PascalCased",
+            "declarationType": "class",
+            "from": "PascalCased.ts",
+            "name": "PascalCased",
+            "type": true,
+          },
+          {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",
