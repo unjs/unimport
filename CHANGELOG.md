@@ -1,3 +1,12 @@
+## [3.13.3](https://github.com/unjs/unimport/compare/v3.13.2...v3.13.3) (2024-11-23)
+
+
+### Bug Fixes
+
+* distinguish class by declarationType ([#391](https://github.com/unjs/unimport/issues/391)) ([250b001](https://github.com/unjs/unimport/commit/250b001ca43ff64f5ebc077326c5d8e9c7033bd5))
+
+
+
 ## [3.13.2](https://github.com/unjs/unimport/compare/v3.13.1...v3.13.2) (2024-11-14)
 
 
