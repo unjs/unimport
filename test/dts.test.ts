@@ -103,6 +103,9 @@ it('dts', async () => {
         export type { JQuery } from 'jquery'
         import('jquery')
         // @ts-ignore
+        export type { PascalCased } from '<root>/playground/composables/PascalCased'
+        import('<root>/playground/composables/PascalCased')
+        // @ts-ignore
         export type { CustomEnum, CustomType1, CustomInterface1 } from '<root>/playground/composables/index'
         import('<root>/playground/composables/index')
         // @ts-ignore
