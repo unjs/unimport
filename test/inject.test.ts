@@ -129,6 +129,25 @@ console.log(fooBar())
       `)
   })
 
+  it('injection at end with regex', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+      injectAtEnd: true,
+    })
+
+    expect((await injectImports(`
+const regex = /\//
+const regex1 = /a[/]bcd/
+fooBar()
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+      "import { fooBar } from 'test-id';
+      const regex = /\//
+      const regex1 = /a[/]bcd/
+      fooBar()"
+      `)
+  })
+
   it('injection at end with mixed imports', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
