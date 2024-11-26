@@ -51,7 +51,7 @@
     "estree-walker": "^3.0.3",
     "fast-glob": "^3.3.2",
     "local-pkg": "^0.5.1",
-    "magic-string": "^0.30.13",
+    "magic-string": "^0.30.14",
     "mlly": "^1.7.3",
     "pathe": "^1.1.2",
     "pkg-types": "^1.2.1",
@@ -60,19 +60,19 @@
     "unplugin": "^1.16.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.9.2",
+    "@antfu/eslint-config": "^3.10.0",
     "@types/estree": "^1.0.6",
-    "@types/node": "^22.9.1",
-    "@vitest/coverage-v8": "^2.1.5",
+    "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^2.1.6",
     "bumpp": "^9.8.1",
     "conventional-changelog-cli": "^5.0.0",
     "eslint": "^9.15.0",
     "h3": "^1.13.0",
     "jquery": "^3.7.1",
     "lit": "^3.2.1",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.2",
     "unbuild": "^2.0.0",
-    "vitest": "^2.1.5",
+    "vitest": "^2.1.6",
     "vue-tsc": "^2.1.10"
   }
 }
