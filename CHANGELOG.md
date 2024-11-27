@@ -1,3 +1,12 @@
+## [3.13.4](https://github.com/unjs/unimport/compare/v3.13.3...v3.13.4) (2024-11-27)
+
+
+### Bug Fixes
+
+* upgrade `string-literal` to fix injecting import for the code with `/a[/]bcd/` ([#393](https://github.com/unjs/unimport/issues/393)) ([8c03bf6](https://github.com/unjs/unimport/commit/8c03bf6527256fd4abd0e4aa89e2d28a3854b49b))
+
+
+
 ## [3.13.3](https://github.com/unjs/unimport/compare/v3.13.2...v3.13.3) (2024-11-23)
 
 
