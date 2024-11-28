@@ -45,6 +45,7 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
+    "@antfu/utils": "catalog:",
     "@rollup/pluginutils": "catalog:",
     "acorn": "catalog:",
     "escape-string-regexp": "catalog:",
@@ -52,6 +53,7 @@
     "fast-glob": "catalog:",
     "local-pkg": "catalog:",
     "magic-string": "catalog:",
+    "minimatch": "catalog:",
     "mlly": "catalog:",
     "pathe": "catalog:",
     "pkg-types": "catalog:",

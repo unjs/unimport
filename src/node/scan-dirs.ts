@@ -1,52 +1,17 @@
 import type { ESMExport } from 'mlly'
-import type { Import, ScanDirExportsOptions } from '../types'
+import type { Import, ScanDir, ScanDirExportsOptions } from '../types'
 
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { slash } from '@antfu/utils'
 import fg from 'fast-glob'
+import { minimatch } from 'minimatch'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
 import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import { camelCase } from 'scule'
-
-export async function scanFilesFromDir(dir: string | string[], options?: ScanDirExportsOptions) {
-  const dirs = (Array.isArray(dir) ? dir : [dir]).map(d => normalize(d))
-
-  const fileFilter = options?.fileFilter || (() => true)
-  const filePatterns = options?.filePatterns || ['*.{ts,js,mjs,cjs,mts,cts}']
-
-  const result = await Promise.all(
-    // Do multiple glob searches to persist the order of input dirs
-    dirs.map(async i => await fg(
-      [i, ...filePatterns.map(p => join(i, p))],
-      {
-        absolute: true,
-        cwd: options?.cwd || process.cwd(),
-        onlyFiles: true,
-        followSymbolicLinks: true,
-      },
-    )
-      .then(r => r
-        .map(f => normalize(f))
-        .sort(),
-      ),
-    ),
-  )
-
-  return Array.from(new Set(result.flat())).filter(fileFilter)
-}
-
-export async function scanDirExports(dir: string | string[], options?: ScanDirExportsOptions) {
-  const files = await scanFilesFromDir(dir, options)
-  const includeTypes = options?.types ?? true
-  const fileExports = await Promise.all(files.map(i => scanExports(i, includeTypes)))
-  const exports = fileExports.flat()
-
-  const deduped = dedupeDtsExports(exports)
-  return deduped
-}
 
 const FileExtensionLookup = [
   '.mts',
@@ -56,6 +21,68 @@ const FileExtensionLookup = [
   '.cjs',
   '.js',
 ]
+
+const FileLookupPatterns = `*.{${FileExtensionLookup.map(i => i.slice(1)).join(',')}}`
+
+function resolveGlobsExclude(glob: string, cwd: string) {
+  return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(/^!/, ''))}`
+}
+
+export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirExportsOptions): Required<ScanDir>[] {
+  const topLevelTypes = options?.types ?? true
+  const cwd = options?.cwd ?? process.cwd()
+  const filePatterns = options?.filePatterns || [FileLookupPatterns]
+
+  return dirs.map((dir) => {
+    const isString = typeof dir === 'string'
+
+    return filePatterns.map((filePattern) => {
+      const glob = slash(join(resolveGlobsExclude(isString ? dir : dir.glob, cwd), filePattern))
+      const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
+      return { glob, types }
+    })
+  }).flat()
+}
+
+export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanDirExportsOptions) {
+  const dirGlobs = (Array.isArray(dir) ? dir : [dir]).map(i => i.glob)
+  const files = await fg(
+    dirGlobs,
+    {
+      absolute: true,
+      cwd: options?.cwd || process.cwd(),
+      onlyFiles: true,
+      followSymbolicLinks: true,
+      unique: true,
+    },
+  )
+
+  const fileFilter = options?.fileFilter || (() => true)
+
+  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => minimatch(normalize(file), glob))
+  const fileSortByDirs = files.reduce((acc, file) => {
+    const index = indexOfDirs(file)
+    if (acc[index])
+      acc[index].push(normalize(file))
+    else
+      acc[index] = [normalize(file)]
+    return acc
+  }, [] as string[][]).map(files => files.sort()).flat()
+
+  return fileSortByDirs.filter(fileFilter)
+}
+
+export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanDirExportsOptions) {
+  const normalizedDirs = normalizeScanDirs(dirs, options)
+  const files = await scanFilesFromDir(normalizedDirs, options)
+
+  const includeTypesDirs = normalizedDirs.filter(dir => !dir.glob.startsWith('!') && dir.types)
+  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => minimatch(slash(file), dir.glob))
+
+  const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
+  const deduped = dedupeDtsExports(imports)
+  return deduped
+}
 
 export function dedupeDtsExports(exports: Import[]) {
   // Dedupe imports for the same export name exists in both `.js` and `.d.ts` file,

@@ -241,7 +241,7 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
    * Directories to scan for auto import
    * @default []
    */
-  dirs?: string[]
+  dirs?: (string | ScanDir)[]
 
   /**
    * Options for scanning directories for auto import
@@ -301,6 +301,20 @@ export interface ScanDirExportsOptions {
    * @default process.cwd()
    */
   cwd?: string
+}
+
+export interface ScanDir {
+  /**
+   * Path pattern of the directory
+   */
+  glob: string
+
+  /**
+   * Register type exports
+   *
+   * @default true
+   */
+  types?: boolean
 }
 
 export interface TypeDeclarationOptions {

@@ -19,6 +19,7 @@ it('public-api', async () => {
         "installGlobalAutoImports",
         "matchRE",
         "normalizeImports",
+        "normalizeScanDirs",
         "resolveBuiltinPresets",
         "resolveIdAbsolute",
         "resolvePreset",

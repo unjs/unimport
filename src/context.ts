@@ -11,10 +11,12 @@ import type {
   UnimportOptions,
 } from './types'
 
+import { slash } from '@antfu/utils'
+import { minimatch } from 'minimatch'
 import { version } from '../package.json'
 import { configureAddons } from './addons/addons'
 import { detectImports } from './detect'
-import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
+import { dedupeDtsExports, normalizeScanDirs, scanExports, scanFilesFromDir } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
 import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 
@@ -48,9 +50,13 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   }
 
   async function scanImportsFromDir(dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
-    const files = await scanFilesFromDir(dirs, options)
-    const includeTypes = options?.types ?? true
-    const imports = (await Promise.all(files.map(dir => scanExports(dir, includeTypes)))).flat()
+    const normalizedDirs = normalizeScanDirs(dirs, options)
+    const files = await scanFilesFromDir(normalizedDirs, options)
+
+    const includeTypesDirs = normalizedDirs.filter(dir => !dir.glob.startsWith('!') && dir.types)
+    const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => minimatch(slash(file), dir.glob))
+
+    const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
     const deduped = dedupeDtsExports(imports)
     await ctx.modifyDynamicImports(imports => imports.filter(i => !files.includes(i.from)).concat(deduped))
     return imports

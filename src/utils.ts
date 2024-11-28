@@ -1,7 +1,7 @@
 import type { StaticImport } from 'mlly'
 import type { Import, InlinePreset, MagicStringResult, PathFromResolver, TypeDeclarationOptions } from './types'
 import MagicString from 'magic-string'
-import { findStaticImports, parseStaticImport, resolvePath } from 'mlly'
+import { findStaticImports, parseStaticImport, resolvePathSync } from 'mlly'
 import { isAbsolute, relative } from 'pathe'
 import { stripCommentsAndStrings } from './regexp'
 
@@ -394,7 +394,7 @@ export function normalizeImports(imports: Import[]): Import[] {
 }
 
 export function resolveIdAbsolute(id: string, parentId?: string) {
-  return resolvePath(id, {
+  return resolvePathSync(id, {
     url: parentId,
   })
 }
