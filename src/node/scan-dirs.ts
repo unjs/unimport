@@ -15,9 +15,11 @@ const FileExtensionLookup = [
   'mts',
   'cts',
   'ts',
+  'tsx',
   'mjs',
   'cjs',
   'js',
+  'jsx',
 ]
 
 const FileLookupPatterns = `*.{${FileExtensionLookup.join(',')}}`

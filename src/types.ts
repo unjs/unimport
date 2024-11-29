@@ -137,7 +137,7 @@ export interface Unimport {
    */
   injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => Promise<ImportInjectionResult>
 
-  scanImportsFromDir: (dir?: string[], options?: ScanDirExportsOptions) => Promise<Import[]>
+  scanImportsFromDir: (dir?: (string | ScanDir)[], options?: ScanDirExportsOptions) => Promise<Import[]>
   scanImportsFromFile: (file: string, includeTypes?: boolean) => Promise<Import[]>
 
   /**
