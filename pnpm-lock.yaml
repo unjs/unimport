@@ -42,9 +42,6 @@ catalogs:
     estree-walker:
       specifier: ^3.0.3
       version: 3.0.3
-    fast-glob:
-      specifier: ^3.3.2
-      version: 3.3.2
     h3:
       specifier: ^1.13.0
       version: 1.13.0
@@ -60,9 +57,6 @@ catalogs:
     magic-string:
       specifier: ^0.30.14
       version: 0.30.14
-    micromatch:
-      specifier: ^4.0.8
-      version: 4.0.8
     mlly:
       specifier: ^1.7.3
       version: 1.7.3
@@ -119,24 +113,21 @@ importers:
       estree-walker:
         specifier: 'catalog:'
         version: 3.0.3
-      fast-glob:
-        specifier: 'catalog:'
-        version: 3.3.2
       local-pkg:
         specifier: 'catalog:'
         version: 0.5.1
       magic-string:
         specifier: 'catalog:'
         version: 0.30.14
-      micromatch:
-        specifier: 'catalog:'
-        version: 4.0.8
       mlly:
         specifier: 'catalog:'
         version: 1.7.3
       pathe:
         specifier: 'catalog:'
         version: 1.1.2
+      picomatch:
+        specifier: ^4.0.2
+        version: 4.0.2
       pkg-types:
         specifier: 'catalog:'
         version: 1.2.1
@@ -146,6 +137,9 @@ importers:
       strip-literal:
         specifier: 'catalog:'
         version: 2.1.1
+      tinyglobby:
+        specifier: ^0.2.10
+        version: 0.2.10
       unplugin:
         specifier: 'catalog:'
         version: 1.16.0
@@ -162,6 +156,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.10.0
+      '@types/picomatch':
+        specifier: ^3.0.1
+        version: 3.0.1
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 2.1.6(vitest@2.1.6(@types/node@22.10.0)(jiti@1.21.6))
@@ -1112,6 +1109,9 @@ packages:
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/picomatch@3.0.1':
+    resolution: {integrity: sha512-1MRgzpzY0hOp9pW/kLRxeQhUWwil6gnrUYd3oEpeYBqp/FexhaCPv3F8LsYr47gtUU45fO2cm1dbwkSrHEo8Uw==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -4008,6 +4008,8 @@ snapshots:
       undici-types: 6.20.0
 
   '@types/normalize-package-data@2.4.4': {}
+
+  '@types/picomatch@3.0.1': {}
 
   '@types/resolve@1.20.2': {}
 
