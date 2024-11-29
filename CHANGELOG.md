@@ -1,3 +1,12 @@
+## [3.14.2](https://github.com/unjs/unimport/compare/v3.14.1...v3.14.2) (2024-11-29)
+
+
+### Bug Fixes
+
+* **scan-dirs:** add `tsx` and `jsx` into default file extensions ([#397](https://github.com/unjs/unimport/issues/397)) ([1c0aaeb](https://github.com/unjs/unimport/commit/1c0aaeba6afcabcb919a9c6a1926009bf2ef780b))
+
+
+
 ## [3.14.1](https://github.com/unjs/unimport/compare/v3.14.0...v3.14.1) (2024-11-29)
 
 
