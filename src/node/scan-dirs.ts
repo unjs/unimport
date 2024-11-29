@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import fg from 'fast-glob'
-import { minimatch } from 'minimatch'
+import { isMatch } from 'micromatch'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
 import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import { camelCase } from 'scule'
@@ -58,7 +58,7 @@ export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanD
 
   const fileFilter = options?.fileFilter || (() => true)
 
-  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => minimatch(file, glob))
+  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => isMatch(file, glob))
   const fileSortByDirs = files.reduce((acc, file) => {
     const index = indexOfDirs(file)
     if (acc[index])
@@ -76,7 +76,7 @@ export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanD
   const files = await scanFilesFromDir(normalizedDirs, options)
 
   const includeTypesDirs = normalizedDirs.filter(dir => !dir.glob.startsWith('!') && dir.types)
-  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => minimatch(file, dir.glob))
+  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => isMatch(file, dir.glob))
 
   const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
   const deduped = dedupeDtsExports(imports)

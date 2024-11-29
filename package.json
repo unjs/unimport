@@ -52,7 +52,7 @@
     "fast-glob": "catalog:",
     "local-pkg": "catalog:",
     "magic-string": "catalog:",
-    "minimatch": "catalog:",
+    "micromatch": "catalog:",
     "mlly": "catalog:",
     "pathe": "catalog:",
     "pkg-types": "catalog:",
@@ -63,6 +63,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@types/estree": "catalog:",
+    "@types/micromatch": "^4.0.9",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:",
