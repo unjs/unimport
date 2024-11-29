@@ -5,7 +5,7 @@ import { scanDirExports, stringifyImports } from '../src'
 describe('scan-dirs', () => {
   it('scanDirExports', async () => {
     const dir = join(__dirname, '../playground/composables')
-    expect((await scanDirExports(dir))
+    expect((await scanDirExports([dir]))
       .map(i => ({
         ...i,
         from: relative(dir, i.from),
@@ -122,9 +122,35 @@ describe('scan-dirs', () => {
       `)
   })
 
+  it('scanDirExports exclude glob', async () => {
+    const dir = join(__dirname, '../playground/composables/nested')
+    expect((await scanDirExports([dir, `!${join(dir, 'bar')}`]))
+      .map(i => ({
+        ...i,
+        from: relative(dir, i.from),
+      }))
+      .sort((a, b) => a.as!.localeCompare(b.as!)),
+    )
+      .toMatchInlineSnapshot(`
+        [
+          {
+            "as": "CustomType3",
+            "from": "index.ts",
+            "name": "CustomType3",
+            "type": true,
+          },
+          {
+            "as": "nested",
+            "from": "index.ts",
+            "name": "default",
+          },
+        ]
+      `)
+  })
+
   it('scanDirExports nested', async () => {
     const dir = join(__dirname, '../playground/composables')
-    expect((await scanDirExports(dir, {
+    expect((await scanDirExports([dir], {
       filePatterns: [
         '*.{ts,js,mjs,cjs,mts,cts}',
         '*/index.{ts,js,mjs,cjs,mts,cts}',
@@ -138,7 +164,7 @@ describe('scan-dirs', () => {
 
   it('scanDirExports star', async () => {
     const dir = join(__dirname, '../playground/composables')
-    const importsResult = (await scanDirExports(dir, {
+    const importsResult = (await scanDirExports([dir], {
       filePatterns: [
         'nested/bar/index.ts',
       ],
@@ -203,5 +229,19 @@ describe('scan-dirs', () => {
 
     expect(result1.at(-1)?.from).toBe(join(secondFolder, 'foo.ts'))
     expect(result2.at(0)?.from).toBe(join(secondFolder, 'foo.ts'))
+  })
+
+  it('scanDirs specific dirs types disable/enable', async () => {
+    const dir = join(__dirname, '../playground/composables/nested')
+    const barDir = join(__dirname, '../playground/composables/nested/bar')
+
+    const exports1 = await scanDirExports([dir, { glob: barDir, types: false }])
+    expect(exports1.some(i => i.name === 'CustomType2')).toEqual(false)
+    expect(exports1.some(i => i.name === 'CustomType3')).toEqual(true)
+
+    const exports2 = await scanDirExports([dir, { glob: barDir, types: true }], { types: false })
+
+    expect(exports2.some(i => i.name === 'CustomType2')).toEqual(true)
+    expect(exports2.some(i => i.name === 'CustomType3')).toEqual(false)
   })
 })

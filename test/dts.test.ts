@@ -112,6 +112,9 @@ it('dts', async () => {
         export type { CustomType2 } from '<root>/playground/composables/nested/bar/sub/index'
         import('<root>/playground/composables/nested/bar/sub/index')
         // @ts-ignore
+        export type { CustomType3 } from '<root>/playground/composables/nested/index'
+        import('<root>/playground/composables/nested/index')
+        // @ts-ignore
         export type { vanillaTypeOnlyFunction, VanillaInterface, VanillaInterfaceAlias } from '<root>/playground/composables/vanilla.d'
         import('<root>/playground/composables/vanilla.d')
       }"

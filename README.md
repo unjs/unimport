@@ -239,12 +239,40 @@ Unimport.vite({
 ### Directory Auto Import
 
 ```ts
-dirs: [
-  './composables/*'
-]
+Unimport.vite({
+  dirs: [
+    './composables/**/*',
+    {
+      glob: './composables/nested/**/*',
+      types: false // disable scan the type declarations
+    }
+  ]
+})
 ```
 
-Named exports for modules under `./composables/*` will be registered for auto imports.
+Named exports for modules under `./composables/**/*` will be registered for auto imports, and filter out the types in `./composables/nested/**/*`.
+
+#### Directory Scan Options
+
+You can also provide custom options for directory scan, for example:
+
+```ts
+Unimport.vite({
+  dirsScanOptions: {
+    filePatterns: ['*.ts'], // optional, default `['*.{ts,js,mjs,cjs,mts,cts}']`, glob patterns for matching files
+    fileFilter: file => file.endsWith('.ts'), // optional, default `() => true`, filter files
+    types: true, // optional, default `true`, enable/disable scan the type declarations
+    cwd: process.cwd(), // optional, default `process.cwd()`, custom cwd for directory scan
+  },
+  dirs: [
+    './composables/**/*',
+    {
+      glob: './composables/nested/**/*',
+      types: false
+    }
+  ]
+})
+```
 
 ### Opt-out Auto Import
 

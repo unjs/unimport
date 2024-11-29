@@ -14,7 +14,7 @@ import type {
 import { version } from '../package.json'
 import { configureAddons } from './addons/addons'
 import { detectImports } from './detect'
-import { dedupeDtsExports, scanExports, scanFilesFromDir } from './node/scan-dirs'
+import { scanDirExports, scanExports } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
 import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 
@@ -48,11 +48,9 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   }
 
   async function scanImportsFromDir(dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
-    const files = await scanFilesFromDir(dirs, options)
-    const includeTypes = options?.types ?? true
-    const imports = (await Promise.all(files.map(dir => scanExports(dir, includeTypes)))).flat()
-    const deduped = dedupeDtsExports(imports)
-    await ctx.modifyDynamicImports(imports => imports.filter(i => !files.includes(i.from)).concat(deduped))
+    const imports = await scanDirExports(dirs, options)
+    const files = new Set(imports.map(f => f.from))
+    await ctx.modifyDynamicImports(i => i.filter(i => !files.has(i.from)).concat(imports))
     return imports
   }
 
