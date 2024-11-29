@@ -1,3 +1,12 @@
+## [3.14.1](https://github.com/unjs/unimport/compare/v3.14.0...v3.14.1) (2024-11-29)
+
+
+### Bug Fixes
+
+* **build:** publish script ([e59424c](https://github.com/unjs/unimport/commit/e59424cd35f2b65957387779f3a5572c56b3c598))
+
+
+
 # [3.14.0](https://github.com/unjs/unimport/compare/v3.13.4...v3.14.0) (2024-11-29)
 
 
