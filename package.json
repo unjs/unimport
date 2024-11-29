@@ -63,7 +63,6 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@types/estree": "catalog:",
-    "@types/micromatch": "^4.0.9",
     "@types/node": "catalog:",
     "@types/picomatch": "^3.0.1",
     "@vitest/coverage-v8": "catalog:",
