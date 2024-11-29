@@ -3,10 +3,8 @@ import type { Import, ScanDir, ScanDirExportsOptions } from '../types'
 
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
-import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import { slash } from '@antfu/utils'
 import fg from 'fast-glob'
 import { minimatch } from 'minimatch'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
@@ -14,15 +12,15 @@ import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import { camelCase } from 'scule'
 
 const FileExtensionLookup = [
-  '.mts',
-  '.cts',
-  '.ts',
-  '.mjs',
-  '.cjs',
-  '.js',
+  'mts',
+  'cts',
+  'ts',
+  'mjs',
+  'cjs',
+  'js',
 ]
 
-const FileLookupPatterns = `*.{${FileExtensionLookup.map(i => i.slice(1)).join(',')}}`
+const FileLookupPatterns = `*.{${FileExtensionLookup.join(',')}}`
 
 function resolveGlobsExclude(glob: string, cwd: string) {
   return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(/^!/, ''))}`
@@ -37,7 +35,7 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
     const isString = typeof dir === 'string'
 
     return filePatterns.map((filePattern) => {
-      const glob = slash(join(resolveGlobsExclude(isString ? dir : dir.glob, cwd), filePattern))
+      const glob = join(resolveGlobsExclude(isString ? dir : dir.glob, cwd), filePattern)
       const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
       return { glob, types }
     })
@@ -46,7 +44,7 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
 
 export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanDirExportsOptions) {
   const dirGlobs = (Array.isArray(dir) ? dir : [dir]).map(i => i.glob)
-  const files = await fg(
+  const files = (await fg(
     dirGlobs,
     {
       absolute: true,
@@ -55,11 +53,12 @@ export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanD
       followSymbolicLinks: true,
       unique: true,
     },
-  )
+  ))
+    .map(i => normalize(i))
 
   const fileFilter = options?.fileFilter || (() => true)
 
-  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => minimatch(normalize(file), glob))
+  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => minimatch(file, glob))
   const fileSortByDirs = files.reduce((acc, file) => {
     const index = indexOfDirs(file)
     if (acc[index])
@@ -77,7 +76,7 @@ export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanD
   const files = await scanFilesFromDir(normalizedDirs, options)
 
   const includeTypesDirs = normalizedDirs.filter(dir => !dir.glob.startsWith('!') && dir.types)
-  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => minimatch(slash(file), dir.glob))
+  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => minimatch(file, dir.glob))
 
   const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
   const deduped = dedupeDtsExports(imports)
@@ -148,12 +147,12 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           let subfilepathResolved = false
 
           for (const ext of FileExtensionLookup) {
-            if (existsSync(`${subfilepath}${ext}`)) {
-              subfilepath = `${subfilepath}${ext}`
+            if (existsSync(`${subfilepath}.${ext}`)) {
+              subfilepath = `${subfilepath}.${ext}`
               break
             }
-            else if (existsSync(`${subfilepath}/index${ext}`)) {
-              subfilepath = `${subfilepath}/index${ext}`
+            else if (existsSync(`${subfilepath}/index.${ext}`)) {
+              subfilepath = `${subfilepath}/index.${ext}`
               break
             }
           }
@@ -165,7 +164,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
             // Try to resolve the module
             try {
               subfilepath = await mllyResolve(exp.specifier)
-              subfilepath = fileURLToPath(subfilepath).replaceAll(path.sep, '/')
+              subfilepath = normalize(fileURLToPath(subfilepath))
               if (existsSync(subfilepath)) {
                 subfilepathResolved = true
               }

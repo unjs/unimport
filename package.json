@@ -45,7 +45,6 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@antfu/utils": "catalog:",
     "@rollup/pluginutils": "catalog:",
     "acorn": "catalog:",
     "escape-string-regexp": "catalog:",
