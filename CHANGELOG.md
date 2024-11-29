@@ -1,3 +1,17 @@
+# [3.14.0](https://github.com/unjs/unimport/compare/v3.13.4...v3.14.0) (2024-11-29)
+
+
+### Features
+
+* **scan-dirs:** support exclude glob and set dirs exclude types ([#395](https://github.com/unjs/unimport/issues/395)) ([5978277](https://github.com/unjs/unimport/commit/5978277795edde32cb0e7405100cc334bf96f379))
+
+
+### Performance Improvements
+
+* move `fast-glob` to `tinyglobby` ([#396](https://github.com/unjs/unimport/issues/396)) ([97bfaa0](https://github.com/unjs/unimport/commit/97bfaa07b465fa75df29e1261700c2754cb9df6b))
+
+
+
 ## [3.13.4](https://github.com/unjs/unimport/compare/v3.13.3...v3.13.4) (2024-11-27)
 
 
