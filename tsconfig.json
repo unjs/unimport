@@ -11,6 +11,7 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "types": [
+      "node",
       "vite/client"
     ],
     "strict": true,

@@ -5,11 +5,11 @@ import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import fg from 'fast-glob'
-import mm from 'micromatch'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
 import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
+import pm from 'picomatch'
 import { camelCase } from 'scule'
+import { glob } from 'tinyglobby'
 
 const FileExtensionLookup = [
   'mts',
@@ -44,21 +44,20 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
 
 export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanDirExportsOptions) {
   const dirGlobs = (Array.isArray(dir) ? dir : [dir]).map(i => i.glob)
-  const files = (await fg(
+  const files = (await glob(
     dirGlobs,
     {
       absolute: true,
       cwd: options?.cwd || process.cwd(),
       onlyFiles: true,
       followSymbolicLinks: true,
-      unique: true,
     },
   ))
     .map(i => normalize(i))
 
   const fileFilter = options?.fileFilter || (() => true)
 
-  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => mm.isMatch(file, glob))
+  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => pm.isMatch(file, glob))
   const fileSortByDirs = files.reduce((acc, file) => {
     const index = indexOfDirs(file)
     if (acc[index])
@@ -76,7 +75,7 @@ export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanD
   const files = await scanFilesFromDir(normalizedDirs, options)
 
   const includeTypesDirs = normalizedDirs.filter(dir => !dir.glob.startsWith('!') && dir.types)
-  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => mm.isMatch(file, dir.glob))
+  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => pm.isMatch(file, dir.glob))
 
   const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
   const deduped = dedupeDtsExports(imports)
