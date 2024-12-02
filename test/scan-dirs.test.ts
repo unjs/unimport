@@ -244,4 +244,19 @@ describe('scan-dirs', () => {
     expect(exports2.some(i => i.name === 'CustomType2')).toEqual(true)
     expect(exports2.some(i => i.name === 'CustomType3')).toEqual(false)
   })
+
+  it('scanDirs default file pattern', async () => {
+    const dir = join(__dirname, '../playground/composables/nested')
+    const exports = await scanDirExports([dir])
+    expect(exports.some(i => i.name === 'CustomType3')).toEqual(true)
+
+    const dirWithSingleAsterisk = join(__dirname, '../playground/composables/nested/*')
+    const singleAsteriskExports = await scanDirExports([dirWithSingleAsterisk])
+    expect(singleAsteriskExports.some(i => i.name === 'CustomType3')).toEqual(true)
+
+    const dirWithDoubleAsterisk = join(__dirname, '../playground/composables/nested/**')
+    const doubleAsteriskExports = await scanDirExports([dirWithDoubleAsterisk])
+    expect(doubleAsteriskExports.some(i => i.name === 'CustomType3')).toEqual(true)
+    expect(doubleAsteriskExports.some(i => i.name === 'CustomType2')).toEqual(true)
+  })
 })
