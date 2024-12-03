@@ -1,6 +1,6 @@
 import { join, relative } from 'pathe'
 import { describe, expect, it } from 'vitest'
-import { scanDirExports, stringifyImports } from '../src'
+import { normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
 
 describe('scan-dirs', () => {
   it('scanDirExports', async () => {
@@ -259,4 +259,41 @@ describe('scan-dirs', () => {
     expect(doubleAsteriskExports.some(i => i.name === 'CustomType3')).toEqual(true)
     expect(doubleAsteriskExports.some(i => i.name === 'CustomType2')).toEqual(true)
   })
+})
+
+it('normalizeScanDirs', () => {
+  expect(normalizeScanDirs(['playground/composables/nested'], {
+    cwd: '/',
+  }))
+    .toMatchInlineSnapshot(`
+      [
+        {
+          "glob": "/playground/composables/nested/*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}",
+          "types": true,
+        },
+      ]
+    `)
+  expect(normalizeScanDirs(['playground/composables/nested/*'], {
+    cwd: '/',
+    types: false,
+  }))
+    .toMatchInlineSnapshot(`
+      [
+        {
+          "glob": "/playground/composables/nested/*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}",
+          "types": false,
+        },
+      ]
+    `)
+  expect(normalizeScanDirs(['playground/composables/nested/**'], {
+    cwd: '/',
+  }))
+    .toMatchInlineSnapshot(`
+      [
+        {
+          "glob": "/playground/composables/nested/**/*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}",
+          "types": true,
+        },
+      ]
+    `)
 })
