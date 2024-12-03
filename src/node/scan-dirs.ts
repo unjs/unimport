@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
-import { dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
+import { basename, dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import pm from 'picomatch'
 import { camelCase } from 'scule'
 import { glob } from 'tinyglobby'
@@ -28,6 +28,10 @@ function resolveGlobsExclude(glob: string, cwd: string) {
   return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(/^!/, ''))}`
 }
 
+function joinGlobFilePattern(glob: string, filePattern: string) {
+  return join(basename(glob) === '*' ? dirname(glob) : glob, filePattern)
+}
+
 export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirExportsOptions): Required<ScanDir>[] {
   const topLevelTypes = options?.types ?? true
   const cwd = options?.cwd ?? process.cwd()
@@ -37,7 +41,7 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
     const isString = typeof dir === 'string'
 
     return filePatterns.map((filePattern) => {
-      const glob = join(resolveGlobsExclude(isString ? dir : dir.glob, cwd), filePattern)
+      const glob = joinGlobFilePattern(resolveGlobsExclude(isString ? dir : dir.glob, cwd), filePattern)
       const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
       return { glob, types }
     })
