@@ -1,3 +1,12 @@
+## [3.14.3](https://github.com/unjs/unimport/compare/v3.14.2...v3.14.3) (2024-12-03)
+
+
+### Bug Fixes
+
+* **scan-dirs:** correctly add the file pattern to the dirs glob. ([#400](https://github.com/unjs/unimport/issues/400)) ([3db6721](https://github.com/unjs/unimport/commit/3db67216c30605e0608f004c8661f9a337499367))
+
+
+
 ## [3.14.2](https://github.com/unjs/unimport/compare/v3.14.1...v3.14.2) (2024-11-29)
 
 
