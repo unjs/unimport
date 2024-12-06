@@ -239,6 +239,9 @@ function makeTypeModulesMap(imports: Import[], resolvePath?: PathFromResolver) {
 export function toTypeReExports(imports: Import[], options?: TypeDeclarationOptions) {
   const importsMap = makeTypeModulesMap(imports, options?.resolvePath)
   const code = Array.from(importsMap).flatMap(([from, module]) => {
+    // ensure we have the correct file extension if we are handling raw declarations
+    from = from.replace(/\.d\.([cm]?)ts$/i, '.$1js')
+
     const { starTypeImport, typeImports } = module
     // TypeScript incorrectly reports an error when re-exporting types in a d.ts file.
     // We use @ts-ignore to suppress the error since it actually works.
