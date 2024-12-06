@@ -1,6 +1,6 @@
 import type { Import } from '../src/types'
 import { describe, expect, it } from 'vitest'
-import { stringifyImports } from '../src/utils'
+import { stringifyImports, toTypeReExports } from '../src/utils'
 
 describe('toImports', () => {
   it('basic', () => {
@@ -108,6 +108,40 @@ describe('toImports', () => {
       import { foobar } from 'test2' with { type: "macro" };
       import defaultAlias from 'test2' with { type: "macro" };
       import 'sideeffects' with { type: "macro" };"
+    `)
+  })
+})
+
+describe('toTypeReExports', () => {
+  it('convert .d.ts path', () => {
+    expect(toTypeReExports(
+      [
+        {
+          from: './foo/bar.d.ts',
+          name: 'fooBar',
+          as: 'fooBar',
+          type: true,
+        },
+        {
+          from: './foo/baz.d.mts',
+          name: 'fooBar',
+          as: 'fooBar',
+          type: true,
+        },
+      ],
+      {
+        resolvePath: x => x.from,
+      },
+    )).toMatchInlineSnapshot(`
+      "// for type re-export
+      declare global {
+        // @ts-ignore
+        export type { fooBar } from './foo/bar.js'
+        import('./foo/bar.js')
+        // @ts-ignore
+        export type { fooBar } from './foo/baz.mjs'
+        import('./foo/baz.mjs')
+      }"
     `)
   })
 })
