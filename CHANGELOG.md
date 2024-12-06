@@ -1,3 +1,12 @@
+## [3.14.4](https://github.com/unjs/unimport/compare/v3.14.3...v3.14.4) (2024-12-06)
+
+
+### Bug Fixes
+
+* normalise `.d.ts` file extensions ([#402](https://github.com/unjs/unimport/issues/402)) ([9d0f558](https://github.com/unjs/unimport/commit/9d0f5588b78282a35b0dbd44ed067d1fa2c33913))
+
+
+
 ## [3.14.3](https://github.com/unjs/unimport/compare/v3.14.2...v3.14.3) (2024-12-03)
 
 
