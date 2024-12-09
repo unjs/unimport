@@ -39,12 +39,11 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
 
   return dirs.map((dir) => {
     const isString = typeof dir === 'string'
+    const glob = resolveGlobsExclude(isString ? dir : dir.glob, cwd)
+    const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
 
-    return filePatterns.map((filePattern) => {
-      const glob = joinGlobFilePattern(resolveGlobsExclude(isString ? dir : dir.glob, cwd), filePattern)
-      const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
-      return { glob, types }
-    })
+    const withFilePatterns = filePatterns.map(filePattern => ({ glob: joinGlobFilePattern(glob, filePattern), types }))
+    return [{ glob, types }, ...withFilePatterns]
   }).flat()
 }
 
