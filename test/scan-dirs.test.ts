@@ -259,6 +259,16 @@ describe('scan-dirs', () => {
     expect(doubleAsteriskExports.some(i => i.name === 'CustomType3')).toEqual(true)
     expect(doubleAsteriskExports.some(i => i.name === 'CustomType2')).toEqual(true)
   })
+
+  it('scanDirs original dirs glob', async () => {
+    const dir = join(__dirname, '../playground/composables/nested/index.ts')
+    const exports = await scanDirExports([dir])
+    expect(exports.some(i => i.name === 'CustomType3')).toEqual(true)
+
+    const dirWithSingleAsterisk = join(__dirname, '../playground/composables/nested/*/index.ts')
+    const singleAsteriskExports = await scanDirExports([dirWithSingleAsterisk])
+    expect(singleAsteriskExports.some(i => i.name === 'CustomType2')).toEqual(true)
+  })
 })
 
 it('normalizeScanDirs', () => {
@@ -267,6 +277,10 @@ it('normalizeScanDirs', () => {
   }))
     .toMatchInlineSnapshot(`
       [
+        {
+          "glob": "/playground/composables/nested",
+          "types": true,
+        },
         {
           "glob": "/playground/composables/nested/*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}",
           "types": true,
@@ -280,6 +294,10 @@ it('normalizeScanDirs', () => {
     .toMatchInlineSnapshot(`
       [
         {
+          "glob": "/playground/composables/nested/*",
+          "types": false,
+        },
+        {
           "glob": "/playground/composables/nested/*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}",
           "types": false,
         },
@@ -290,6 +308,10 @@ it('normalizeScanDirs', () => {
   }))
     .toMatchInlineSnapshot(`
       [
+        {
+          "glob": "/playground/composables/nested/**",
+          "types": true,
+        },
         {
           "glob": "/playground/composables/nested/**/*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}",
           "types": true,
