@@ -42,6 +42,11 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
     const glob = resolveGlobsExclude(isString ? dir : dir.glob, cwd)
     const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
 
+    // Ends with a extension, consider as a file
+    if (glob.match(/\.\w+$/))
+      return { glob, types }
+
+    // Otherwise, append the default file patterns `*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}`
     const withFilePatterns = filePatterns.map(filePattern => ({ glob: joinGlobFilePattern(glob, filePattern), types }))
     return [{ glob, types }, ...withFilePatterns]
   }).flat()

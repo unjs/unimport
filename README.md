@@ -241,6 +241,18 @@ Unimport.vite({
 ```ts
 Unimport.vite({
   dirs: [
+    './composables/*',
+  ]
+})
+```
+
+Scan for modules under `./composables` and auto-import the named exports.
+
+#### Nested Directories
+
+```ts
+Unimport.vite({
+  dirs: [
     './composables/**/*',
     {
       glob: './composables/nested/**/*',
