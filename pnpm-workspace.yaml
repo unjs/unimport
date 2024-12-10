@@ -14,6 +14,7 @@ catalog:
   escape-string-regexp: ^5.0.0
   eslint: ^9.16.0
   estree-walker: ^3.0.3
+  fast-glob: ^3.3.2
   h3: ^1.13.0
   jquery: ^3.7.1
   lit: ^3.2.1

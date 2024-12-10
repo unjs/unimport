@@ -49,6 +49,7 @@
     "acorn": "catalog:",
     "escape-string-regexp": "catalog:",
     "estree-walker": "catalog:",
+    "fast-glob": "catalog:",
     "local-pkg": "catalog:",
     "magic-string": "catalog:",
     "mlly": "catalog:",
@@ -57,7 +58,6 @@
     "pkg-types": "catalog:",
     "scule": "catalog:",
     "strip-literal": "catalog:",
-    "tinyglobby": "catalog:",
     "unplugin": "catalog:"
   },
   "devDependencies": {
