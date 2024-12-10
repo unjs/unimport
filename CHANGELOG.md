@@ -1,3 +1,14 @@
+## [3.14.5](https://github.com/unjs/unimport/compare/v3.14.4...v3.14.5) (2024-12-10)
+
+
+### Bug Fixes
+
+* revert [#396](https://github.com/unjs/unimport/issues/396), move back to `fast-glob` ([7bc76c5](https://github.com/unjs/unimport/commit/7bc76c5f87e2ca9b52062d21fa0dd20381e378cb)), closes [/github.com/nuxt/nuxt/issues/30137#issuecomment-2528141266](https://github.com//github.com/nuxt/nuxt/issues/30137/issues/issuecomment-2528141266)
+* **scan-dirs:** retain the original `dirs` glob scanning ([#406](https://github.com/unjs/unimport/issues/406)) ([e647dfa](https://github.com/unjs/unimport/commit/e647dfa9373ece54198ab5083eae974f78af4d60))
+* support direct file path in `dirs` options ([1671bf1](https://github.com/unjs/unimport/commit/1671bf1d92d7793f83c50505d59711e3b527c4c4))
+
+
+
 ## [3.14.4](https://github.com/unjs/unimport/compare/v3.14.3...v3.14.4) (2024-12-06)
 
 
