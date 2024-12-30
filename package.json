@@ -9,17 +9,14 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./unplugin": {
-      "types": "./dist/unplugin.d.ts",
       "import": "./dist/unplugin.mjs",
       "require": "./dist/unplugin.cjs"
     },
     "./addons": {
-      "types": "./dist/addons.d.ts",
       "import": "./dist/addons.mjs",
       "require": "./dist/addons.cjs"
     },
