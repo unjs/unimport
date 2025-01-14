@@ -2,6 +2,7 @@ import { parse } from 'acorn'
 import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
 import { traveseScopes } from '../src/detect-acorn'
+import { resolverAddon } from './share'
 
 describe('detect-acorn', () => {
   it('scopes', async () => {
@@ -127,6 +128,41 @@ describe('detect-acorn', () => {
             "references": [],
           },
         ]
+      `)
+  })
+
+  it('matchedImports', async () => {
+    const ctx = createUnimport({
+      parser: 'acorn',
+      presets: ['vue'],
+      addons: [
+        resolverAddon(),
+      ],
+    })
+
+    const code = `
+import otherModule from 'otherModule'
+
+const count = ref(0)
+const component1 = ElInput
+const component2 = ElSelect
+const test = notDefined
+console.log(otherModule)
+`.trim()
+
+    expect((await ctx.injectImports(code)).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        import { ElInput, ElSelect } from 'element-plus/es';
+        import 'element-plus/es/components/input/style/index';
+        import 'element-plus/es/components/select/style/index';
+        import otherModule from 'otherModule'
+
+        const count = ref(0)
+        const component1 = ElInput
+        const component2 = ElSelect
+        const test = notDefined
+        console.log(otherModule)"
       `)
   })
 })

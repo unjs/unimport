@@ -1,4 +1,5 @@
-import type { Addon } from '../src'
+import type { Addon, Import } from '../src'
+import { kebabCase } from 'scule'
 
 export function functionWrapAddon(): Addon {
   return {
@@ -27,6 +28,28 @@ export function functionWrapAddon(): Addon {
           '',
         ].join('\n')
       }
+    },
+  }
+}
+
+export function resolverAddon(): Addon {
+  return {
+    name: 'resolver',
+    async matchImports(names, matched) {
+      const dynamic: Import[] = []
+      for (const name of names) {
+        if (!name.match(/^El[A-Z]/))
+          continue
+        dynamic.push({
+          name,
+          from: `element-plus/es`,
+        }, {
+          name: 'default',
+          as: '',
+          from: `element-plus/es/components/${kebabCase(name.slice(2))}/style/index`,
+        })
+      }
+      return [...matched, ...dynamic]
     },
   }
 }
