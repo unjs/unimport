@@ -27,8 +27,6 @@ export async function detectImportsAcorn(
       locations: true,
     })
 
-    const occurrenceMap = new Map<string, number>()
-
     const virtualImports = createVirtualImportsAcronWalker(map, ctx.options.virtualImports)
 
     const scopes = traveseScopes(
@@ -39,15 +37,13 @@ export async function detectImportsAcorn(
     )
 
     if (enableAutoImport) {
-      const identifiers = new Set(occurrenceMap.keys())
+      const identifiers = scopes.unmatched
       matchedImports.push(
-        ...Array.from(scopes.unmatched)
+        ...Array.from(identifiers)
           .map((name) => {
             const item = map.get(name)
             if (item && !item.disabled)
               return item
-
-            occurrenceMap.delete(name)
             return null
           })
           .filter(Boolean) as Import[],
