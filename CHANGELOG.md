@@ -1,3 +1,12 @@
+## [3.14.6](https://github.com/unjs/unimport/compare/v3.14.5...v3.14.6) (2025-01-14)
+
+
+### Bug Fixes
+
+* **detect-acorn:** identifiers variable not being properly assigned ([#415](https://github.com/unjs/unimport/issues/415)) ([d36d8e2](https://github.com/unjs/unimport/commit/d36d8e2c3f2a7b959d96f17eba2c787cbd1b2c79))
+
+
+
 ## [3.14.5](https://github.com/unjs/unimport/compare/v3.14.4...v3.14.5) (2024-12-10)
 
 
