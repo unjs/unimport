@@ -22,7 +22,9 @@ export function vueDirectivesAddon(
 
     isDirective = options.isDirective?.(normalizePath(process.cwd(), importEntry.from), importEntry) ?? false
     if (isDirective) {
-      importEntry.meta ??= {}
+      if (!importEntry.meta) {
+        importEntry.meta = {}
+      }
       importEntry.meta.vueDirective = true
     }
 
