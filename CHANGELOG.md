@@ -1,3 +1,7 @@
+# [4.0.0](https://github.com/unjs/unimport/compare/v3.14.6...v4.0.0) (2025-01-22)
+
+
+
 ## [3.14.6](https://github.com/unjs/unimport/compare/v3.14.5...v3.14.6) (2025-01-14)
 
 
