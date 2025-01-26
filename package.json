@@ -30,7 +30,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18.20.6"
+    "node": ">=22.13.1"
   },
   "scripts": {
     "build": "unbuild",
