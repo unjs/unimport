@@ -2,9 +2,9 @@ import type { FilterPattern } from 'unplugin-utils'
 import type { UnimportOptions } from './types'
 
 import { promises as fs } from 'node:fs'
-import { createFilter } from 'unplugin-utils'
 import MagicString from 'magic-string'
 import { createUnplugin } from 'unplugin'
+import { createFilter } from 'unplugin-utils'
 import { createUnimport } from './context'
 
 export interface UnimportPluginOptions extends UnimportOptions {
