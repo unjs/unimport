@@ -9,9 +9,6 @@ catalogs:
     '@antfu/eslint-config':
       specifier: ^4.1.0
       version: 4.1.0
-    '@rollup/pluginutils':
-      specifier: ^5.1.4
-      version: 5.1.4
     '@types/estree':
       specifier: ^1.0.6
       version: 1.0.6
@@ -90,6 +87,9 @@ catalogs:
     unplugin:
       specifier: ^2.1.2
       version: 2.1.2
+    unplugin-utils:
+      specifier: ^0.2.1
+      version: 0.2.1
     vite:
       specifier: ^6.0.11
       version: 6.0.11
@@ -110,9 +110,6 @@ importers:
 
   .:
     dependencies:
-      '@rollup/pluginutils':
-        specifier: 'catalog:'
-        version: 5.1.4(rollup@4.30.1)
       acorn:
         specifier: 'catalog:'
         version: 8.14.0
@@ -152,6 +149,9 @@ importers:
       unplugin:
         specifier: 'catalog:'
         version: 2.1.2
+      unplugin-utils:
+        specifier: 'catalog:'
+        version: 0.2.1
     devDependencies:
       '@antfu/eslint-config':
         specifier: 'catalog:'
@@ -2988,6 +2988,10 @@ packages:
 
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
+
+  unplugin-utils@0.2.1:
+    resolution: {integrity: sha512-faU4I8x5OyXQ+0SKRxzv78QfuCAQpEGsMM9l3WniKVYoMFe9mAP29xM8QWtz5Cbjv0JdpvQwVWxfb1n53YEgMg==}
+    engines: {node: '>=20.18.0'}
 
   unplugin@2.1.2:
     resolution: {integrity: sha512-Q3LU0e4zxKfRko1wMV2HmP8lB9KWislY7hxXpxd+lGx0PRInE4vhMBVEZwpdVYHvtqzhSrzuIfErsob6bQfCzw==}
@@ -6210,6 +6214,11 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
+
+  unplugin-utils@0.2.1:
+    dependencies:
+      pathe: 2.0.2
+      picomatch: 4.0.2
 
   unplugin@2.1.2:
     dependencies:
