@@ -62,8 +62,10 @@ export function vueDirectivesAddon(
       if (!targets.length)
         return s
 
-      // remove resolveDirective import
-      s.replace(contextText, '')
+      // Remove resolveDirective import only if there are no more directives.
+      // User may be using missing directives or globally registered directives.
+      if (!s.toString().match(directiveRE))
+        s.replace(contextText, '')
 
       for (const addon of this.addons) {
         if (addon === self)

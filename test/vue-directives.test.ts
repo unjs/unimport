@@ -1,4 +1,5 @@
 import process from 'node:process'
+import { findStaticImports } from 'mlly'
 import { describe, expect, it } from 'vitest'
 import { compileTemplate } from 'vue/compiler-sfc'
 import { resolvePresets } from '../playground/configure-directives'
@@ -149,11 +150,14 @@ describe('vue-directives', () => {
           ])
         }"
       `)
-      expect(replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
+      const transformed = replaceRoot((await ctx.injectImports(defaultDirective.code, 'a.vue')).code.toString())
+      const imports = findStaticImports(transformed)
+      expect(imports.some(i => i.imports.includes('_resolveDirective')), '_resolveDirective import should be present').toBeTruthy()
+      expect(transformed).toMatchInlineSnapshot(`
         "import { vRippleDirective as _directive_ripple_directive } from '<root>/directives/ripple-directive.ts';
         import _directive_focus_directive from '<root>/directives/v-focus-directive.ts';
         import { NamedDirective as _directive_named_directive } from '<root>/directives/named-directive.ts';
-        import _directive_awesome_directive from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        import _directive_awesome_directive from '<root>/directives/awesome-directive.ts';import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
           const _directive_missing = _resolveDirective("missing")
