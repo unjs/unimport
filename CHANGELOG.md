@@ -1,3 +1,17 @@
+# [4.1.0](https://github.com/unjs/unimport/compare/v4.0.0...v4.1.0) (2025-02-07)
+
+
+### Bug Fixes
+
+* **vue-directives:** remove `resolveDirective` import when needed ([#428](https://github.com/unjs/unimport/issues/428)) ([7110ef0](https://github.com/unjs/unimport/commit/7110ef04d7e15231b0fe9b2d82b01f42392c6ee1))
+
+
+### Features
+
+* upgrade to pnpm 10 ([052803d](https://github.com/unjs/unimport/commit/052803da7bab2e55c0de3658ca210ba0c836b030))
+
+
+
 # [4.0.0](https://github.com/unjs/unimport/compare/v3.14.6...v4.0.0) (2025-01-22)
 
 
