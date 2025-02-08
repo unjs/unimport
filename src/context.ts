@@ -64,10 +64,18 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     const metadata = ctx.getMetadata()
     if (metadata) {
       result.imports.forEach((i) => {
-        metadata.injectionUsage[i.name] = metadata.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
-        metadata.injectionUsage[i.name].count++
-        if (id && !metadata.injectionUsage[i.name].moduleIds.includes(id))
-          metadata.injectionUsage[i.name].moduleIds.push(id)
+        const injectionUsage = metadata.injectionUsage[i.name] ??= { import: i, count: 0, moduleIds: [] }
+        injectionUsage.count++
+        if (id && !injectionUsage.moduleIds.includes(id)) {
+          injectionUsage.moduleIds.push(id)
+        }
+      })
+      result.addonsImports.forEach((i) => {
+        const injectionUsage = metadata.injectionUsage[i.as ?? i.name] ??= { import: i, count: 0, moduleIds: [] }
+        injectionUsage.count++
+        if (id && !injectionUsage.moduleIds.includes(id)) {
+          injectionUsage.moduleIds.push(id)
+        }
       })
     }
 
@@ -217,11 +225,14 @@ async function injectImports(
       s,
       get code() { return s.toString() },
       imports: [],
+      addonsImports: [],
     }
   }
 
+  const addonsImports: Import[] = []
+
   for (const addon of ctx.addons)
-    await addon.transform?.call(ctx, s, id)
+    await addon.transform?.call(ctx, s, id, addonsImports)
 
   const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options)
   const imports = await resolveImports(ctx, matchedImports, id)
@@ -230,6 +241,7 @@ async function injectImports(
     // eslint-disable-next-line no-console
     const log = ctx.options.debugLog || console.log
     log(`[unimport] ${imports.length} imports detected in "${id}"${imports.length ? `: ${imports.map(i => i.name).join(', ')}` : ''}`)
+    log(`[unimport] ${addonsImports.length} addons imports detected in "${id}"${addonsImports.length ? `: ${addonsImports.map(i => i.as ?? i.name).join(', ')}` : ''}`)
   }
 
   return {
@@ -254,6 +266,7 @@ async function injectImports(
       },
     ),
     imports,
+    addonsImports,
   }
 }
 
