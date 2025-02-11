@@ -1,5 +1,6 @@
 {
   "extends": [
     "github>unjs/renovate-config"
-  ]
+  ],
+  "ignoreDeps": ["node"]
 }
