@@ -1,3 +1,12 @@
+## [4.1.1](https://github.com/unjs/unimport/compare/v4.1.0...v4.1.1) (2025-02-11)
+
+
+### Bug Fixes
+
+* revert engine requirement change ([764694f](https://github.com/unjs/unimport/commit/764694f14d27214981ca69ff7f1972be254949ff))
+
+
+
 # [4.1.0](https://github.com/unjs/unimport/compare/v4.0.0...v4.1.0) (2025-02-07)
 
 
