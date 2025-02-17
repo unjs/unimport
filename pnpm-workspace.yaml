@@ -13,7 +13,6 @@ catalog:
   escape-string-regexp: ^5.0.0
   eslint: ^9.20.1
   estree-walker: ^3.0.3
-  fast-glob: ^3.3.3
   h3: ^1.15.0
   jquery: ^3.7.1
   lit: ^3.2.1
@@ -26,7 +25,7 @@ catalog:
   pkg-types: ^1.3.1
   scule: ^1.3.0
   strip-literal: ^3.0.0
-  tinyglobby: ^0.2.10
+  tinyglobby: ^0.2.11
   typescript: ^5.7.3
   unbuild: ^3.3.1
   unplugin: ^2.2.0
