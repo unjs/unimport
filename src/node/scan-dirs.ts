@@ -5,11 +5,11 @@ import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import fg from 'fast-glob'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
 import { basename, dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
 import pm from 'picomatch'
 import { camelCase } from 'scule'
+import { glob } from 'tinyglobby'
 
 const FileExtensionLookup = [
   'mts',
@@ -54,14 +54,14 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
 
 export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanDirExportsOptions) {
   const dirGlobs = (Array.isArray(dir) ? dir : [dir]).map(i => i.glob)
-  const files = (await fg(
+  const files = (await glob(
     dirGlobs,
     {
       absolute: true,
       cwd: options?.cwd || process.cwd(),
       onlyFiles: true,
       followSymbolicLinks: true,
-      unique: true,
+      expandDirectories: false,
     },
   ))
     .map(i => normalize(i))
