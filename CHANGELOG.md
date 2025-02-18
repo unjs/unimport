@@ -1,3 +1,12 @@
+## [4.1.2](https://github.com/unjs/unimport/compare/v4.1.1...v4.1.2) (2025-02-18)
+
+
+### Features
+
+* switch to tinyglobby 0.2.11 addressing previous performance issues ([#431](https://github.com/unjs/unimport/issues/431)) ([5c16f58](https://github.com/unjs/unimport/commit/5c16f589673f11a6b956dbc5380b9336dd76c96f)), closes [#396](https://github.com/unjs/unimport/issues/396)
+
+
+
 ## [4.1.1](https://github.com/unjs/unimport/compare/v4.1.0...v4.1.1) (2025-02-11)
 
 
