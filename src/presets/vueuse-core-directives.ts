@@ -13,9 +13,10 @@ export interface VueUseCoreDirectivesOptions {
   prefix?: true
 }
 
+let _cache: InlinePreset | undefined
+
 /* c8 ignore start */
 export function VueUseCoreDirectives(options: VueUseCoreDirectivesOptions = {}): InlinePreset {
-  let _cache: InlinePreset | undefined
   if (!_cache) {
     try {
       const corePath = resolveModule('@vueuse/core') || process.cwd()
