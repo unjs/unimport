@@ -29,12 +29,15 @@ export function VueUseCoreDirectives(options: VueUseCoreDirectivesOptions = {}):
         imports: indexesJson
           .functions
           .filter((i: any) => i.directive && i.name)
-          // name is the component name, we need to use the directive name
-          .map(({ name, docs }: any) => ({
-            name: `v${name[0].toUpperCase()}${name.slice(1)}`,
-            as: options.prefix ? `vVueuse${name[0].toUpperCase()}${name.slice(1)}` : undefined,
-            meta: { docsUrl: docs },
-          })),
+          .map(({ name, docs }: any) => {
+            // name is the component name, we need to use the directive name
+            name = name.replace(/^use/, '')
+            return ({
+              name: `v${name[0].toUpperCase()}${name.slice(1)}`,
+              as: options.prefix ? `vVueuse${name[0].toUpperCase()}${name.slice(1)}` : undefined,
+              meta: { docsUrl: docs },
+            })
+          }),
       })
     }
     catch (error) {
