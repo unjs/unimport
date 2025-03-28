@@ -11,12 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "catalog:"
+    "vue": "catalog:playground"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "catalog:",
-    "typescript": "catalog:",
-    "vite": "catalog:",
-    "vite-plugin-inspect": "catalog:"
+    "@vitejs/plugin-vue": "catalog:playground",
+    "typescript": "catalog:dev",
+    "vite": "catalog:playground",
+    "vite-plugin-inspect": "catalog:playground"
   }
 }

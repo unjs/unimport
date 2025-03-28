@@ -1,39 +1,42 @@
 packages:
   - playground
-catalog:
-  '@antfu/eslint-config': ^4.11.0
-  '@types/estree': ^1.0.7
-  '@types/node': ^22.13.14
-  '@types/picomatch': ^3.0.2
-  '@vitejs/plugin-vue': ^5.2.3
-  '@vitest/coverage-v8': ^3.0.9
-  acorn: ^8.14.1
-  bumpp: ^10.1.0
-  conventional-changelog-cli: ^5.0.0
-  escape-string-regexp: ^5.0.0
-  eslint: ^9.23.0
-  estree-walker: ^3.0.3
-  h3: ^1.15.1
-  jquery: ^3.7.1
-  lit: ^3.2.1
-  local-pkg: ^1.1.1
-  magic-string: ^0.30.17
-  micromatch: ^4.0.8
-  mlly: ^1.7.4
-  pathe: ^2.0.3
-  picomatch: ^4.0.2
-  pkg-types: ^2.1.0
-  scule: ^1.3.0
-  strip-literal: ^3.0.0
-  tinyglobby: ^0.2.12
-  typescript: ^5.8.2
-  unbuild: ^3.5.0
-  unplugin: ^2.2.2
-  unplugin-utils: ^0.2.4
-  vite: ^6.2.3
-  vite-plugin-inspect: ^11.0.0
-  vitest: ^3.0.9
-  vue: ^3.5.13
-  vue-tsc: ^2.2.8
+catalogs:
+  dev:
+    '@antfu/eslint-config': ^4.11.0
+    '@types/estree': ^1.0.7
+    '@types/node': ^22.13.14
+    '@types/picomatch': ^3.0.2
+    '@vitest/coverage-v8': ^3.0.9
+    bumpp: ^10.1.0
+    conventional-changelog-cli: ^5.0.0
+    eslint: ^9.23.0
+    typescript: ^5.8.2
+    unbuild: ^3.5.0
+    vue-tsc: ^2.2.8
+  playground:
+    '@vitejs/plugin-vue': ^5.2.3
+    vite: ^6.2.3
+    vite-plugin-inspect: ^11.0.0
+    vue: ^3.5.13
+  prod:
+    acorn: ^8.14.1
+    escape-string-regexp: ^5.0.0
+    estree-walker: ^3.0.3
+    local-pkg: ^1.1.1
+    magic-string: ^0.30.17
+    mlly: ^1.7.4
+    pathe: ^2.0.3
+    picomatch: ^4.0.2
+    pkg-types: ^2.1.0
+    scule: ^1.3.0
+    strip-literal: ^3.0.0
+    tinyglobby: ^0.2.12
+    unplugin: ^2.2.2
+    unplugin-utils: ^0.2.4
+  test:
+    h3: ^1.15.1
+    jquery: ^3.7.1
+    lit: ^3.2.1
+    vitest: ^3.0.9
 onlyBuiltDependencies:
   - esbuild

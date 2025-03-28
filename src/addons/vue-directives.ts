@@ -168,7 +168,7 @@ async function* findDirectives(
   }, new Map<string, DirectiveData>())
 
   for (const [symbol, data] of symbols.entries()) {
-    yield * findDirective(imports, symbol, data)
+    yield* findDirective(imports, symbol, data)
   }
 }
 

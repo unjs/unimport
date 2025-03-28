@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 catalogs:
-  default:
+  dev:
     '@antfu/eslint-config':
       specifier: ^4.11.0
       version: 4.11.0
@@ -18,39 +18,50 @@ catalogs:
     '@types/picomatch':
       specifier: ^3.0.2
       version: 3.0.2
-    '@vitejs/plugin-vue':
-      specifier: ^5.2.3
-      version: 5.2.3
     '@vitest/coverage-v8':
       specifier: ^3.0.9
       version: 3.0.9
-    acorn:
-      specifier: ^8.14.1
-      version: 8.14.1
     bumpp:
       specifier: ^10.1.0
       version: 10.1.0
     conventional-changelog-cli:
       specifier: ^5.0.0
       version: 5.0.0
-    escape-string-regexp:
-      specifier: ^5.0.0
-      version: 5.0.0
     eslint:
       specifier: ^9.23.0
       version: 9.23.0
+    typescript:
+      specifier: ^5.8.2
+      version: 5.8.2
+    unbuild:
+      specifier: ^3.5.0
+      version: 3.5.0
+    vue-tsc:
+      specifier: ^2.2.8
+      version: 2.2.8
+  playground:
+    '@vitejs/plugin-vue':
+      specifier: ^5.2.3
+      version: 5.2.3
+    vite:
+      specifier: ^6.2.3
+      version: 6.2.3
+    vite-plugin-inspect:
+      specifier: ^11.0.0
+      version: 11.0.0
+    vue:
+      specifier: ^3.5.13
+      version: 3.5.13
+  prod:
+    acorn:
+      specifier: ^8.14.1
+      version: 8.14.1
+    escape-string-regexp:
+      specifier: ^5.0.0
+      version: 5.0.0
     estree-walker:
       specifier: ^3.0.3
       version: 3.0.3
-    h3:
-      specifier: ^1.15.1
-      version: 1.15.1
-    jquery:
-      specifier: ^3.7.1
-      version: 3.7.1
-    lit:
-      specifier: ^3.2.1
-      version: 3.2.1
     local-pkg:
       specifier: ^1.1.1
       version: 1.1.1
@@ -78,144 +89,136 @@ catalogs:
     tinyglobby:
       specifier: ^0.2.12
       version: 0.2.12
-    typescript:
-      specifier: ^5.8.2
-      version: 5.8.2
-    unbuild:
-      specifier: ^3.5.0
-      version: 3.5.0
     unplugin:
       specifier: ^2.2.2
       version: 2.2.2
     unplugin-utils:
       specifier: ^0.2.4
       version: 0.2.4
-    vite:
-      specifier: ^6.2.3
-      version: 6.2.3
-    vite-plugin-inspect:
-      specifier: ^11.0.0
-      version: 11.0.0
+  test:
+    h3:
+      specifier: ^1.15.1
+      version: 1.15.1
+    jquery:
+      specifier: ^3.7.1
+      version: 3.7.1
+    lit:
+      specifier: ^3.2.1
+      version: 3.2.1
     vitest:
       specifier: ^3.0.9
       version: 3.0.9
-    vue:
-      specifier: ^3.5.13
-      version: 3.5.13
-    vue-tsc:
-      specifier: ^2.2.8
-      version: 2.2.8
 
 importers:
 
   .:
     dependencies:
       acorn:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 8.14.1
       escape-string-regexp:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 5.0.0
       estree-walker:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 3.0.3
       local-pkg:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 1.1.1
       magic-string:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 0.30.17
       mlly:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 1.7.4
       pathe:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 2.0.3
       picomatch:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 4.0.2
       pkg-types:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 2.1.0
       scule:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 1.3.0
       strip-literal:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 3.0.0
       tinyglobby:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 0.2.12
       unplugin:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 2.2.2
       unplugin-utils:
-        specifier: 'catalog:'
+        specifier: catalog:prod
         version: 0.2.4
     devDependencies:
       '@antfu/eslint-config':
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 4.11.0(@typescript-eslint/utils@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2))(@vue/compiler-sfc@3.5.13)(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.0.9(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0))
       '@types/estree':
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 1.0.7
       '@types/node':
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 22.13.14
       '@types/picomatch':
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 3.0.2
       '@vitest/coverage-v8':
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 3.0.9(vitest@3.0.9(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0))
       bumpp:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 10.1.0(magicast@0.3.5)
       conventional-changelog-cli:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 5.0.0(conventional-commits-filter@5.0.0)
       eslint:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 9.23.0(jiti@2.4.2)
       h3:
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 1.15.1
       jquery:
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.7.1
       lit:
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.2.1
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 5.8.2
       unbuild:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 3.5.0(typescript@5.8.2)(vue-tsc@2.2.8(typescript@5.8.2))(vue@3.5.13(typescript@5.8.2))
       vitest:
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.0.9(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0)
       vue-tsc:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 2.2.8(typescript@5.8.2)
 
   playground:
     dependencies:
       vue:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 3.5.13(typescript@5.8.2)
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 5.2.3(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:dev
         version: 5.8.2
       vite:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0)
       vite-plugin-inspect:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 11.0.0(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0))
 
 packages:
