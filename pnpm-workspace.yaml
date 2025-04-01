@@ -5,7 +5,7 @@ catalogs:
     '@antfu/eslint-config': ^4.11.0
     '@types/estree': ^1.0.7
     '@types/node': ^22.13.14
-    '@types/picomatch': ^3.0.2
+    '@types/picomatch': ^4.0.0
     '@vitest/coverage-v8': ^3.0.9
     bumpp: ^10.1.0
     conventional-changelog-cli: ^5.0.0

@@ -16,8 +16,8 @@ catalogs:
       specifier: ^22.13.14
       version: 22.13.14
     '@types/picomatch':
-      specifier: ^3.0.2
-      version: 3.0.2
+      specifier: ^4.0.0
+      version: 4.0.0
     '@vitest/coverage-v8':
       specifier: ^3.0.9
       version: 3.0.9
@@ -167,7 +167,7 @@ importers:
         version: 22.13.14
       '@types/picomatch':
         specifier: catalog:dev
-        version: 3.0.2
+        version: 4.0.0
       '@vitest/coverage-v8':
         specifier: catalog:dev
         version: 3.0.9(vitest@3.0.9(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(yaml@2.7.0))
@@ -983,8 +983,8 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
-  '@types/picomatch@3.0.2':
-    resolution: {integrity: sha512-n0i8TD3UDB7paoMMxA3Y65vUncFJXjcUf7lQY7YyKGl6031FNjfsLs6pdLFCy2GNFxItPJG8GvvpbZc2skH7WA==}
+  '@types/picomatch@4.0.0':
+    resolution: {integrity: sha512-J1Bng+wlyEERWSgJQU1Pi0HObCLVcr994xT/M+1wcl/yNRTGBupsCxthgkdYG+GCOMaQH7iSVUY3LJVBBqG7MQ==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -3836,7 +3836,7 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
-  '@types/picomatch@3.0.2': {}
+  '@types/picomatch@4.0.0': {}
 
   '@types/resolve@1.20.2': {}
 
