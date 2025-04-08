@@ -3,7 +3,7 @@ import { accessSync, constants, existsSync, promises as fsp } from 'node:fs'
 import os from 'node:os'
 import { resolveModuleExportNames } from 'mlly'
 import { dirname, join } from 'pathe'
-// import { readPackageJSON, resolvePackageJSON } from 'pkg-types' // TODO: use normal import in next major
+import { readPackageJSON, resolvePackageJSON } from 'pkg-types'
 
 const CACHE_PATH = /* #__PURE__ */ join(os.tmpdir(), 'unimport')
 let CACHE_WRITEABLE: boolean | undefined
@@ -31,14 +31,9 @@ export async function resolvePackagePreset(preset: PackagePreset): Promise<Impor
   }))
 }
 
-let pkgTypes: typeof import('pkg-types') | undefined
-
 async function extractExports(name: string, url?: string, cache = true) {
-  if (!pkgTypes) {
-    pkgTypes = await import('pkg-types')
-  }
-  const packageJsonPath = await pkgTypes.resolvePackageJSON(name, { url })
-  const packageJson = await pkgTypes.readPackageJSON(packageJsonPath)
+  const packageJsonPath = await resolvePackageJSON(name, { url })
+  const packageJson = await readPackageJSON(packageJsonPath)
   const version = packageJson.version
   const cachePath = join(CACHE_PATH, `${name}@${version}`, 'exports.json')
 

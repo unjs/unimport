@@ -8,23 +8,14 @@
   "repository": "unjs/unimport",
   "sideEffects": false,
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./unplugin": {
-      "import": "./dist/unplugin.mjs",
-      "require": "./dist/unplugin.cjs"
-    },
-    "./addons": {
-      "import": "./dist/addons.mjs",
-      "require": "./dist/addons.cjs"
-    },
+    ".": "./dist/index.mjs",
+    "./unplugin": "./dist/unplugin.mjs",
+    "./addons": "./dist/addons.mjs",
     "./*": "./*"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "files": [
     "*.d.ts",
     "dist"
