@@ -1,3 +1,17 @@
+# [4.2.0](https://github.com/unjs/unimport/compare/v4.1.3...v4.2.0) (2025-04-08)
+
+
+### Bug Fixes
+
+* dynamically import pkg-types for cjs compat ([#442](https://github.com/unjs/unimport/issues/442)) ([c20f9fb](https://github.com/unjs/unimport/commit/c20f9fbd1985c3ba0ec7f0b6e92e3c21b9022418))
+
+
+### Features
+
+* add `Slot` and `Slots` types to `Vue` preset ([#444](https://github.com/unjs/unimport/issues/444)) ([dddc219](https://github.com/unjs/unimport/commit/dddc21914c2fcccbd0a7dd8eb6a2967f82ec5815))
+
+
+
 ## [4.1.3](https://github.com/unjs/unimport/compare/v4.1.2...v4.1.3) (2025-03-28)
 
 
