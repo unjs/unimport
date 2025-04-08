@@ -80,8 +80,8 @@ Object.entries(options).forEach(([name, options]) => {
       ...options,
     })
 
-    const negatives = import.meta.glob('./cases/negative/*', { as: 'raw' })
-    const positives = import.meta.glob('./cases/positive/*', { as: 'raw' })
+    const negatives = import.meta.glob<string>('./cases/negative/*', { query: '?raw', import: 'default' })
+    const positives = import.meta.glob<string>('./cases/positive/*', { query: '?raw', import: 'default' })
 
     for (const [file, getCode] of Object.entries(positives)) {
       if (excludes?.[name]?.(file))
