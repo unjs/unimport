@@ -6,6 +6,7 @@ it('public-api', async () => {
   expect(keys)
     .toMatchInlineSnapshot(`
       [
+        "VueUseCoreDirectives",
         "addImportToCode",
         "builtinPresets",
         "createUnimport",
