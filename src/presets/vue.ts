@@ -63,6 +63,8 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   // types
   ...[
     'Component',
+    'Slot',
+    'Slots',
     'ComponentPublicInstance',
     'ComputedRef',
     'DirectiveBinding',
