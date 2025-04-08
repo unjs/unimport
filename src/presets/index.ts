@@ -1,4 +1,5 @@
 import dateFns from './date-fns'
+import temporalPolyfill from './temporal-polyfill'
 import pinia from './pinia'
 import preact from './preact'
 import quasar from './quasar'
@@ -62,6 +63,7 @@ export const builtinPresets = {
   'solid-app-router': solidAppRouter,
   'rxjs': rxjs,
   'date-fns': dateFns,
+  'temporal-polyfill': temporalPolyfill,
 }
 
 export type BuiltinPresetName = keyof typeof builtinPresets
