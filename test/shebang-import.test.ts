@@ -13,10 +13,11 @@ console.log(fooBar())
     const output = (await injectImports(code)).code
     expect(output)
       .toMatchInlineSnapshot(`
-      "#!/usr/bin/env node
+        "#!/usr/bin/env node
 
-      import { fooBar } from 'test-id';
-      console.log(fooBar())
-      "`)
+        import { fooBar } from 'test-id';
+        console.log(fooBar())
+        "
+      `)
   })
 })
