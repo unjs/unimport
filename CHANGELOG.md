@@ -1,3 +1,12 @@
+## [5.0.1](https://github.com/unjs/unimport/compare/v5.0.0...v5.0.1) (2025-05-04)
+
+
+### Bug Fixes
+
+* **vue-directives:** check directive name before removing `v-` prefix ([#447](https://github.com/unjs/unimport/issues/447)) ([5f71ab2](https://github.com/unjs/unimport/commit/5f71ab268094f5a5ece722881e532b33a17bf483))
+
+
+
 # [5.0.0](https://github.com/unjs/unimport/compare/v4.2.0...v5.0.0) (2025-04-08)
 
 
