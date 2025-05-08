@@ -106,6 +106,8 @@ export interface UnimportContext {
 
   invalidate: () => void
   resolveId: (id: string, parentId?: string) => Thenable<string | null | undefined | void>
+
+  reportMatched: (options: ReportMatchedOptions) => Promise<void>
 }
 
 export interface DetectImportResult {
@@ -139,6 +141,8 @@ export interface Unimport {
 
   scanImportsFromDir: (dir?: (string | ScanDir)[], options?: ScanDirExportsOptions) => Promise<Import[]>
   scanImportsFromFile: (file: string, includeTypes?: boolean) => Promise<Import[]>
+
+  reportMatched: (options: ReportMatchedOptions) => Promise<void>
 
   /**
    * @deprecated
@@ -271,7 +275,61 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
    * Collect meta data for each auto import. Accessible via `ctx.meta`
    */
   collectMeta?: boolean
+
+  reportMatchedOptions?: ReportMatchedOptions
 }
+
+export interface ReportMatchedOptions {
+  /**
+   * Report the matched imports to console
+   *
+   * @default false
+   */
+  printOut?: boolean
+
+  /**
+   * Format of the report
+   *
+   * default -> simple and compact output
+   * json -> JSON output
+   * table -> table output
+   *
+   * @default 'compact'
+   */
+  printFormat?: 'compact' | 'json' | 'table'
+
+  /**
+   * Custom console printer to report the matched imports.
+   * By default, it'll print out the formatted string to console.
+   * Provide a different function to format the MatchedGrouptImports by yourself.
+   */
+  printFn?: ({ imports, formattedOutput }: { imports?: MatchedGroupedImports, formattedOutput?: string }) => void
+
+  /**
+   * Custom function to format the matched imports
+   *
+   * @default project_root
+   */
+  outputToFile?: string
+
+  /**
+   * Custom function to format the matched imports
+   *
+   * @default 'compact'
+   */
+  outputFormat?: 'compact' | 'json' | 'table'
+}
+
+/**
+ * Grouped imports by their `from` property
+ *
+ * e.g. [
+ *  ['vue', ['ref', 'computed']],
+ *  ['lodash', ['map', 'filter']],
+ *  ...
+ * ]
+ */
+export type MatchedGroupedImports = string[][]
 
 export type PathFromResolver = (_import: Import) => string | undefined
 
