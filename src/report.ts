@@ -14,7 +14,6 @@ export const LABEL_DYNAMIC = "(dynamic)"
 
 export const groupedImportsByFrom = (staticImports: Import[], dynamicImports: Import[]): MatchedGroupedImports => {
   const allImports = [...staticImports, ...dynamicImports]
-    .toSorted((a, b) => a.from < b.from ? 1 : -1)
   let staticIdx = staticImports.length
   const groupedImports: Record<string, string[]> = {}
 
