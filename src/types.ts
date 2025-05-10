@@ -300,8 +300,8 @@ export interface ReportMatchedOptions {
 
   /**
    * Custom console printer to report the matched imports.
-   * By default, it'll print out the formatted string to console.
-   * Provide a different function to format the MatchedGrouptImports by yourself.
+   * By default, it'll print out the `formattedOutput: string` to console.
+   * The function itself can be overridden to turn the output into a custom format for printout.
    */
   printFn?: ({ imports, formattedOutput }: { imports?: MatchedGroupedImports, formattedOutput?: string }) => void
 
