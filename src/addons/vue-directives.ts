@@ -187,6 +187,14 @@ function* findDirective(
     else {
       resolvedName = kebabCase(i.as ?? i.name)
     }
+    if (resolvedName === importName) {
+      yield [
+        begin,
+        end,
+        { ...i, name: i.name, as: symbol },
+      ]
+      return
+    }
     if (resolvedName[0] === 'v') {
       resolvedName = resolvedName.slice(resolvedName[1] === '-' ? 2 : 1)
     }
