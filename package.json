@@ -47,6 +47,7 @@
     "pkg-types": "catalog:prod",
     "scule": "catalog:prod",
     "strip-literal": "catalog:prod",
+    "table": "catalog:prod",
     "tinyglobby": "catalog:prod",
     "unplugin": "catalog:prod",
     "unplugin-utils": "catalog:prod"

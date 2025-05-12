@@ -106,6 +106,8 @@ export interface UnimportContext {
 
   invalidate: () => void
   resolveId: (id: string, parentId?: string) => Thenable<string | null | undefined | void>
+
+  reportMatched: (options: OptionsReportMatched) => Promise<void>
 }
 
 export interface DetectImportResult {
@@ -139,6 +141,8 @@ export interface Unimport {
 
   scanImportsFromDir: (dir?: (string | ScanDir)[], options?: ScanDirExportsOptions) => Promise<Import[]>
   scanImportsFromFile: (file: string, includeTypes?: boolean) => Promise<Import[]>
+
+  reportMatched: (options: OptionsReportMatched) => Promise<void>
 
   /**
    * @deprecated
@@ -271,7 +275,66 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
    * Collect meta data for each auto import. Accessible via `ctx.meta`
    */
   collectMeta?: boolean
+
+  reportMatchedOptions?: OptionsReportMatched
 }
+
+export interface OptionsReportMatched {
+  /**
+   * Report the matched imports to console
+   *
+   * @default false
+   */
+  printOut?: boolean
+
+  /**
+   * Format of the report
+   *
+   * compact -> (default) simple and compact output
+   *   example output:
+   *      vue: onActivated, onBeforeMount, ...
+   *      /project/unimport/composables/PascalCased.ts: PascalCased
+   *      /project/unimport/foo.ts: default->foo
+   *
+   * json -> JSON output of array
+   * table -> table output formatted by the `table` package
+   *
+   * @default 'compact'
+   */
+  printFormat?: 'compact' | 'json' | 'table'
+
+  /**
+   * Custom console printer to report the matched imports.
+   * By default, it'll print out the `formattedOutput: string` to console.
+   * The function itself can be overridden to turn the output into a custom format for printout.
+   */
+  printFn?: ({ imports, formattedOutput }: { imports?: MatchedGroupedImports, formattedOutput?: string }) => void
+
+  /**
+   * Custom function to format the matched imports
+   *
+   * @default project_root
+   */
+  outputToFile?: string
+
+  /**
+   * Custom function to format the matched imports
+   *
+   * @default 'compact'
+   */
+  outputFormat?: 'compact' | 'json' | 'table'
+}
+
+/**
+ * Grouped imports by their `from` property
+ *
+ * e.g. [
+ *  ['vue', ['ref', 'computed']],
+ *  ['lodash', ['map', 'filter']],
+ *  ...
+ * ]
+ */
+export type MatchedGroupedImports = [string, string[]][]
 
 export type PathFromResolver = (_import: Import) => string | undefined
 

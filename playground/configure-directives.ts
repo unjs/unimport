@@ -16,6 +16,15 @@ const unimportViteOptions: Partial<UnimportPluginOptions> = {
   dts: true,
   // eslint-disable-next-line no-console
   debugLog: console.log,
+  reportMatchedOptions: {
+    printOut: true,
+    printFormat: 'table',
+    outputFormat: 'json',
+    outputToFile: 'report.json',
+    printFn: ({ formattedOutput }) => {
+      console.log(formattedOutput)
+    },
+  },
   presets: [
     'vue',
     {

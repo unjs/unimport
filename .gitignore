@@ -14,3 +14,4 @@ node_modules
 types
 .idea
 playground/unimport.d.ts
+playground/report.json

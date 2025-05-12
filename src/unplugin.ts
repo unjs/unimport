@@ -70,5 +70,15 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
       if (dts)
         return fs.writeFile(dts, await ctx.generateTypeDeclarations(), 'utf-8')
     },
+    async buildEnd() {
+      const typeOptionsReportMatched = Object.prototype.toString.call(options.reportMatchedOptions)
+      if (
+        'reportMatchedOptions' in options && typeOptionsReportMatched === '[object Object]'
+      ) {
+        return ctx.reportMatched(options.reportMatchedOptions!)
+      } else {
+        throw new Error(`\`reportMatchedOptions\` should be an Object, \`${typeOptionsReportMatched}\` is given`)
+      }
+    },
   }
 })
