@@ -7,10 +7,66 @@ import {
   vi
 } from 'vitest'
 import fs from "node:fs"
+import path from "node:path"
+
 import * as reportModule from "../src/report"
 import { Import, MatchedGroupedImports } from "../src/types"
 
 describe('report', () => {
+
+  describe("OptionsReportMatched", () => {
+    const imports = new Map<string, Import>([
+      ["1", { from: "vue", name: "ref", as: "ref" }],
+      ["2", { from: "lodash", name: "map", as: "map" }],
+    ])
+
+    it("should use default options if none provided", () => {
+      const logSpy = vi.spyOn(console, "log").mockImplementation(() => { })
+      reportModule.default(imports)
+      expect(logSpy).not.toHaveBeenCalled()
+      logSpy.mockRestore()
+    })
+
+    it("should use custom printFormat", () => {
+      const printFn = vi.fn()
+      reportModule.default(imports, { printOut: true, printFormat: "json", printFn })
+      expect(printFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          imports: expect.any(Array),
+          formattedOutput: expect.any(String),
+        })
+      )
+    })
+
+    it("should use custom outputFormat", () => {
+      // @ts-ignore
+      const writeFileSpy = vi.spyOn(fs, "writeFile").mockImplementation((_, __, ___, cb) => cb && cb(null))
+      const printFn = vi.fn()
+      reportModule.default(imports, { outputToFile: "test.json", outputFormat: "json", printFn })
+      expect(writeFileSpy).toHaveBeenCalled()
+      writeFileSpy.mockRestore()
+    })
+
+    it("should resolve outputToFile path relative to cwd", () => {
+      // @ts-ignore
+      const writeFileSpy = vi.spyOn(fs, "writeFile").mockImplementation((outputPath, _, __, cb) => {
+        expect(outputPath).toBe(path.resolve(process.cwd(), "relative.txt"))
+        cb && cb(null)
+      })
+      reportModule.default(imports, { outputToFile: "relative.txt" })
+      writeFileSpy.mockRestore()
+    })
+
+    it("should handle both printOut and outputToFile together", () => {
+      // @ts-ignore
+      const writeFileSpy = vi.spyOn(fs, "writeFile").mockImplementation((_, __, ___, cb) => cb && cb(null))
+      const printFn = vi.fn()
+      reportModule.default(imports, { printOut: true, outputToFile: "both.txt", printFn })
+      expect(printFn).toHaveBeenCalled()
+      expect(writeFileSpy).toHaveBeenCalled()
+      writeFileSpy.mockRestore()
+    })
+  })
 
   describe("printwrapper", () => {
     it("should print before and after the callback", () => {
@@ -87,8 +143,8 @@ describe('report', () => {
     let writeFileSpy: ReturnType<typeof vi.spyOn>
     let logSpy: ReturnType<typeof vi.spyOn>
     const imports = new Map<string, Import>([
-      ["1", { from: "vue", name: "ref", as: "ref" }],
-      ["2", { from: "lodash", name: "map", as: "map" }],
+      ["ref", { from: "vue", name: "ref", as: "ref" }],
+      ["map", { from: "lodash", name: "map", as: "map" }],
     ])
 
     beforeEach(() => {
@@ -154,7 +210,7 @@ describe('report', () => {
 
     it("report uses fallback formatter for unknown printFormat/outputFormat", () => {
       const imports = new Map<string, Import>([
-        ["1", { from: "vue", name: "ref", as: "ref" }]
+        ["ref", { from: "vue", name: "ref", as: "ref" }]
       ])
       const printFn = vi.fn()
       reportModule.default(imports, { printOut: true, printFormat: "unknown" as any, printFn })
@@ -169,7 +225,7 @@ describe('report', () => {
 
     it("report throws error if fs.writeFile fails", () => {
       const imports = new Map<string, Import>([
-        ["1", { from: "vue", name: "ref", as: "ref" }]
+        ["ref", { from: "vue", name: "ref", as: "ref" }]
       ])
       // @ts-ignore
       const writeFileSpy = vi.spyOn(fs, "writeFile").mockImplementation((_, __, ___, cb) => cb && cb(new Error("fail")))
@@ -181,7 +237,7 @@ describe('report', () => {
 
     it("report passes correct arguments to printFn", () => {
       const imports = new Map<string, Import>([
-        ["1", { from: "vue", name: "ref", as: "ref" }]
+        ["ref", { from: "vue", name: "ref", as: "ref" }]
       ])
       const printFn = vi.fn()
       reportModule.default(imports, { printOut: true, printFn })
