@@ -1,84 +1,109 @@
-import { table } from "table"
-import { Import, MatchedGroupedImports, ReportMatchedOptions } from "./types"
 import fs from "node:fs"
 import path from "node:path"
 
+import { table } from "table"
+import MagicString from "magic-string"
+
+import { Import, MatchedGroupedImports, OptionsReportMatched } from "./types"
+
+/**
+ * Prints a message before and after executing the provided callback function.
+ *
+ * @param {Function} cb - The callback function to customize the print output.
+ */
 export const printWrapper = (cb: Function) => {
   console.log()
   cb()
   console.log()
 }
 
-export const LABEL_STATIC = "(static)"
-export const LABEL_DYNAMIC = "(dynamic)"
+/**
+ * Group imports by their 'from' property.
+ * Format of the output:
+ * [<from>, [<import1>, <import2>, ...]]
+ *
+ *  e.g. ['vue', ['useId', 'useTemplateRef', ...]]
+ *
+ * @param {Map<string, Import>} matchedImports - A map of matched imports.
+ * @returns {Array<[string, string[]]>} - An array of tuples where each tuple contains the 'from' property and an array of import names.
+ */
+export const groupedImportsByFrom = (matchedImports: Map<string, Import>): MatchedGroupedImports => {
+  const groupedMap = new Map<string, string[]>()
 
-export const groupedImportsByFrom = (staticImports: Import[], dynamicImports: Import[]): MatchedGroupedImports => {
-  const allImports = [...staticImports, ...dynamicImports]
-  let staticIdx = staticImports.length
-  const groupedImports: Record<string, string[]> = {}
-
-  // TODO: optimize with 2 pointers
-  allImports.forEach((imp, idx) => {
-    const prefixLabel = idx < staticIdx ? LABEL_STATIC : LABEL_DYNAMIC
-
-    const { from, name, as } = imp
+  matchedImports.forEach(({ from, name, as }) => {
+    if (!groupedMap.has(from)) {
+      groupedMap.set(from, [])
+    }
 
     const modName = name === as ? name : `${name}->${as}`
-    const modFrom = `${prefixLabel} ${from}`
 
-    if (!groupedImports[modFrom]) {
-      groupedImports[modFrom] = []
-    }
+    groupedMap.get(from)?.push(modName)
+  });
 
-    groupedImports[modFrom].push(modName)
-  })
-
-  return Object.entries(groupedImports).map(([from, imports]) => {
-    return [
-      from,
-      imports.join(", "),
-    ]
-  })
+  return Array.from(groupedMap.entries())
 }
 
-export const printFormatter = {
-  table: (groupedImports: MatchedGroupedImports) => {
-    const configs = {
-      header: {
-        content: "[unimport] Matched Imports",
-      },
-      columns: {
-        0: {
-          width: 50,
-          wrapWord: true,
-        },
-        1: {
-          width: 50,
-          wrapWord: true,
-        },
-      }
-    }
-
-    return table(groupedImports, configs)
+const _DEFAULT_TABLE_CONFIGS = {
+  header: {
+    content: "<PLACEHOLDER_TITLE>",
   },
-  json: (groupedImports: MatchedGroupedImports) => {
-    return JSON.stringify(groupedImports, null, 2)
-  },
-  compact: (groupedImports: MatchedGroupedImports) => {
-    const result = groupedImports.map(([from, imports]) => {
-      return `${from}: ${imports}`
-    }).join("\n")
-
-    return result
+  columns: {
+    0: {
+      width: 50,
+      wrapWord: true,
+    },
+    1: {
+      width: 50,
+      wrapWord: true,
+    },
   }
 }
 
+/**
+ * Formatter for printing matched imports in different formats.
+ */
+export const printFormatter = {
+  table: (groupedImports: MatchedGroupedImports) => {
+    if (groupedImports.length === 0) {
+      return `[unimport] matched imports (0):\n`
+    }
+
+    return new MagicString(
+      table(groupedImports, _DEFAULT_TABLE_CONFIGS)
+    ).replace(
+      "<PLACEHOLDER_TITLE>",
+      `[unimport] matched imports (${groupedImports.length}):\n`
+    ).toString()
+  },
+  json: (groupedImports: MatchedGroupedImports) => {
+    return new MagicString(
+      JSON.stringify(groupedImports, null, 2)
+    ).prepend(
+      `[unimport] matched imports (${groupedImports.length}):\n`
+    ).toString()
+  },
+  compact: (groupedImports: MatchedGroupedImports) => {
+    return new MagicString(
+      groupedImports.map(([from, imports]) =>
+        `${from}: ${imports}`
+      ).join("\n")
+    ).prepend(
+      `[unimport] matched imports (${groupedImports.length}):\n`
+    ).toString()
+  }
+}
+
+/**
+ * Report function to handle matched imports.
+ * It can print the output to the console or write it to a file.
+ *
+ * @param {Map<string, Import>} matchedImports - A map of matched imports.
+ * @param {OptionsReportMatched} opts - Options for reporting.
+ */
 export default function report(
-  staticImports: Import[],
-  dynamicImports: Import[],
-  opts: ReportMatchedOptions = {}
+  matchedImports: Map<string, Import>,
+  opts: OptionsReportMatched = {}
 ) {
-  // Quit if no output is needed
   if (!opts.printOut && !opts.outputToFile) {
     return
   }
@@ -92,27 +117,28 @@ export default function report(
       console.log(formattedOutput),
   } = opts
 
-  const imports = groupedImportsByFrom(staticImports, dynamicImports)
+  const imports = groupedImportsByFrom(matchedImports)
 
   if (printOut) {
     const formatter = printFormatter[printFormat] || printFormatter.compact
-
     const formattedOutput = formatter(imports)
+
     printWrapper(() => {
       printFn({ imports, formattedOutput })
     })
   }
 
   if (outputToFile) {
+    const formatter = printFormatter[outputFormat] || printFormatter.compact
+    const formattedOutput = formatter(imports)
     const outputPath = path.resolve(process.cwd(), outputToFile)
-    const formattedOutput = printFormatter[outputFormat] || printFormatter.compact
 
-    fs.writeFile(outputPath, formattedOutput(imports), "utf-8", (err) => {
+    fs.writeFile(outputPath, formattedOutput, "utf-8", (err) => {
       if (err)
         throw new Error(`[unimport] Failed to write to file: ${err.message}`)
 
       printWrapper(() => {
-        printFn({ imports, formattedOutput: `[unimport] Imports outputs written to ${outputPath}` })
+        printFn({ imports, formattedOutput: `[unimport] Imports outputs are written to ${outputPath}\n` })
       })
     })
   }

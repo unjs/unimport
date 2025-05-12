@@ -107,7 +107,7 @@ export interface UnimportContext {
   invalidate: () => void
   resolveId: (id: string, parentId?: string) => Thenable<string | null | undefined | void>
 
-  reportMatched: (options: ReportMatchedOptions) => Promise<void>
+  reportMatched: (options: OptionsReportMatched) => Promise<void>
 }
 
 export interface DetectImportResult {
@@ -142,7 +142,7 @@ export interface Unimport {
   scanImportsFromDir: (dir?: (string | ScanDir)[], options?: ScanDirExportsOptions) => Promise<Import[]>
   scanImportsFromFile: (file: string, includeTypes?: boolean) => Promise<Import[]>
 
-  reportMatched: (options: ReportMatchedOptions) => Promise<void>
+  reportMatched: (options: OptionsReportMatched) => Promise<void>
 
   /**
    * @deprecated
@@ -276,10 +276,10 @@ export interface UnimportOptions extends Pick<InjectImportsOptions, 'injectAtEnd
    */
   collectMeta?: boolean
 
-  reportMatchedOptions?: ReportMatchedOptions
+  reportMatchedOptions?: OptionsReportMatched
 }
 
-export interface ReportMatchedOptions {
+export interface OptionsReportMatched {
   /**
    * Report the matched imports to console
    *
@@ -290,9 +290,14 @@ export interface ReportMatchedOptions {
   /**
    * Format of the report
    *
-   * default -> simple and compact output
-   * json -> JSON output
-   * table -> table output
+   * compact -> (default) simple and compact output
+   *   example output:
+   *      vue: onActivated, onBeforeMount, ...
+   *      /project/unimport/composables/PascalCased.ts: PascalCased
+   *      /project/unimport/foo.ts: default->foo
+   *
+   * json -> JSON output of array
+   * table -> table output formatted by the `table` package
    *
    * @default 'compact'
    */
@@ -329,7 +334,7 @@ export interface ReportMatchedOptions {
  *  ...
  * ]
  */
-export type MatchedGroupedImports = string[][]
+export type MatchedGroupedImports = [string, string[]][]
 
 export type PathFromResolver = (_import: Import) => string | undefined
 

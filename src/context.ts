@@ -3,7 +3,7 @@ import type {
   Import,
   ImportInjectionResult,
   InjectImportsOptions,
-  ReportMatchedOptions,
+  OptionsReportMatched,
   Thenable,
   TypeDeclarationOptions,
   Unimport,
@@ -100,7 +100,7 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
     getMetadata: () => ctx.getMetadata(),
     getInternalContext: () => ctx,
-    reportMatched: (options: ReportMatchedOptions) => ctx.reportMatched(options),
+    reportMatched: (options: OptionsReportMatched) => ctx.reportMatched(options),
 
     // Deprecated
     toExports: async (filepath?: string, includeTypes = false) => toExports(await ctx.getImports(), filepath, includeTypes),
@@ -110,7 +110,7 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
 function createInternalContext(opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
-  const _map = new Map()
+  const _map = new Map<string, Import>()
 
   const addons = configureAddons(opts)
 
@@ -157,8 +157,9 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
       _combinedImports = undefined
     },
     resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
-    async reportMatched(opts: ReportMatchedOptions) {
-      return report(ctx.staticImports, ctx.dynamicImports, opts)
+    async reportMatched(opts: OptionsReportMatched) {
+      const matchedImports = _map
+      return report(matchedImports, opts)
     }
   }
 
