@@ -279,7 +279,7 @@ export interface ScanDirExportsOptions {
   /**
    * Glob patterns for matching files
    *
-   * @default ['*.{ts,js,mjs,cjs,mts,cts}']
+   * @default ['*.{ts,js,mjs,cjs,mts,cts,tsx,jsx}']
    */
   filePatterns?: string[]
 
