@@ -3,6 +3,7 @@ import type {
   Import,
   ImportInjectionResult,
   InjectImportsOptions,
+  OptionsReportMatched,
   Thenable,
   TypeDeclarationOptions,
   Unimport,
@@ -17,6 +18,7 @@ import { detectImports } from './detect'
 import { scanDirExports, scanExports } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
 import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
+import report from './report'
 
 export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   const ctx = createInternalContext(opts)
@@ -98,6 +100,7 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
     getMetadata: () => ctx.getMetadata(),
     getInternalContext: () => ctx,
+    reportMatched: (options: OptionsReportMatched) => ctx.reportMatched(options),
 
     // Deprecated
     toExports: async (filepath?: string, includeTypes = false) => toExports(await ctx.getImports(), filepath, includeTypes),
@@ -107,7 +110,7 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
 function createInternalContext(opts: Partial<UnimportOptions>) {
   // Cache for combine imports
   let _combinedImports: Import[] | undefined
-  const _map = new Map()
+  const _map = new Map<string, Import>()
 
   const addons = configureAddons(opts)
 
@@ -154,6 +157,10 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
       _combinedImports = undefined
     },
     resolveId: (id, parentId) => opts.resolveId?.(id, parentId),
+    async reportMatched(opts: OptionsReportMatched) {
+      const matchedImports = _map
+      return report(matchedImports, opts)
+    }
   }
 
   // Resolve presets

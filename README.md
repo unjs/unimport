@@ -286,6 +286,98 @@ Unimport.vite({
 })
 ```
 
+### Collect Matched-imports (files & modules) Reports
+
+You can enable printing output of the matched files & modules in terminals for debugging or logging purposes.
+
+#### Report Options
+
+#### printout
+
+`type: boolean`
+
+This option enables the report of the matched imports to the console.
+
+#### printFormat
+
+`type: 'compact' | 'json' | 'table'`
+
+This option defines the format of the report.
+The default is `compact`, which is a compact format that shows each matched imports in a single line.
+
+```sh
+# Example output of compact format
+vue: ref, reactive
+vue-router: useRoute, useRouter
+myModule: default->module1, moduleFn1, moduleFn2
+```
+
+Choose `table` for a more readable format, which will print out the matched imports in a table format.
+
+```sh
+# Example output of table format
++-----------------+---------------------+
+|     [unimport] matched imports        |
++-----------------+---------------------+
+| vue             | ref, reactive       |
+| vue-router      | useRoute, useRouter |
+| myModule        | default->module1    |
+|                 | moduleFn1, moduleFn2|
++-----------------+---------------------+
+
+```
+
+The `json` format will print out the matched imports in a JSON Array.
+
+```sh
+# Example output of json format
+[
+  [
+    "vue",
+    [ "ref", "reactive" ]
+  ],
+  [
+    "vue-router",
+    [ "useRoute", "useRouter" ]
+  ],
+  [
+    "myModule",
+    [ "default->module1", "moduleFn1", "moduleFn2" ]
+  ]
+]
+```
+
+#### printFn: ({ imports, formattedOutput }: { imports?: MatchedGroupedImports, formattedOutput?: string }) => void
+
+This is a custom console printer function that allows you to report the matched imports.
+By default, it will print out the `formattedOutput: string` to the console.
+You can override this function to customize the output format for printing.
+
+#### outputToFile: string
+
+- This option allows you to specify a custom file path to generate the report. By default, it will use the project root directory.
+
+#### outputFormat: 'compact' | 'json' | 'table'
+
+- This option defines the format of the report when outputting to a file. The default is 'compact', but you can also choose 'json' or 'table' for different output formats.
+
+#### Usage Example
+
+```ts
+Unimport.vite({
+  dirs: ['./composables/**/*'],
+  reportMatchedOptions: {
+    printOut: true, // default is false, enable this one to print out into console
+    printFormat: 'table', // Formatted table could be a good option for CI/CD purpose
+    outputFormat: 'json', // The output is an array of tuples [<from>, <imported_modules>]
+    outputToFile: 'report.json', // This generates a report.json file in the project root directory
+    printFn: ({ formattedOutput }) => {
+      console.log(formattedOutput)
+    },
+  }
+})
+```
+
 ### Opt-out Auto Import
 
 You can opt-out auto-import for specific modules by adding a comment:
@@ -367,6 +459,7 @@ Unimport.vite({
 #### Library Authors
 
 When including directives in your presets, you should:
+
 - provide the corresponding imports with `meta.vueDirective` set to `true`, otherwise, `unimport` will not be able to detect your directives.
 - use named exports for your directives, or use default export and use `as` in the Import.
 - set `dtsDisabled` to `true` if you provide a type declaration for your directives.
@@ -407,6 +500,7 @@ export const directives = defineUnimportPreset({
 #### Using Directory Scan and Local Directives
 
 If you add a directory scan for your local directives in the project, you need to:
+
 - provide `isDirective` in the `vueDirectives`: `unimport` will use it to detect them (will never be called for imports with `meta.vueDirective` set to `true`).
 - use always named exports for your directives.
 
@@ -442,9 +536,6 @@ Published under [MIT License](./LICENSE).
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/unimport?style=flat-square
 [npm-downloads-href]: https://npmjs.com/package/unimport
-
-[github-actions-src]: https://img.shields.io/github/workflow/status/unjs/unimport/ci/main?style=flat-square
-[github-actions-href]: https://github.com/unjs/unimport/actions?query=workflow%3Aci
 
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/unimport/main?style=flat-square
 [codecov-href]: https://codecov.io/gh/unjs/unimport

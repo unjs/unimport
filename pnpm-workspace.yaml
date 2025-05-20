@@ -30,6 +30,7 @@ catalogs:
     pkg-types: ^2.1.0
     scule: ^1.3.0
     strip-literal: ^3.0.0
+    table: ^6.9.0
     tinyglobby: ^0.2.13
     unplugin: ^2.3.2
     unplugin-utils: ^0.2.4
