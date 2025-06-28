@@ -121,9 +121,6 @@ export function vueDirectivesAddon(
       return `${dts}
 // for vue directives auto import
 declare module 'vue' {
-  interface ComponentCustomProperties {
-${directives}
-  }
   interface GlobalDirectives {
 ${directives}
   }
