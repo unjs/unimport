@@ -1,3 +1,12 @@
+# [5.1.0](https://github.com/unjs/unimport/compare/v5.0.1...v5.1.0) (2025-06-29)
+
+
+### Bug Fixes
+
+* **vue-directives:** remove `ComponentCustomProperties` ([#456](https://github.com/unjs/unimport/issues/456)) ([9fc5e73](https://github.com/unjs/unimport/commit/9fc5e730c7c143a3eaa7d8315cc7ab421c9582c7))
+
+
+
 ## [5.0.1](https://github.com/unjs/unimport/compare/v5.0.0...v5.0.1) (2025-05-04)
 
 
