@@ -8,8 +8,8 @@ export {
   resolveBuiltinPresets,
   resolvePreset,
 } from './preset'
-export { builtinPresets } from './presets'
-export type { BuiltinPresetName } from './presets'
+export { builtinPresets, VueUseCoreDirectives } from './presets'
+export type { BuiltinPresetName, VueUseCoreDirectivesOptions } from './presets'
 
 export * from './regexp'
 
