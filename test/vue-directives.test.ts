@@ -185,12 +185,6 @@ describe('vue-directives', () => {
         }
         // for vue directives auto import
         declare module 'vue' {
-          interface ComponentCustomProperties {
-            vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['default']
-            vFocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
-            vNamedDirective: typeof import('<root>/directives/named-directive')['NamedDirective']
-            vRippleDirective: typeof import('<root>/directives/ripple-directive')['vRippleDirective']
-          }
           interface GlobalDirectives {
             vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['default']
             vFocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
@@ -674,9 +668,6 @@ describe('vue-directives', () => {
         }
         // for vue directives auto import
         declare module 'vue' {
-          interface ComponentCustomProperties {
-            vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['AwesomeDirective']
-          }
           interface GlobalDirectives {
             vAwesomeDirective: typeof import('<root>/directives/awesome-directive')['AwesomeDirective']
           }
