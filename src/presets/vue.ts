@@ -23,6 +23,7 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
   'customRef',
   'isReadonly',
   'isRef',
+  'isShallow',
   'isProxy',
   'isReactive',
   'markRaw',
@@ -74,6 +75,7 @@ export const CommonCompositionAPI: InlinePreset['imports'] = [
     'InjectionKey',
     'PropType',
     'Ref',
+    'ShallowRef',
     'MaybeRef',
     'MaybeRefOrGetter',
     'VNode',
@@ -96,6 +98,7 @@ export default defineUnimportPreset({
     'useModel',
 
     // vue3.5+
+    'getCurrentWatcher',
     'onWatcherCleanup',
     'useId',
     'useTemplateRef',
