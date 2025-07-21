@@ -1,3 +1,12 @@
+# [5.2.0](https://github.com/unjs/unimport/compare/v5.1.0...v5.2.0) (2025-07-21)
+
+
+### Features
+
+* add new vue api in presets ([#460](https://github.com/unjs/unimport/issues/460)) ([e6d368f](https://github.com/unjs/unimport/commit/e6d368f534e9f920560f8b828ed13f44186bb72a))
+
+
+
 # [5.1.0](https://github.com/unjs/unimport/compare/v5.0.1...v5.1.0) (2025-06-29)
 
 
