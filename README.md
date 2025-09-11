@@ -178,7 +178,7 @@ imports: [
 
 ###### Built-in Presets
 
-`unimport` also provides some builtin presets for common libraries:
+`unimport` also provides some built-in presets for common libraries:
 
 ```ts
 presets: [
