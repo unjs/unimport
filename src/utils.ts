@@ -180,21 +180,40 @@ export function stripFileExtension(path: string) {
 }
 
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
-  return imports
-    .map((i) => {
-      const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      let typeDef = ''
-      if (i.with)
-        typeDef += `import('${from}', { with: ${stringifyWith(i.with)} })`
-      else
-        typeDef += `import('${from}')`
+  const groups = new Map<string, {
+    typeDef: string
+    isStarOrEqual: boolean
+    imports: Import[]
+  }>()
 
-      if (i.name !== '*' && i.name !== '=')
-        typeDef += `['${i.name}']`
+  for (const i of imports) {
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
+    const typeDef = i.with
+      ? `import('${from}', { with: ${stringifyWith(i.with)} })`
+      : `import('${from}')`
+    const isStarOrEqual = i.name === '*' || i.name === '='
 
-      return `const ${i.as}: typeof ${typeDef}`
-    })
-    .sort()
+    const key = `${typeDef}${isStarOrEqual ? '/*' : ''}`
+    if (!groups.has(key)) {
+      groups.set(key, { typeDef, isStarOrEqual, imports: [] })
+    }
+    groups.get(key)!.imports.push(i)
+  }
+
+  const items: string[] = []
+
+  for (const { typeDef, isStarOrEqual, imports } of groups.values()) {
+    if (isStarOrEqual) {
+      for (const i of imports) {
+        items.push(`const ${i.as}: typeof ${typeDef}`)
+      }
+    }
+    else {
+      const bindings = imports.map(i => i.as && i.as !== i.name ? `${i.name}: ${i.as}` : i.name).sort()
+      items.push(`const { ${bindings.join(', ')} }: typeof ${typeDef}`)
+    }
+  }
+  return items.sort()
 }
 
 export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarationOptions) {

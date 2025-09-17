@@ -178,10 +178,10 @@ describe('vue-directives', () => {
       expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
-          const FocusDirective: typeof import('<root>/directives/v-focus-directive')['default']
-          const NamedDirective: typeof import('<root>/directives/named-directive')['NamedDirective']
-          const default: typeof import('<root>/directives/awesome-directive')['default']
-          const vRippleDirective: typeof import('<root>/directives/ripple-directive')['vRippleDirective']
+          const { NamedDirective }: typeof import('<root>/directives/named-directive')
+          const { default }: typeof import('<root>/directives/awesome-directive')
+          const { default: FocusDirective }: typeof import('<root>/directives/v-focus-directive')
+          const { vRippleDirective }: typeof import('<root>/directives/ripple-directive')
         }
         // for vue directives auto import
         declare module 'vue' {
@@ -664,7 +664,7 @@ describe('vue-directives', () => {
       expect(replaceRoot(await ctx.generateTypeDeclarations())).toMatchInlineSnapshot(`
         "export {}
         declare global {
-          const AwesomeDirective: typeof import('<root>/directives/awesome-directive')['AwesomeDirective']
+          const { AwesomeDirective }: typeof import('<root>/directives/awesome-directive')
         }
         // for vue directives auto import
         declare module 'vue' {

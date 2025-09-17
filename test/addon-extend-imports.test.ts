@@ -54,11 +54,8 @@ describe('addon extend imports', () => {
       .toMatchInlineSnapshot(`
         "export {}
         declare global {
-          const computed1: typeof import('vue')['computed']
-          const ref1: typeof import('vue')['ref']
-          const useEffect: typeof import('react')['useEffect']
-          const useState: typeof import('react')['useState']
-          const watch1: typeof import('vue')['watch']
+          const { computed: computed1, ref: ref1, watch: watch1 }: typeof import('vue')
+          const { useEffect, useState }: typeof import('react')
         }"
       `)
   })
@@ -84,12 +81,8 @@ describe('addon extend imports', () => {
       .toMatchInlineSnapshot(`
         "export {}
         declare global {
-          const computed1: typeof import('vue')['computed']
-          const foo1: typeof import('vue')['foo']
-          const ref1: typeof import('vue')['ref']
-          const useEffect: typeof import('react')['useEffect']
-          const useState: typeof import('react')['useState']
-          const watch1: typeof import('vue')['watch']
+          const { computed: computed1, foo: foo1, ref: ref1, watch: watch1 }: typeof import('vue')
+          const { useEffect, useState }: typeof import('react')
         }"
       `)
   })
