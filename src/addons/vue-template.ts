@@ -1,5 +1,5 @@
 import type { Addon, Import } from '../types'
-import { stringifyImports } from '../utils'
+import { stringifyImports, toTypeDeclarationItems } from '../utils'
 
 const contextRE = /\b_ctx\.([$\w]+)\b/g
 const UNREF_KEY = '__unimport_unref_'
@@ -65,24 +65,19 @@ export function vueTemplateAddon(): Addon {
     },
     async declaration(dts, options) {
       const imports = await this.getImports()
-      const items = imports
-        .map((i) => {
-          if (i.type || i.dtsDisabled)
-            return ''
-          const from = options?.resolvePath?.(i) || i.from
-          return `readonly ${i.as}: UnwrapRef<typeof import('${from}')${i.name !== '*' ? `['${i.name}']` : ''}>`
-        })
-        .filter(Boolean)
-        .sort()
+      const items = toTypeDeclarationItems(imports.filter(i => !i.type && !i.dtsDisabled), options)
 
-      const extendItems = items.map(i => `    ${i}`).join('\n')
+      const extendItems = items.map(i => `  ${i}`).join('\n')
       return `${dts}
 // for vue template auto import
-import { UnwrapRef } from 'vue'
-declare module 'vue' {
-  interface ComponentCustomProperties {
+type UnwrapRefs<T> = {
+  [K in keyof T]: import('vue').UnwrapRef<T[K]>
+}
+namespace _ComponentCustomProperties {
 ${extendItems}
-  }
+}
+declare module 'vue' {
+  interface ComponentCustomProperties extends UnwrapRefs<typeof _ComponentCustomProperties> {}
 }`
     },
   }
