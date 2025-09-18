@@ -43,11 +43,8 @@ describe('addon inject hooks', () => {
       .toMatchInlineSnapshot(`
         "export {}
         declare global {
-          const computed: typeof import('vue')['computed']
-          const ref: typeof import('vue')['ref']
-          const useEffect: typeof import('react')['useEffect']
-          const useState: typeof import('react')['useState']
-          const watch: typeof import('vue')['watch']
+          const { computed, ref, watch }: typeof import('vue')
+          const { useEffect, useState }: typeof import('react')
         }"
       `)
   })

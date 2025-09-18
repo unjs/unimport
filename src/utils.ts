@@ -148,51 +148,66 @@ export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
 }
 
 export function toExports(imports: Import[], fileDir?: string, includeType = false) {
-  const map = toImportModuleMap(imports, includeType)
-  return Object.entries(map)
-    .flatMap(([name, imports]) => {
-      if (isFilePath(name))
-        name = name.replace(/\.[a-z]+$/i, '')
+  const map = toImportModuleMap(imports, includeType, (i) => {
+    let from = stripFileExtension(i.from)
+    if (fileDir && isAbsolute(from)) {
+      from = relative(fileDir, from)
+      if (from[0] !== '.' && from[0] !== '/')
+        from = `./${from}`
+    }
+    return i.with
+      ? `'${from}' with ${stringifyWith(i.with)}`
+      : `'${from}'`
+  })
 
-      if (fileDir && isAbsolute(name)) {
-        name = relative(fileDir, name)
-        if (!name.match(/^[./]/))
-          name = `./${name}`
-      }
+  return Object.entries(map)
+    .flatMap(([from, imports]) => {
       const entries: string[] = []
       const filtered = Array.from(imports).filter((i) => {
-        if (i.name === '*') {
-          entries.push(`export * as ${i.as} from '${name}';`)
+        if (i.name === '*' || i.name === '=') {
+          entries.push(`export * as ${i.as} from ${from};`)
           return false
         }
         return true
       })
-      if (filtered.length)
-        entries.push(`export { ${filtered.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
-
+      if (filtered.length) {
+        const items = filtered.map(i => stringifyImportAlias(i, false)).join(', ')
+        entries.push(`export { ${items} } from ${from};`)
+      }
       return entries
     })
     .join('\n')
 }
 
 export function stripFileExtension(path: string) {
-  return path.replace(/\.[a-z]+$/i, '')
+  return isFilePath(path)
+    ? path.replace(/\.[a-z]+$/i, '')
+    : path
 }
 
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
-  return imports
-    .map((i) => {
-      const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      let typeDef = ''
-      if (i.with)
-        typeDef += `import('${from}', { with: ${stringifyWith(i.with)} })`
-      else
-        typeDef += `import('${from}')`
+  const map = toImportModuleMap(imports, true, (i) => {
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
+    return i.with
+      ? `import('${from}', { with: ${stringifyWith(i.with)} })`
+      : `import('${from}')`
+  })
 
-      if (i.name !== '*' && i.name !== '=')
-        typeDef += `['${i.name}']`
-
-      return `const ${i.as}: typeof ${typeDef}`
+  return Object.entries(map)
+    .flatMap(([from, imports]) => {
+      const entries: string[] = []
+      const filtered = Array.from(imports).filter((i) => {
+        if (i.name === '*' || i.name === '=') {
+          entries.push(`const ${i.as}: typeof ${from}`)
+          return false
+        }
+        return true
+      })
+      if (filtered.length) {
+        const items = filtered.map(i => stringifyImportAlias(i, true)).sort().join(', ')
+        entries.push(`const { ${items} }: typeof ${from}`)
+      }
+      return entries
     })
     .sort()
 }
@@ -282,16 +297,15 @@ function stringifyImportAlias(item: Import, isCJS = false) {
       : `${item.name} as ${item.as}`
 }
 
-function toImportModuleMap(imports: Import[], includeType = false) {
+function toImportModuleMap(imports: Import[], includeType = false, getKey?: (i: Import) => string) {
   const map: Record<string, Set<Import>> = {}
   for (const _import of imports) {
     if (_import.type && !includeType)
       continue
 
-    if (!map[_import.from])
-      map[_import.from] = new Set()
-
-    map[_import.from].add(_import)
+    const key = getKey?.(_import) || _import.from
+    map[key] ??= new Set()
+    map[key].add(_import)
   }
   return map
 }
