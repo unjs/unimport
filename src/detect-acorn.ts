@@ -234,10 +234,10 @@ export function createVirtualImportsAcronWalker(
   importMap: Map<string, Import>,
   virtualImports: string[] = [],
 ): {
-    imports: Import[]
-    ranges: [number, number][]
-    walk: ArgumentsType<typeof walk>[1]
-  } {
+  imports: Import[]
+  ranges: [number, number][]
+  walk: ArgumentsType<typeof walk>[1]
+} {
   const imports: Import[] = []
   const ranges: [number, number][] = []
 
