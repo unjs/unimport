@@ -77,11 +77,14 @@ describe('vue-template', () => {
         const { foo }: typeof import('foo')
       }
       // for vue template auto import
-      import { UnwrapRef } from 'vue'
+      type UnwrapRefs<T> = {
+        [K in keyof T]: import('vue').UnwrapRef<T[K]>
+      }
+      namespace _ComponentCustomProperties {
+        const { foo }: typeof import('foo')
+      }
       declare module 'vue' {
-        interface ComponentCustomProperties {
-          readonly foo: UnwrapRef<typeof import('foo')['foo']>
-        }
+        interface ComponentCustomProperties extends UnwrapRefs<typeof _ComponentCustomProperties> {}
       }"
     `)
   })
