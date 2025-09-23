@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> For the chagnelogs going onwards, please refer to the [GitHub Releases](https://github.com/unjs/unimport/releases).
+
+----
+
+
 # [5.3.0](https://github.com/unjs/unimport/compare/v5.2.0...v5.3.0) (2025-09-18)
 
 
