@@ -74,17 +74,14 @@ describe('vue-template', () => {
     expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
       "export {}
       declare global {
-        const { foo }: typeof import('foo')
+        const foo: typeof import('foo')['foo']
       }
       // for vue template auto import
-      type UnwrapRefs<T> = {
-        [K in keyof T]: import('vue').UnwrapRef<T[K]>
-      }
-      namespace _ComponentCustomProperties {
-        const { foo }: typeof import('foo')
-      }
+      import { UnwrapRef } from 'vue'
       declare module 'vue' {
-        interface ComponentCustomProperties extends UnwrapRefs<typeof _ComponentCustomProperties> {}
+        interface ComponentCustomProperties {
+          readonly foo: UnwrapRef<typeof import('foo')['foo']>
+        }
       }"
     `)
   })
