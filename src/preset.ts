@@ -12,8 +12,10 @@ const commonProps: (keyof ImportCommon)[] = [
   'priority',
   'disabled',
   'dtsDisabled',
+  'declarationType',
   'meta',
   'type',
+  'typeFrom'
 ]
 
 export async function resolvePreset(preset: Preset): Promise<Import[]> {
