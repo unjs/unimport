@@ -45,6 +45,11 @@ it('dts', async () => {
           },
         ],
       },
+      {
+        from : 'pkg/src',
+        typeFrom: 'pkg/dts',
+        imports: ['pkg']
+      }
     ],
     dirs: [
       './playground/composables/**',
@@ -81,6 +86,7 @@ it('dts', async () => {
         const myfunc2: typeof import('<root>/playground/composables/nested/bar/named')['myfunc2']
         const named: typeof import('<root>/playground/composables/nested/bar/index')['named']
         const nested: typeof import('<root>/playground/composables/nested/index')['default']
+        const pkg: typeof import('pkg/dts')['pkg']
         const reactive: typeof import('vue')['reactive']
         const ref: typeof import('vue')['ref']
         const subFoo: typeof import('<root>/playground/composables/nested/bar/sub/index')['subFoo']
