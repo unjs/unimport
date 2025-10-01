@@ -46,10 +46,10 @@ it('dts', async () => {
         ],
       },
       {
-        from : 'pkg/src',
+        from: 'pkg/src',
         typeFrom: 'pkg/dts',
-        imports: ['pkg']
-      }
+        imports: ['pkg'],
+      },
     ],
     dirs: [
       './playground/composables/**',

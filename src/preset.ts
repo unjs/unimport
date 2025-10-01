@@ -15,7 +15,7 @@ const commonProps: (keyof ImportCommon)[] = [
   'declarationType',
   'meta',
   'type',
-  'typeFrom'
+  'typeFrom',
 ]
 
 export async function resolvePreset(preset: Preset): Promise<Import[]> {
