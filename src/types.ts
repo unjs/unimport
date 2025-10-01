@@ -418,3 +418,11 @@ export interface MagicStringResult {
 export interface ImportInjectionResult extends MagicStringResult {
   imports: Import[]
 }
+
+export interface ToExportsOptions {
+  /**
+   * Whether to retrieve module names from imports' `typeFrom` property when provided
+   * @default false
+   */
+  declaration?: boolean
+}
