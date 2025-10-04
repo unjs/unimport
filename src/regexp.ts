@@ -24,6 +24,8 @@ export const separatorRE = /[,[\]{}\n]|\b(?:import|export)\b/g
 // eslint-disable-next-line regexp/no-super-linear-backtracking
 export const matchRE = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w$/)]|\bextends\s+)([\w$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+\{)/g
 
+export const identifierRE = /^[A-Z_$][\w$]*$/i
+
 // eslint-disable-next-line regexp/no-super-linear-backtracking
 const regexRE = /\/\S*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g
 

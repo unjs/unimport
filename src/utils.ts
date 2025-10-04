@@ -3,7 +3,7 @@ import type { Import, InlinePreset, MagicStringResult, PathFromResolver, TypeDec
 import MagicString from 'magic-string'
 import { findStaticImports, parseStaticImport, resolvePathSync } from 'mlly'
 import { isAbsolute, relative } from 'pathe'
-import { stripCommentsAndStrings } from './regexp'
+import { identifierRE, stripCommentsAndStrings } from './regexp'
 
 export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
@@ -190,7 +190,7 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
         typeDef += `import('${from}')`
 
       if (i.name !== '*' && i.name !== '=')
-        typeDef += `['${i.name}']`
+        typeDef += identifierRE.test(i.name) ? `.${i.name}` : `['${i.name}']`
 
       return `const ${i.as}: typeof ${typeDef}`
     })
