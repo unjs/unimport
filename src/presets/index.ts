@@ -1,4 +1,5 @@
 import dateFns from './date-fns'
+import { nuxtTestUtilsE2E, nuxtTestUtilsRuntime } from './nuxt-test-utils'
 import pinia from './pinia'
 import preact from './preact'
 import quasar from './quasar'
@@ -55,6 +56,8 @@ export const builtinPresets = {
   'vue-router-composables': vueRouterComposables,
   'vue': vue,
   'vue/macros': vueMacros,
+  '@nuxt/test-utils/e2e': nuxtTestUtilsE2E,
+  '@nuxt/test-utils/runtime': nuxtTestUtilsRuntime,
   'vuex': vuex,
   'vitest': vitest,
   'uni-app': uniApp,
