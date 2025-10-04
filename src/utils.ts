@@ -3,12 +3,13 @@ import type { Import, InlinePreset, MagicStringResult, PathFromResolver, TypeDec
 import MagicString from 'magic-string'
 import { findStaticImports, parseStaticImport, resolvePathSync } from 'mlly'
 import { isAbsolute, relative } from 'pathe'
-import { identifierRE, stripCommentsAndStrings } from './regexp'
+import { stripCommentsAndStrings } from './regexp'
 
 export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
+const identifierRE = /^[A-Z_$][\w$]*$/i
 const safePropertyName = /^[a-z$_][\w$]*$/i
 
 function stringifyWith(withValues: Record<string, string>) {
