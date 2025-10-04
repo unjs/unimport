@@ -1,3 +1,18 @@
+> [!IMPORTANT]
+> For the chagnelogs going onwards, please refer to the [GitHub Releases](https://github.com/unjs/unimport/releases).
+
+----
+
+
+# [5.3.0](https://github.com/unjs/unimport/compare/v5.2.0...v5.3.0) (2025-09-18)
+
+
+### Features
+
+* optimize type declaration generation with `const { ... }` ([#468](https://github.com/unjs/unimport/issues/468)) ([0a47eab](https://github.com/unjs/unimport/commit/0a47eab635335b58950d8a559248aa2620d14e52))
+
+
+
 # [5.2.0](https://github.com/unjs/unimport/compare/v5.1.0...v5.2.0) (2025-07-21)
 
 
