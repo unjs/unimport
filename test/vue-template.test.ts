@@ -74,7 +74,7 @@ describe('vue-template', () => {
     expect(await ctx.generateTypeDeclarations()).toMatchInlineSnapshot(`
       "export {}
       declare global {
-        const foo: typeof import('foo')['foo']
+        const foo: typeof import('foo').foo
       }
       // for vue template auto import
       import { UnwrapRef } from 'vue'
