@@ -116,7 +116,7 @@ describe('toExports', () => {
       { from: 'pkg/src', typeFrom: 'pkg/dts', name: 'foo' },
     ]
     expect(
-      toExports(imports, undefined, false, { declaration: true })
+      toExports(imports, undefined, false, { declaration: true }),
     ).toMatchInlineSnapshot(`"export { foo } from 'pkg/dts';"`)
   })
 })
