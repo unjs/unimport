@@ -9,6 +9,7 @@ export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
+const identifierRE = /^[A-Z_$][\w$]*$/i
 const safePropertyName = /^[a-z$_][\w$]*$/i
 
 function stringifyWith(withValues: Record<string, string>) {
@@ -190,7 +191,7 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
         typeDef += `import('${from}')`
 
       if (i.name !== '*' && i.name !== '=')
-        typeDef += `['${i.name}']`
+        typeDef += identifierRE.test(i.name) ? `.${i.name}` : `['${i.name}']`
 
       return `const ${i.as}: typeof ${typeDef}`
     })
