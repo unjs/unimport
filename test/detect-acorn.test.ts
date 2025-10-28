@@ -165,6 +165,51 @@ console.log(otherModule)
         console.log(otherModule)"
       `)
   })
+
+  it('for function body scope, take function params as declarations of parent scope', async () => {
+    const ast = parse(`
+      function test(param1, param2) {
+        console.log(param1)
+      }
+    `, {
+      sourceType: 'module',
+      ecmaVersion: 'latest',
+      locations: true,
+    })
+
+    const { scopes, unmatched } = traveseScopes(ast as any)
+
+    expect(unmatched)
+      .toMatchInlineSnapshot(`
+        Set {
+          "console",
+        }
+      `)
+
+    expect(scopes.map(i => ({
+      declarations: [...i.declarations].sort(),
+      references: [...i.references].sort(),
+    })))
+      .toMatchInlineSnapshot(`
+        [
+          {
+            "declarations": [
+              "param1",
+              "param2",
+              "test",
+            ],
+            "references": [],
+          },
+          {
+            "declarations": [],
+            "references": [
+              "console",
+              "param1",
+            ],
+          },
+        ]
+      `)
+  })
 })
 
 describe('virtual imports', () => {
