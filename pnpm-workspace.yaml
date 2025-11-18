@@ -40,3 +40,4 @@ catalogs:
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
+trustPolicy: no-downgrade
