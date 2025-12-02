@@ -6,7 +6,7 @@ catalogs:
     '@types/estree': ^1.0.8
     '@types/node': ^24.6.1
     '@types/picomatch': ^4.0.2
-    '@vitest/coverage-v8': ^3.2.4
+    '@vitest/coverage-v8': ^4.0.15
     bumpp: ^10.2.3
     eslint: ^9.36.0
     typescript: ^5.9.3
@@ -36,7 +36,7 @@ catalogs:
     h3: ^1.15.4
     jquery: ^3.7.1
     lit: ^3.3.1
-    vitest: ^3.2.4
+    vitest: ^4.0.15
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
