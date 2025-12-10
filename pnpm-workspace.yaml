@@ -2,7 +2,7 @@ packages:
   - playground
 catalogs:
   dev:
-    '@antfu/eslint-config': ^5.4.1
+    '@antfu/eslint-config': ^6.6.1
     '@types/estree': ^1.0.8
     '@types/node': ^24.6.1
     '@types/picomatch': ^4.0.2
