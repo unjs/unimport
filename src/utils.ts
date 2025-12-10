@@ -117,7 +117,7 @@ export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
   const indexToRemove = new Set<number>()
 
   imports.filter(i => !i.disabled).forEach((i, idx) => {
-    if (i.declarationType === 'enum' || i.declarationType === 'class')
+    if (i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
       return
 
     const name = i.as ?? i.name
