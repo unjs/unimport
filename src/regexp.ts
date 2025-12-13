@@ -10,7 +10,7 @@ export const excludeRE = [
   /\bclass\s*([\w$]+)\s*\{/g,
   // defined as local variable
   // eslint-disable-next-line regexp/no-super-linear-backtracking
-  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs,
+  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?(?:[=;\n]|of)/gs
 ]
 
 export const importAsRE = /^.*\sas\s+/
