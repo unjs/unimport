@@ -1,5 +1,5 @@
 import type { StaticImport } from 'mlly'
-import type { Import, InlinePreset, MagicStringResult, PathFromResolver, TypeDeclarationOptions } from './types'
+import type { Import, InlinePreset, MagicStringResult, PathFromResolver, ToExportsOptions, TypeDeclarationOptions } from './types'
 import MagicString from 'magic-string'
 import { findStaticImports, parseStaticImport, resolvePathSync } from 'mlly'
 import { isAbsolute, relative } from 'pathe'
@@ -148,8 +148,8 @@ export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
   return imports.filter((_, idx) => !indexToRemove.has(idx))
 }
 
-export function toExports(imports: Import[], fileDir?: string, includeType = false) {
-  const map = toImportModuleMap(imports, includeType)
+export function toExports(imports: Import[], fileDir?: string, includeType = false, options: ToExportsOptions = {}) {
+  const map = toImportModuleMap(imports, includeType, options)
   return Object.entries(map)
     .flatMap(([name, imports]) => {
       if (isFilePath(name))
@@ -283,16 +283,17 @@ function stringifyImportAlias(item: Import, isCJS = false) {
       : `${item.name} as ${item.as}`
 }
 
-function toImportModuleMap(imports: Import[], includeType = false) {
+function toImportModuleMap(imports: Import[], includeType = false, options: ToExportsOptions = {}) {
   const map: Record<string, Set<Import>> = {}
   for (const _import of imports) {
     if (_import.type && !includeType)
       continue
 
-    if (!map[_import.from])
-      map[_import.from] = new Set()
+    const from = (options.declaration && _import.typeFrom) || _import.from
+    if (!map[from])
+      map[from] = new Set()
 
-    map[_import.from].add(_import)
+    map[from].add(_import)
   }
   return map
 }

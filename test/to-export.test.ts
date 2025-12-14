@@ -110,4 +110,13 @@ describe('toExports', () => {
     expect(toExports(imports, root, true))
       .toMatchInlineSnapshot('"export { ref, Ref } from \'vue\';"')
   })
+
+  it('declaration file support', () => {
+    const imports: Import[] = [
+      { from: 'pkg/src', typeFrom: 'pkg/dts', name: 'foo' },
+    ]
+    expect(
+      toExports(imports, undefined, false, { declaration: true }),
+    ).toMatchInlineSnapshot(`"export { foo } from 'pkg/dts';"`)
+  })
 })
