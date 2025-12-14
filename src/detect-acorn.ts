@@ -145,6 +145,20 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
 
         // ====== Scope ======
         case 'BlockStatement':
+          switch (parent?.type) {
+            // for a function body scope, take the function parameters as declarations
+            case 'FunctionDeclaration': // e.g. function foo(p1, p2) { ... }
+            case 'ArrowFunctionExpression': // e.g. (p1, p2) => { ... }
+            case 'FunctionExpression': // e.g. const foo = function(p1, p2) { ... }
+            {
+              const parameterIdentifiers = parent.params
+                .filter(p => p.type === 'Identifier')
+              for (const id of parameterIdentifiers) {
+                scopeCurrent.declarations.add(id.name)
+              }
+              break
+            }
+          }
           pushScope(node)
           return
 
