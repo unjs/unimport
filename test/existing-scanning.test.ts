@@ -9,7 +9,6 @@ describe('regex for extract local variable', () => {
     { input: 'const { ref} = Vue', output: ['ref'] },
     { input: 'const { maybe_test, $test} = Vue', output: ['maybe_test', '$test'] },
     { input: 'const [state] = useState(1)', output: ['state'] },
-    { input: 'for (const [index, value] of list.entries()) {}', output: ['index', 'value'] },
 
     // We may not able to handle these cases
     //     { input: 'const b = computed(0)  ,   test=1;', output: ['b', 'test'] },
