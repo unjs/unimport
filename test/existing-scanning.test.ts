@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { excludeRE, importAsRE, separatorRE, stripCommentsAndStrings } from '../src/regexp'
 
-describe.only('regex for extract local variable', () => {
+describe('regex for extract local variable', () => {
   const cases: { input: string, output: string[] }[] = [
     { input: 'const b;', output: ['b'] },
     { input: 'const { ref,    computed,watch} = Vue', output: ['ref', 'computed', 'watch'] },
