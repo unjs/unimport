@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { excludeRE, importAsRE, separatorRE, stripCommentsAndStrings } from '../src/regexp'
 
-describe('regex for extract local variable', () => {
+describe.only('regex for extract local variable', () => {
   const cases: { input: string, output: string[] }[] = [
     { input: 'const b;', output: ['b'] },
     { input: 'const { ref,    computed,watch} = Vue', output: ['ref', 'computed', 'watch'] },
@@ -9,6 +9,12 @@ describe('regex for extract local variable', () => {
     { input: 'const { ref} = Vue', output: ['ref'] },
     { input: 'const { maybe_test, $test} = Vue', output: ['maybe_test', '$test'] },
     { input: 'const [state] = useState(1)', output: ['state'] },
+    { input: `
+for (const [index] of [1,2,3].entries()) {
+  const a = AUTO_IMPORTED;
+  const b = []; // Make sure that the destructuring bracket in the loop does not expand to here
+}
+`, output: ['index', 'a', 'b'] },
 
     // We may not able to handle these cases
     //     { input: 'const b = computed(0)  ,   test=1;', output: ['b', 'test'] },
