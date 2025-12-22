@@ -28,12 +28,14 @@ import vueMacros from './vue-macros'
 import vueRouter from './vue-router'
 import vueRouterComposables from './vue-router-composables'
 import vueuseCore from './vueuse-core'
+import { VueUseCoreDirectives } from './vueuse-core-directives'
 import vueuseHead from './vueuse-head'
 import vuex from './vuex'
 
 export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
   '@vueuse/core': vueuseCore,
+  '@vueuse/core/directives': VueUseCoreDirectives,
   '@vueuse/head': vueuseHead,
   'pinia': pinia,
   'preact': preact,
@@ -64,4 +66,7 @@ export const builtinPresets = {
   'date-fns': dateFns,
 }
 
+export { VueUseCoreDirectives }
+
 export type BuiltinPresetName = keyof typeof builtinPresets
+export type { VueUseCoreDirectivesOptions } from './vueuse-core-directives'

@@ -11,7 +11,8 @@
 - Auto import register APIs for Vite, Webpack or esbuild powered by [unplugin](https://github.com/unjs/unplugin)
 - TypeScript declaration file generation
 - Auto import for custom APIs defined under specific directories
-- Auto import for Vue template
+- Built-in presets for common libraries: check [presets](./src/presets) folder
+- Auto import for Vue template and directives
 
 ## Install
 
@@ -419,6 +420,33 @@ Unimport.vite({
         return normalizedImportFrom.includes('/directives/')
       }
     }
+  }
+})
+```
+
+#### Built-in Preset for VueUse Core Directives
+
+You can use the built-in VueUse Core directives, you will need:
+- install `@vueuse/core` and `@vueuse/components`
+
+You can add the preset via the built-in preset:
+```ts
+Unimport.vite({
+  presets: ['@vueuse/core/directives'],
+  addons: {
+    vueDirectives: true
+  }
+})
+```
+
+or via preset factory to change the directives prefix:
+```ts
+import { VueUseCoreDirectives } from 'unimport'
+
+Unimport.vite({
+  presets: [VueUseCoreDirectives({ prefix: true })],
+  addons: {
+    vueDirectives: true
   }
 })
 ```
