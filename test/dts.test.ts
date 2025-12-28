@@ -1,5 +1,6 @@
-import { expect, it } from 'vitest'
-import { createUnimport } from '../src'
+import type { Import } from '../src'
+import { describe, expect, it } from 'vitest'
+import { createUnimport, toTypeDeclarationFile } from '../src'
 
 it('dts', async () => {
   const cwd = process.cwd().replace(/\\/g, '/')
@@ -142,4 +143,23 @@ it('should compat with `export =`', async () => {
       const browser: typeof import('webextension-polyfill')
     }"
   `)
+})
+
+describe('toTypeDeclarationFile', () => {
+  it('should merge multiple imports into union type', async () => {
+    const imports: Import[] = [
+      { name: 'a', from: 'source-1', as: 'merged' },
+      { name: 'b', from: 'source-2', as: 'merged' },
+      { name: 'c', from: 'source-3', as: 'merged' },
+      { name: 'd', from: 'source-4', as: 'other' },
+    ]
+
+    expect(toTypeDeclarationFile(imports)).toMatchInlineSnapshot(`
+      "export {}
+      declare global {
+        const merged: typeof import('source-1').a | typeof import('source-2').b | typeof import('source-3').c
+        const other: typeof import('source-4').d
+      }"
+    `)
+  })
 })

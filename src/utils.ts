@@ -180,21 +180,41 @@ export function stripFileExtension(path: string) {
   return path.replace(/\.[a-z]+$/i, '')
 }
 
+function groupImportsByName(imports: Import[]): Map<string, Import[]> {
+  const map = new Map<string, Import[]>()
+  for (const i of imports) {
+    const name = i.as ?? i.name
+    if (!map.has(name)) {
+      map.set(name, [])
+    }
+    map.get(name)!.push(i)
+  }
+  return map
+}
+
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
-  return imports
-    .map((i) => {
-      const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
-      let typeDef = ''
-      if (i.with)
-        typeDef += `import('${from}', { with: ${stringifyWith(i.with)} })`
-      else
-        typeDef += `import('${from}')`
+  const groupedImports = groupImportsByName(imports)
 
-      if (i.name !== '*' && i.name !== '=')
-        typeDef += identifierRE.test(i.name) ? `.${i.name}` : `['${i.name}']`
+  function generateTypeDef(i: Import) {
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
+    let typeDef = ''
+    if (i.with)
+      typeDef += `import('${from}', { with: ${stringifyWith(i.with)} })`
+    else
+      typeDef += `import('${from}')`
 
-      return `const ${i.as}: typeof ${typeDef}`
-    })
+    if (i.name !== '*' && i.name !== '=')
+      typeDef += identifierRE.test(i.name) ? `.${i.name}` : `['${i.name}']`
+    return typeDef
+  }
+
+  const declarations: string[] = []
+  for (const [name, importGroup] of groupedImports.entries()) {
+    const typeDefs = importGroup.map(i => `typeof ${generateTypeDef(i)}`)
+    declarations.push(`const ${name}: ${typeDefs.join(' | ')}`)
+  }
+
+  return declarations
     .sort()
 }
 
