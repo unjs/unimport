@@ -68,7 +68,9 @@ it('dts', async () => {
       "export {}
       declare global {
         const $: typeof import('jquery').$
+        const BAR: typeof import('<root>/playground/composables/comma-separated').BAR
         const CustomEnum: typeof import('<root>/playground/composables/index').CustomEnum
+        const FOO: typeof import('<root>/playground/composables/comma-separated').FOO
         const PascalCased: typeof import('<root>/playground/composables/PascalCased').PascalCased
         const THREE: typeof import('three')
         const bar: typeof import('<root>/playground/composables/nested/bar/index').bar

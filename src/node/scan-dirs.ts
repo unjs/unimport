@@ -138,10 +138,10 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           imports.push({ name, as: name, from: filepath, ...additional })
       }
       else if (exp.type === 'declaration') {
-        if (exp.name) {
-          imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
+        for (const name of exp.names) {
+          imports.push({ name, as: name, from: filepath, ...additional })
           if (exp.declarationType === 'enum' || exp.declarationType === 'const enum' || exp.declarationType === 'class') {
-            imports.push({ name: exp.name, as: exp.name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
+            imports.push({ name, as: name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
           }
         }
       }

@@ -15,6 +15,11 @@ describe('scan-dirs', () => {
       .toMatchInlineSnapshot(`
         [
           {
+            "as": "BAR",
+            "from": "comma-separated.ts",
+            "name": "BAR",
+          },
+          {
             "as": "bump",
             "from": "index.ts",
             "name": "bump",
@@ -47,6 +52,11 @@ describe('scan-dirs', () => {
             "as": "foo",
             "from": "foo.ts",
             "name": "default",
+          },
+          {
+            "as": "FOO",
+            "from": "comma-separated.ts",
+            "name": "FOO",
           },
           {
             "as": "localA",
