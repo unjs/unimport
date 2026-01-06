@@ -5,6 +5,7 @@ export default antfu(
     pnpm: true,
     ignores: [
       'test/cases',
+      'playground',
     ],
   },
 )
