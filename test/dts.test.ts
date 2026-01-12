@@ -172,7 +172,6 @@ describe('toTypeDeclarationFile', () => {
     expect(toTypeDeclarationFile(imports)).toMatchInlineSnapshot(`
       "export {}
       declare global {
-        const merged: typeof import('source-1').a
         const merged: typeof import('source-2').b
       }"
     `)
