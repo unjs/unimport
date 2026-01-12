@@ -154,11 +154,26 @@ describe('toTypeDeclarationFile', () => {
       { name: 'd', from: 'source-4', as: 'other' },
     ]
 
-    expect(toTypeDeclarationFile(imports)).toMatchInlineSnapshot(`
+    expect(toTypeDeclarationFile(imports, { mergeIntoUnion: true })).toMatchInlineSnapshot(`
       "export {}
       declare global {
         const merged: typeof import('source-1').a | typeof import('source-2').b | typeof import('source-3').c
         const other: typeof import('source-4').d
+      }"
+    `)
+  })
+
+  it('should not merge multiple imports into union type by default', async () => {
+    const imports: Import[] = [
+      { name: 'a', from: 'source-1', as: 'merged' },
+      { name: 'b', from: 'source-2', as: 'merged' },
+    ]
+
+    expect(toTypeDeclarationFile(imports)).toMatchInlineSnapshot(`
+      "export {}
+      declare global {
+        const merged: typeof import('source-1').a
+        const merged: typeof import('source-2').b
       }"
     `)
   })

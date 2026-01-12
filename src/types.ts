@@ -334,6 +334,12 @@ export interface TypeDeclarationOptions {
    * @default true
    */
   typeReExports?: boolean
+  /**
+   * Merge the imports with the same name into a union type
+   *
+   * @default false
+   */
+  mergeIntoUnion?: boolean
 }
 
 export interface InjectImportsOptions {

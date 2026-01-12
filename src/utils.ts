@@ -211,7 +211,12 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
   const declarations: string[] = []
   for (const [name, importGroup] of groupedImports.entries()) {
     const typeDefs = importGroup.map(i => `typeof ${generateTypeDef(i)}`)
-    declarations.push(`const ${name}: ${typeDefs.join(' | ')}`)
+    if (options?.mergeIntoUnion) {
+      declarations.push(`const ${name}: ${typeDefs.join(' | ')}`)
+    }
+    else {
+      declarations.push(...typeDefs.map(typeDef => `const ${name}: ${typeDef}`))
+    }
   }
 
   return declarations
