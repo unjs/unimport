@@ -380,7 +380,7 @@ export type Thenable<T> = Promise<T> | T
 
 export interface Addon {
   name?: string
-  transform?: (this: UnimportContext, code: MagicString, id: string | undefined) => Thenable<MagicString>
+  transform?: (this: UnimportContext, code: MagicString, id: string | undefined, imports: Import[]) => Thenable<MagicString>
   declaration?: (this: UnimportContext, dts: string, options: TypeDeclarationOptions) => Thenable<string>
   matchImports?: (this: UnimportContext, identifiers: Set<string>, matched: Import[]) => Thenable<Import[] | void>
   /**
@@ -417,6 +417,7 @@ export interface MagicStringResult {
 
 export interface ImportInjectionResult extends MagicStringResult {
   imports: Import[]
+  addonsImports: Import[]
 }
 
 export interface ToExportsOptions {
