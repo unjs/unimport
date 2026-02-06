@@ -40,8 +40,8 @@ describe('inject import', () => {
 
     expect(ctx.getMetadata()).toMatchInlineSnapshot(`
       {
-        "injectionUsage": {
-          "import1": {
+        "injectionUsage": Map {
+          "import1" => {
             "count": 3,
             "import": {
               "as": "import1",
@@ -53,7 +53,7 @@ describe('inject import', () => {
               "gar",
             ],
           },
-          "import2": {
+          "import2" => {
             "count": 1,
             "import": {
               "as": "import2",

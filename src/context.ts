@@ -64,10 +64,13 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     const metadata = ctx.getMetadata()
     if (metadata) {
       result.imports.forEach((i) => {
-        metadata.injectionUsage[i.name] = metadata.injectionUsage[i.name] || { import: i, count: 0, moduleIds: [] }
-        metadata.injectionUsage[i.name].count++
-        if (id && !metadata.injectionUsage[i.name].moduleIds.includes(id))
-          metadata.injectionUsage[i.name].moduleIds.push(id)
+        let record = metadata.injectionUsage.get(i.name)
+        if (!record) {
+          metadata.injectionUsage.set(i.name, record = { import: i, count: 0, moduleIds: [] })
+        }
+        record.count++
+        if (id && !record.moduleIds.includes(id))
+          record.moduleIds.push(id)
       })
     }
 
@@ -119,7 +122,7 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
 
   if (opts.collectMeta) {
     metadata = {
-      injectionUsage: {},
+      injectionUsage: new Map(),
     }
   }
 

@@ -153,7 +153,7 @@ export interface InjectionUsageRecord {
 }
 
 export interface UnimportMeta {
-  injectionUsage: Record<string, InjectionUsageRecord>
+  injectionUsage: Map<string, InjectionUsageRecord>
 }
 
 export interface AddonsOptions {
