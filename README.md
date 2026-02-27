@@ -83,7 +83,7 @@ console.log(injectImports('console.log(fooBar())'))
 
 ### Imports Item
 
-###### Named import
+#### Named import
 
 ```ts
 imports: [
@@ -99,7 +99,7 @@ import { useState as useSignal } from 'react'
 import { ref } from 'vue'
 ```
 
-###### Default import
+#### Default import
 
 ```ts
 imports: [
@@ -113,7 +113,7 @@ Will be injected as:
 import _ from 'lodash'
 ```
 
-###### Namespace import
+#### Namespace import
 
 ```ts
 imports: [
@@ -127,7 +127,7 @@ Will be injected as:
 import * as _ from 'lodash'
 ```
 
-###### Export assignment import
+#### Export assignment import
 
 This is a special case for libraries authored with [TypeScript's `export =` syntax](https://www.typescriptlang.org/docs/handbook/modules/reference.html#export--and-import--require). You don't need it the most of the time.
 
@@ -149,7 +149,7 @@ And the type declaration will be added as:
 const browser: typeof import('webextension-polyfill')
 ```
 
-###### Custom Presets
+#### Custom Presets
 
 Presets are provided as a shorthand for declaring imports from the same package:
 
@@ -176,7 +176,7 @@ imports: [
 ]
 ```
 
-###### Built-in Presets
+#### Built-in Presets
 
 `unimport` also provides some built-in presets for common libraries:
 
@@ -191,7 +191,7 @@ presets: [
 
 You can check out [`src/presets`](./src/presets/) for all the options available or refer to the type declaration.
 
-###### Exports Auto Scan
+#### Exports Auto Scan
 
 Since `unimport` v0.7.0, we also support auto scanning the examples from a local installed package, for example:
 
@@ -441,10 +441,7 @@ Published under [MIT License](./LICENSE).
 [npm-version-href]: https://npmjs.com/package/unimport
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/unimport?style=flat-square
-[npm-downloads-href]: https://npmjs.com/package/unimport
-
-[github-actions-src]: https://img.shields.io/github/workflow/status/unjs/unimport/ci/main?style=flat-square
-[github-actions-href]: https://github.com/unjs/unimport/actions?query=workflow%3Aci
+[npm-downloads-href]: https://npmjs.com/package/Unimport
 
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/unimport/main?style=flat-square
 [codecov-href]: https://codecov.io/gh/unjs/unimport
