@@ -64,9 +64,9 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     const metadata = ctx.getMetadata()
     if (metadata) {
       result.imports.forEach((i) => {
-        let record = metadata.injections.get(i.name)
+        let record = metadata.injectionsUsageMap.get(i.name)
         if (!record) {
-          metadata.injections.set(i.name, record = { import: i, count: 0, moduleIds: [] })
+          metadata.injectionsUsageMap.set(i.name, record = { import: i, count: 0, moduleIds: [] })
         }
         record.count++
         if (id && !record.moduleIds.includes(id))
@@ -122,10 +122,12 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
 
   if (opts.collectMeta) {
     metadata = {
-      injections: new Map(),
+      injectionsUsageMap: new Map(),
       get injectionUsage() {
-        console.warn('[unimport] `injectionUsage` is deprecated, use `injections` instead')
-        return Object.fromEntries(this.injections)
+        // eslint-disable-next-line unicorn/error-message
+        const stack = new Error().stack
+        console.warn('[unimport] `injectionUsage` is deprecated, use `injectionsUsageMap` instead', stack)
+        return Object.fromEntries(this.injectionsUsageMap)
       },
     }
   }

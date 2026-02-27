@@ -153,9 +153,9 @@ export interface InjectionUsageRecord {
 }
 
 export interface UnimportMeta {
-  injections: Map<string, InjectionUsageRecord>
+  injectionsUsageMap: Map<string, InjectionUsageRecord>
   /**
-   * @deprecated use `injections` instead
+   * @deprecated use `injectionsUsageMap` instead
    */
   get injectionUsage(): Record<string, InjectionUsageRecord>
 }
