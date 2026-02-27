@@ -76,7 +76,7 @@ describe('inject import', () => {
             "moduleIds": [],
           },
         },
-        "injections": Map {
+        "injectionsUsageMap": Map {
           "import1" => {
             "count": 3,
             "import": {
