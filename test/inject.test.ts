@@ -29,6 +29,7 @@ describe('inject import', () => {
         { name: 'import3', from: 'specifier3' },
         { name: 'import4', from: 'specifier4' },
         { name: 'foo', as: 'import5', from: 'specifier5' },
+        { name: 'toString', from: 'specifier6' },
         { name: 'import10', from: 'specifier10' },
       ],
       collectMeta: true,
@@ -37,6 +38,7 @@ describe('inject import', () => {
     await ctx.injectImports('console.log(import1())', 'foo')
     await ctx.injectImports('console.log(import2())', 'bar')
     await ctx.injectImports('console.log(import1())', 'gar')
+    await ctx.injectImports('console.log(toString())')
 
     expect(ctx.getMetadata()).toMatchInlineSnapshot(`
       {
@@ -63,6 +65,49 @@ describe('inject import', () => {
             "moduleIds": [
               "bar",
             ],
+          },
+          "toString": {
+            "count": 1,
+            "import": {
+              "as": "toString",
+              "from": "specifier6",
+              "name": "toString",
+            },
+            "moduleIds": [],
+          },
+        },
+        "injectionsUsageMap": Map {
+          "import1" => {
+            "count": 3,
+            "import": {
+              "as": "import1",
+              "from": "specifier1",
+              "name": "import1",
+            },
+            "moduleIds": [
+              "foo",
+              "gar",
+            ],
+          },
+          "import2" => {
+            "count": 1,
+            "import": {
+              "as": "import2",
+              "from": "specifier2",
+              "name": "import2",
+            },
+            "moduleIds": [
+              "bar",
+            ],
+          },
+          "toString" => {
+            "count": 1,
+            "import": {
+              "as": "toString",
+              "from": "specifier6",
+              "name": "toString",
+            },
+            "moduleIds": [],
           },
         },
       }
