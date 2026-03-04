@@ -23,7 +23,7 @@ export function createEstreeDetector(parse: (code: string) => Program) {
     if (enableAutoImport || enableTransformVirtualImports) {
       const ast = parse(s.original)
 
-      const virtualImports = createVirtualImportsAcronWalker(map, ctx.options.virtualImports)
+      const virtualImports = createVirtualImports(map, ctx.options.virtualImports)
 
       const scopes = traveseScopes(
         ast,
@@ -241,7 +241,7 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
   }
 }
 
-export function createVirtualImportsAcronWalker(
+function createVirtualImports(
   importMap: Map<string, Import>,
   virtualImports: string[] = [],
 ): {
