@@ -1,8 +1,8 @@
+catalogMode: prefer
+shellEmulator: true
+trustPolicy: no-downgrade
 packages:
   - playground
-
-catalogMode: prefer
-
 catalogs:
   dev:
     '@antfu/eslint-config': ^7.6.1
@@ -42,11 +42,6 @@ catalogs:
     jquery: ^3.7.1
     lit: ^3.3.2
     vitest: ^4.0.18
-
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
-
-shellEmulator: true
-
-trustPolicy: no-downgrade
