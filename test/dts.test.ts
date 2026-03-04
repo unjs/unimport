@@ -96,6 +96,7 @@ it('dts', async () => {
         const useDoubled: typeof import('<root>/playground/composables/index').useDoubled
         const useEffect: typeof import('react').useEffect
         const useRef: typeof import('react').useRef
+        const useSleep: typeof import('<root>/playground/composables/async-value').useSleep
         const useState: typeof import('react').useState
         const vanillaA: typeof import('<root>/playground/composables/vanilla').vanillaA
         const vanillaAMJS: typeof import('<root>/playground/composables/vanilla').vanillaAMJS

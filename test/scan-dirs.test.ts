@@ -1,6 +1,7 @@
 import { join, relative } from 'pathe'
 import { describe, expect, it } from 'vitest'
 import { normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
+import { scanExports } from '../src/node/scan-dirs'
 
 describe('scan-dirs', () => {
   it('scanDirExports', async () => {
@@ -89,6 +90,11 @@ describe('scan-dirs', () => {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",
+          },
+          {
+            "as": "useSleep",
+            "from": "async-value.ts",
+            "name": "useSleep",
           },
           {
             "as": "vanillaA",
@@ -278,6 +284,17 @@ describe('scan-dirs', () => {
     const dirWithSingleAsterisk = join(__dirname, '../playground/composables/nested/*/index.ts')
     const singleAsteriskExports = await scanDirExports([dirWithSingleAsterisk])
     expect(singleAsteriskExports.some(i => i.name === 'CustomType2')).toEqual(true)
+  })
+
+  it('should not register JS reserved words as exports from declaration expressions', async () => {
+    // mlly's regex parser incorrectly captures `async` from arrow function
+    // bodies (e.g. `export const x = () => foo(async () => {})`) as an export
+    // name. unimport should filter these out.
+    const filepath = join(__dirname, '../playground/composables/async-value.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+    expect(names).toContain('useSleep')
+    expect(names).not.toContain('async')
   })
 })
 
