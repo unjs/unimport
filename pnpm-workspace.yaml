@@ -1,8 +1,8 @@
-catalogMode: prefer
-shellEmulator: true
-trustPolicy: no-downgrade
 packages:
   - playground
+
+catalogMode: prefer
+
 catalogs:
   dev:
     '@antfu/eslint-config': ^7.6.1
@@ -28,6 +28,7 @@ catalogs:
     local-pkg: ^1.1.2
     magic-string: ^0.30.21
     mlly: ^1.8.0
+    oxc-parser: ^0.116.0
     pathe: ^2.0.3
     picomatch: ^4.0.3
     pkg-types: ^2.3.0
@@ -41,6 +42,11 @@ catalogs:
     jquery: ^3.7.1
     lit: ^3.3.2
     vitest: ^4.0.18
+
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
+
+shellEmulator: true
+
+trustPolicy: no-downgrade

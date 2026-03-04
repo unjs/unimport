@@ -370,7 +370,7 @@ export interface InjectImportsOptions {
    *
    * @default 'regex'
    */
-  parser?: 'acorn' | 'regex'
+  parser?: 'acorn' | 'oxc' | 'regex'
 
   /**
    * Inject the imports at the end of other imports

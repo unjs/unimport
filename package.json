@@ -34,6 +34,14 @@
     "release": "pnpm run test --run && bumpp",
     "test": "vitest --coverage"
   },
+  "peerDependencies": {
+    "oxc-parser": "*"
+  },
+  "peerDependenciesMeta": {
+    "oxc-parser": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "acorn": "catalog:prod",
     "escape-string-regexp": "catalog:prod",
@@ -61,6 +69,7 @@
     "h3": "catalog:test",
     "jquery": "catalog:test",
     "lit": "catalog:test",
+    "oxc-parser": "catalog:prod",
     "typescript": "catalog:dev",
     "unbuild": "catalog:dev",
     "vitest": "catalog:test",

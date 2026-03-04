@@ -7,7 +7,12 @@ export async function detectImports(
   ctx: UnimportContext,
   options?: InjectImportsOptions,
 ) {
-  if (options?.parser === 'acorn')
-    return import('./detect-acorn').then(r => r.detectImportsAcorn(code, ctx, options))
-  return detectImportsRegex(code, ctx, options)
+  switch (options?.parser) {
+    case 'acorn':
+      return import('./detect-acorn').then(r => r.detectImportsAcorn(code, ctx, options))
+    case 'oxc':
+      return import('./detect-oxc').then(r => r.detectImportsOxc(code, ctx, options))
+    default:
+      return detectImportsRegex(code, ctx, options)
+  }
 }
