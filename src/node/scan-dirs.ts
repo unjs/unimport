@@ -11,6 +11,65 @@ import pm from 'picomatch'
 import { camelCase } from 'scule'
 import { glob } from 'tinyglobby'
 
+// JavaScript reserved words and keywords that mlly's regex parser may
+// incorrectly capture as export names from declaration expressions.
+// See: https://github.com/unjs/unimport/issues/303
+const JS_RESERVED_WORDS = new Set([
+  // Keywords
+  'abstract',
+  'arguments',
+  'async',
+  'await',
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'debugger',
+  'default',
+  'delete',
+  'do',
+  'else',
+  'enum',
+  'eval',
+  'export',
+  'extends',
+  'false',
+  'finally',
+  'for',
+  'function',
+  'if',
+  'implements',
+  'import',
+  'in',
+  'instanceof',
+  'interface',
+  'let',
+  'new',
+  'null',
+  'of',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'static',
+  'super',
+  'switch',
+  'this',
+  'throw',
+  'true',
+  'try',
+  'typeof',
+  'undefined',
+  'var',
+  'void',
+  'while',
+  'with',
+  'yield',
+])
+
 const FileExtensionLookup = [
   'mts',
   'cts',
@@ -139,6 +198,8 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
       }
       else if (exp.type === 'declaration') {
         for (const name of exp.names) {
+          if (JS_RESERVED_WORDS.has(name))
+            continue
           imports.push({ name, as: name, from: filepath, ...additional })
           if (exp.declarationType === 'enum' || exp.declarationType === 'const enum' || exp.declarationType === 'class') {
             imports.push({ name, as: name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
