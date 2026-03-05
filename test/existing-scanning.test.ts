@@ -9,6 +9,12 @@ describe('regex for extract local variable', () => {
     { input: 'const { ref} = Vue', output: ['ref'] },
     { input: 'const { maybe_test, $test} = Vue', output: ['maybe_test', '$test'] },
     { input: 'const [state] = useState(1)', output: ['state'] },
+    { input: `
+for (const [index] of [1,2,3].entries()) {
+  const a = AUTO_IMPORTED;
+  const b = []; // Make sure that the destructuring bracket in the loop does not expand to here
+}
+`, output: ['index', 'a', 'b'] },
 
     // We may not able to handle these cases
     //     { input: 'const b = computed(0)  ,   test=1;', output: ['b', 'test'] },
