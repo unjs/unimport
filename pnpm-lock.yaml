@@ -97,8 +97,8 @@ catalogs:
       specifier: ^1.15.5
       version: 1.15.5
     jquery:
-      specifier: ^3.7.1
-      version: 3.7.1
+      specifier: ^4.0.0
+      version: 4.0.0
     lit:
       specifier: ^3.3.2
       version: 3.3.2
@@ -182,7 +182,7 @@ importers:
         version: 1.15.5
       jquery:
         specifier: catalog:test
-        version: 3.7.1
+        version: 4.0.0
       lit:
         specifier: catalog:test
         version: 3.3.2
@@ -1865,8 +1865,8 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  jquery@3.7.1:
-    resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
+  jquery@4.0.0:
+    resolution: {integrity: sha512-TXCHVR3Lb6TZdtw1l3RTLf8RBWVGexdxL6AC8/e0xZKEpBflBsjh9/8LXw+dkNFuOyW9B7iB3O1sP7hS0Kiacg==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -4424,7 +4424,7 @@ snapshots:
 
   jiti@2.6.1: {}
 
-  jquery@3.7.1: {}
+  jquery@4.0.0: {}
 
   js-tokens@10.0.0: {}
 
