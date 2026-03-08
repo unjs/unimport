@@ -27,6 +27,7 @@ import vueI18n from './vue-i18n'
 import vueMacros from './vue-macros'
 import vueRouter from './vue-router'
 import vueRouterComposables from './vue-router-composables'
+import vueTestUtils from './vue-test-utils'
 import vueuseCore from './vueuse-core'
 import vueuseHead from './vueuse-head'
 import vuex from './vuex'
@@ -35,6 +36,7 @@ export const builtinPresets = {
   '@vue/composition-api': vueCompositionApi,
   '@vueuse/core': vueuseCore,
   '@vueuse/head': vueuseHead,
+  '@vue/test-utils': vueTestUtils,
   'pinia': pinia,
   'preact': preact,
   'quasar': quasar,
