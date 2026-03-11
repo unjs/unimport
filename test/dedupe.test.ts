@@ -67,6 +67,39 @@ describe('dedupeImports', () => {
     `)
   })
 
+  it('should not dedupe disabled imports', () => {
+    const imports = [
+      {
+        name: 'foo',
+        from: 'moduleA',
+        disabled: true,
+      },
+      {
+        name: 'foo',
+        from: 'moduleB',
+      },
+      {
+        name: 'foo',
+        from: 'moduleC',
+      },
+    ]
+
+    expect(dedupeImports(imports, warnFn)).toMatchInlineSnapshot(`
+      [
+        {
+          "disabled": true,
+          "from": "moduleA",
+          "name": "foo",
+        },
+        {
+          "from": "moduleC",
+          "name": "foo",
+        },
+      ]
+    `)
+    expect(warnMsg).toMatchInlineSnapshot(`"Duplicated imports "foo", the one from "moduleB" has been ignored and "moduleC" is used"`)
+  })
+
   it('should not warn about duplicates when one is disabled', () => {
     expect(dedupeImports(
       [
