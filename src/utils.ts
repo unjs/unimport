@@ -113,39 +113,37 @@ export function stringifyImports(imports: Import[], isCJS = false) {
 }
 
 export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
-  const map = new Map<string, number>()
-  const indexToRemove = new Set<number>()
+  const deduped = new Map<string | number, Import>()
+  let numKey = 0
 
-  imports.forEach((i, idx) => {
-    if (i.disabled || i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
-      return
-
-    const name = i.as ?? i.name
-    if (!map.has(name)) {
-      map.set(name, idx)
-      return
+  for (const i of imports) {
+    if (i.disabled || i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class') {
+      deduped.set(numKey++, i)
+      continue
     }
 
-    const other = imports[map.get(name)!]
+    const name = String(i.as ?? i.name)
+    const other = deduped.get(name)
+    if (!other) {
+      deduped.set(name, i)
+      continue
+    }
 
     if (other.from === i.from) {
-      indexToRemove.add(idx)
-      return
+      continue
     }
+
     const diff = (other.priority || 1) - (i.priority || 1)
     if (diff === 0)
       warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored and "${i.from}" is used`)
 
     if (diff <= 0) {
-      indexToRemove.add(map.get(name)!)
-      map.set(name, idx)
+      deduped.delete(name)
+      deduped.set(name, i)
     }
-    else {
-      indexToRemove.add(idx)
-    }
-  })
+  }
 
-  return imports.filter((_, idx) => !indexToRemove.has(idx))
+  return deduped.values().toArray()
 }
 
 export function toExports(imports: Import[], fileDir?: string, includeType = false, options: ToExportsOptions = {}) {
