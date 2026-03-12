@@ -146,3 +146,31 @@ it('should compat with `export =`', async () => {
     }"
   `)
 })
+
+it('should generate value and type declarations for complementary imports', async () => {
+  const { generateTypeDeclarations, init } = createUnimport({
+    imports: [{
+      name: 'Test',
+      from: 'module.js',
+    }, {
+      name: 'Test',
+      from: 'module.js',
+      type: true,
+    }],
+  })
+
+  await init()
+
+  await expect(generateTypeDeclarations()).resolves.toMatchInlineSnapshot(`
+    "export {}
+    declare global {
+      const Test: typeof import('module').Test
+    }
+    // for type re-export
+    declare global {
+      // @ts-ignore
+      export type { Test } from 'module'
+      import('module')
+    }"
+  `)
+})
