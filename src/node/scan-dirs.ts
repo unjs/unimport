@@ -32,8 +32,9 @@ const RE_WHITESPACE = /\s/
  */
 function extractDeclaratorNames(code: string): string[] | undefined {
   const match = code.match(RE_EXPORT_DECL)
-  if (!match)
+  if (!match) {
     return undefined
+  }
 
   const rest = code.slice(match[0].length)
   const names: string[] = []
@@ -54,10 +55,18 @@ function extractDeclaratorNames(code: string): string[] | undefined {
 
     // Skip string literals — brackets and commas inside strings are not
     // structural. Handles single-quoted, double-quoted, and template
-    // literals. Escaped quotes (e.g. \") do not end the string.
+    // literals. A closing quote is only valid when preceded by an even
+    // number of backslashes (so `"\\"` closes but `"\\\"` does not).
     if (inString) {
-      if (ch === inString && rest[i - 1] !== '\\')
-        inString = false
+      if (ch === inString) {
+        let backslashes = 0
+        for (let k = i - 1; k >= 0 && rest[k] === '\\'; k--) {
+          backslashes++
+        }
+        if (backslashes % 2 === 0) {
+          inString = false
+        }
+      }
       continue
     }
     if (ch === '\'' || ch === '"' || ch === '`') {
@@ -85,28 +94,47 @@ function extractDeclaratorNames(code: string): string[] | undefined {
         // Whitespace before `<` — only count as generic if preceded by `=`
         // (arrow fn generics: `= <T>`)
         let k = i - 1
-        while (k >= 0 && RE_WHITESPACE.test(rest[k])) k--
-        if (k >= 0 && rest[k] === '=')
+        while (k >= 0 && RE_WHITESPACE.test(rest[k])) {
+          k--
+        }
+        if (k >= 0 && rest[k] === '=') {
           angleDepth++
+        }
       }
     }
-    else if (ch === '>' && angleDepth > 0) { angleDepth-- }
-    else if (ch === '(') parenDepth++
-    else if (ch === ')') parenDepth = Math.max(0, parenDepth - 1)
-    else if (ch === '{') braceDepth++
-    else if (ch === '}') braceDepth = Math.max(0, braceDepth - 1)
-    else if (ch === '[') bracketDepth++
-    else if (ch === ']') bracketDepth = Math.max(0, bracketDepth - 1)
+    else if (ch === '>' && angleDepth > 0) {
+      angleDepth--
+    }
+    else if (ch === '(') {
+      parenDepth++
+    }
+    else if (ch === ')') {
+      parenDepth = Math.max(0, parenDepth - 1)
+    }
+    else if (ch === '{') {
+      braceDepth++
+    }
+    else if (ch === '}') {
+      braceDepth = Math.max(0, braceDepth - 1)
+    }
+    else if (ch === '[') {
+      bracketDepth++
+    }
+    else if (ch === ']') {
+      bracketDepth = Math.max(0, bracketDepth - 1)
+    }
 
     const isTopLevel = angleDepth === 0 && parenDepth === 0 && braceDepth === 0 && bracketDepth === 0
 
     if (ch === '=' && isTopLevel && !inValue) {
       // Strip type annotation (e.g. `foo: string` → `foo`) before testing
       const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
-      if (name && RE_IDENTIFIER.test(name))
+      if (name && RE_IDENTIFIER.test(name)) {
         names.push(name)
-      else if (current.trim())
+      }
+      else if (current.trim()) {
         hasUnsupportedDeclarator = true
+      }
       inValue = true
       current = ''
     }
@@ -115,10 +143,12 @@ function extractDeclaratorNames(code: string): string[] | undefined {
       // that appear before the comma without a preceding `=`.
       if (!inValue) {
         const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
-        if (name && RE_IDENTIFIER.test(name))
+        if (name && RE_IDENTIFIER.test(name)) {
           names.push(name)
-        else if (current.trim())
+        }
+        else if (current.trim()) {
           hasUnsupportedDeclarator = true
+        }
       }
       inValue = false
       current = ''
@@ -131,17 +161,20 @@ function extractDeclaratorNames(code: string): string[] | undefined {
   // Handle trailing name without '=' (mlly truncates code before the value)
   if (!inValue) {
     const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
-    if (name && RE_IDENTIFIER.test(name))
+    if (name && RE_IDENTIFIER.test(name)) {
       names.push(name)
-    else if (current.trim())
+    }
+    else if (current.trim()) {
       hasUnsupportedDeclarator = true
+    }
   }
 
   // If we encountered any unsupported declarator pattern (destructuring, rest,
   // etc.), return undefined to fall back to exp.names rather than returning a
   // partial list that silently drops exports.
-  if (hasUnsupportedDeclarator)
+  if (hasUnsupportedDeclarator) {
     return undefined
+  }
 
   return names.length > 0 ? names : undefined
 }
