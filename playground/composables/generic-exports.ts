@@ -20,8 +20,12 @@ export let uninitFoo: string, uninitBar = 'hello'
 // Edge case: comparison operator `<` in RHS expression.
 // The `<` must not be tracked as an angle bracket, or it hides
 // the comma that separates `compA` from `compB`.
+// Both `1 < 2` (digit before <) and `foo < bar` (identifier before <)
+// must be recognised as comparisons, not generics.
 // See: CodeRabbit review on PR #513
 export const compA = 1 < 2 ? 'yes' : 'no', compB = 42
+const _someNum = 10
+export const compC = _someNum < 100 ? 'small' : 'big', compD = 99
 
 // Pin original #502 regression: arrow function with generic params.
 // `useResizable` should be exported; `options` (the param) should not.

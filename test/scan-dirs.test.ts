@@ -36,6 +36,16 @@ describe('scan-dirs', () => {
             "name": "compB",
           },
           {
+            "as": "compC",
+            "from": "generic-exports.ts",
+            "name": "compC",
+          },
+          {
+            "as": "compD",
+            "from": "generic-exports.ts",
+            "name": "compD",
+          },
+          {
             "as": "CustomEnum",
             "from": "index.ts",
             "name": "CustomEnum",
@@ -370,8 +380,12 @@ describe('scan-dirs', () => {
     const exports = await scanExports(filepath, false)
     const names = exports.map(i => i.name)
 
+    // Digit before `<` (1 < 2)
     expect(names).toContain('compA')
     expect(names).toContain('compB')
+    // Identifier before `<` (_someNum < 100) — must not be confused with generic
+    expect(names).toContain('compC')
+    expect(names).toContain('compD')
   })
 
   it('should export useResizable but not its arrow function parameter (#502)', async () => {

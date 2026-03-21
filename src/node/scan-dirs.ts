@@ -12,6 +12,10 @@ import { camelCase } from 'scule'
 import { glob } from 'tinyglobby'
 
 const RE_IDENTIFIER = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/
+const RE_EXPORT_DECL = /^export\s+(?:default\s+)?(?:const|let|var)\s+/
+const RE_TYPE_ANNOTATION = /:.*$/
+const RE_GENERIC_PREV = /[a-zA-Z_$)>]/
+const RE_WHITESPACE = /\s/
 
 /**
  * Extracts actual declarator names from an `ESMExport.code` string for
@@ -27,7 +31,7 @@ const RE_IDENTIFIER = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/
  * @see https://github.com/unjs/unimport/issues/502
  */
 function extractDeclaratorNames(code: string): string[] | undefined {
-  const match = code.match(/^export\s+(?:default\s+)?(?:const|let|var)\s+/)
+  const match = code.match(RE_EXPORT_DECL)
   if (!match)
     return undefined
 
@@ -40,6 +44,10 @@ function extractDeclaratorNames(code: string): string[] | undefined {
   let current = ''
   let inValue = false
   let inString: string | false = false
+  // If any declarator uses a pattern we can't reliably parse (destructuring,
+  // rest elements, etc.), bail out entirely and let the caller fall back to
+  // exp.names. Returning a partial list would silently drop exports.
+  let hasUnsupportedDeclarator = false
 
   for (let i = 0; i < rest.length; i++) {
     const ch = rest[i]
@@ -58,18 +66,29 @@ function extractDeclaratorNames(code: string): string[] | undefined {
     }
 
     // Track bracket depth for all bracket types. Angle brackets are
-    // ambiguous (generics vs comparison operators). We use a heuristic:
-    // `<` is a generic opener when the last non-whitespace character is an
-    // identifier char, `)`, `>`, or `=` (for arrow fn generics like
-    // `= <T>(...)`). A comparison like `1 < 2` has a digit before
-    // whitespace, which matches `\w` — but importantly, a digit followed
-    // by ` < ` is always comparison. We exclude digits explicitly.
+    // ambiguous (generics vs comparison operators). We distinguish them
+    // using adjacency: generics are always attached to the preceding
+    // token without whitespace (`Record<`, `foo<T>`), while comparisons
+    // have whitespace (`foo < bar`, `1 < 2`).
+    //
+    // The one exception is arrow-function generics after `=`: `= <T>(...)`.
+    // Here the `<` is separated from `=` by whitespace but is still a
+    // generic opener. We handle this by checking whether the last
+    // non-whitespace char is `=`.
     if (ch === '<') {
-      let k = i - 1
-      while (k >= 0 && /\s/.test(rest[k])) k--
-      const prev = k >= 0 ? rest[k] : ''
-      if (/[a-zA-Z_$)>=]/.test(prev))
+      const prev = i > 0 ? rest[i - 1] : ''
+      if (RE_GENERIC_PREV.test(prev)) {
+        // Directly attached to identifier/closing bracket → generic
         angleDepth++
+      }
+      else if (RE_WHITESPACE.test(prev)) {
+        // Whitespace before `<` — only count as generic if preceded by `=`
+        // (arrow fn generics: `= <T>`)
+        let k = i - 1
+        while (k >= 0 && RE_WHITESPACE.test(rest[k])) k--
+        if (k >= 0 && rest[k] === '=')
+          angleDepth++
+      }
     }
     else if (ch === '>' && angleDepth > 0) { angleDepth-- }
     else if (ch === '(') parenDepth++
@@ -83,9 +102,11 @@ function extractDeclaratorNames(code: string): string[] | undefined {
 
     if (ch === '=' && isTopLevel && !inValue) {
       // Strip type annotation (e.g. `foo: string` → `foo`) before testing
-      const name = current.trim().replace(/:.*$/, '').trim()
+      const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
       if (name && RE_IDENTIFIER.test(name))
         names.push(name)
+      else if (current.trim())
+        hasUnsupportedDeclarator = true
       inValue = true
       current = ''
     }
@@ -93,9 +114,11 @@ function extractDeclaratorNames(code: string): string[] | undefined {
       // Capture uninitialised declarator names (e.g. `export let foo, bar`)
       // that appear before the comma without a preceding `=`.
       if (!inValue) {
-        const name = current.trim().replace(/:.*$/, '').trim()
+        const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
         if (name && RE_IDENTIFIER.test(name))
           names.push(name)
+        else if (current.trim())
+          hasUnsupportedDeclarator = true
       }
       inValue = false
       current = ''
@@ -107,10 +130,18 @@ function extractDeclaratorNames(code: string): string[] | undefined {
 
   // Handle trailing name without '=' (mlly truncates code before the value)
   if (!inValue) {
-    const name = current.trim().replace(/:.*$/, '').trim()
+    const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
     if (name && RE_IDENTIFIER.test(name))
       names.push(name)
+    else if (current.trim())
+      hasUnsupportedDeclarator = true
   }
+
+  // If we encountered any unsupported declarator pattern (destructuring, rest,
+  // etc.), return undefined to fall back to exp.names rather than returning a
+  // partial list that silently drops exports.
+  if (hasUnsupportedDeclarator)
+    return undefined
 
   return names.length > 0 ? names : undefined
 }

@@ -77,6 +77,8 @@ it('dts', async () => {
         const bump: typeof import('<root>/playground/composables/index').bump
         const compA: typeof import('<root>/playground/composables/generic-exports').compA
         const compB: typeof import('<root>/playground/composables/generic-exports').compB
+        const compC: typeof import('<root>/playground/composables/generic-exports').compC
+        const compD: typeof import('<root>/playground/composables/generic-exports').compD
         const computed: typeof import('vue').computed
         const customDefault: typeof import('default').default
         const doTheThing: typeof import('my-macro-library', { with: { type: "macro" } }).doTheThing
