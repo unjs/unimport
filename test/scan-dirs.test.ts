@@ -26,6 +26,16 @@ describe('scan-dirs', () => {
             "name": "bump",
           },
           {
+            "as": "compA",
+            "from": "generic-exports.ts",
+            "name": "compA",
+          },
+          {
+            "as": "compB",
+            "from": "generic-exports.ts",
+            "name": "compB",
+          },
+          {
             "as": "CustomEnum",
             "from": "index.ts",
             "name": "CustomEnum",
@@ -92,6 +102,16 @@ describe('scan-dirs', () => {
             "type": true,
           },
           {
+            "as": "uninitBar",
+            "from": "generic-exports.ts",
+            "name": "uninitBar",
+          },
+          {
+            "as": "uninitFoo",
+            "from": "generic-exports.ts",
+            "name": "uninitFoo",
+          },
+          {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",
@@ -100,6 +120,11 @@ describe('scan-dirs', () => {
             "as": "useGenericStore",
             "from": "generic-exports.ts",
             "name": "useGenericStore",
+          },
+          {
+            "as": "useResizable",
+            "from": "generic-exports.ts",
+            "name": "useResizable",
           },
           {
             "as": "useSleep",
@@ -324,6 +349,41 @@ describe('scan-dirs', () => {
     expect(names).not.toContain('B')
     expect(names).not.toContain('Record')
     expect(names).not.toContain('object')
+  })
+
+  it('should export uninitialised names in multi-declarator statements', async () => {
+    // `export let foo, bar = 1` — both `foo` and `bar` should be exported.
+    // See: CodeRabbit review on PR #513
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    expect(names).toContain('uninitFoo')
+    expect(names).toContain('uninitBar')
+  })
+
+  it('should not confuse comparison operators with angle brackets', async () => {
+    // `export const a = 1 < 2 ? ... , b = 42` — the `<` in the RHS must
+    // not corrupt bracket depth and hide the comma separating `a` from `b`.
+    // See: CodeRabbit review on PR #513
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    expect(names).toContain('compA')
+    expect(names).toContain('compB')
+  })
+
+  it('should export useResizable but not its arrow function parameter (#502)', async () => {
+    // Pin the original regression from issue #502: arrow function with
+    // generic type params should export the binding name, not the params.
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    expect(names).toContain('useResizable')
+    expect(names).not.toContain('options')
+    expect(names).not.toContain('columns')
   })
 })
 

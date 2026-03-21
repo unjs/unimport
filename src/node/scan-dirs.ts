@@ -39,12 +39,39 @@ function extractDeclaratorNames(code: string): string[] | undefined {
   let bracketDepth = 0
   let current = ''
   let inValue = false
+  let inString: string | false = false
 
   for (let i = 0; i < rest.length; i++) {
     const ch = rest[i]
 
-    if (ch === '<') angleDepth++
-    else if (ch === '>') angleDepth = Math.max(0, angleDepth - 1)
+    // Skip string literals — brackets and commas inside strings are not
+    // structural. Handles single-quoted, double-quoted, and template
+    // literals. Escaped quotes (e.g. \") do not end the string.
+    if (inString) {
+      if (ch === inString && rest[i - 1] !== '\\')
+        inString = false
+      continue
+    }
+    if (ch === '\'' || ch === '"' || ch === '`') {
+      inString = ch
+      continue
+    }
+
+    // Track bracket depth for all bracket types. Angle brackets are
+    // ambiguous (generics vs comparison operators). We use a heuristic:
+    // `<` is a generic opener when the last non-whitespace character is an
+    // identifier char, `)`, `>`, or `=` (for arrow fn generics like
+    // `= <T>(...)`). A comparison like `1 < 2` has a digit before
+    // whitespace, which matches `\w` — but importantly, a digit followed
+    // by ` < ` is always comparison. We exclude digits explicitly.
+    if (ch === '<') {
+      let k = i - 1
+      while (k >= 0 && /\s/.test(rest[k])) k--
+      const prev = k >= 0 ? rest[k] : ''
+      if (/[a-zA-Z_$)>=]/.test(prev))
+        angleDepth++
+    }
+    else if (ch === '>' && angleDepth > 0) { angleDepth-- }
     else if (ch === '(') parenDepth++
     else if (ch === ')') parenDepth = Math.max(0, parenDepth - 1)
     else if (ch === '{') braceDepth++
@@ -55,13 +82,21 @@ function extractDeclaratorNames(code: string): string[] | undefined {
     const isTopLevel = angleDepth === 0 && parenDepth === 0 && braceDepth === 0 && bracketDepth === 0
 
     if (ch === '=' && isTopLevel && !inValue) {
-      const name = current.trim()
+      // Strip type annotation (e.g. `foo: string` → `foo`) before testing
+      const name = current.trim().replace(/:.*$/, '').trim()
       if (name && RE_IDENTIFIER.test(name))
         names.push(name)
       inValue = true
       current = ''
     }
     else if (ch === ',' && isTopLevel) {
+      // Capture uninitialised declarator names (e.g. `export let foo, bar`)
+      // that appear before the comma without a preceding `=`.
+      if (!inValue) {
+        const name = current.trim().replace(/:.*$/, '').trim()
+        if (name && RE_IDENTIFIER.test(name))
+          names.push(name)
+      }
       inValue = false
       current = ''
     }
@@ -72,7 +107,7 @@ function extractDeclaratorNames(code: string): string[] | undefined {
 
   // Handle trailing name without '=' (mlly truncates code before the value)
   if (!inValue) {
-    const name = current.trim()
+    const name = current.trim().replace(/:.*$/, '').trim()
     if (name && RE_IDENTIFIER.test(name))
       names.push(name)
   }
