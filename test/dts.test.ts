@@ -82,6 +82,7 @@ it('dts', async () => {
         const foobar: typeof import('foobar').foobar
         const localA: typeof import('<root>/playground/composables/index').localA
         const localBAlias: typeof import('<root>/playground/composables/index').localBAlias
+        const mergeObjects: typeof import('<root>/playground/composables/generic-exports').mergeObjects
         const multiplier: typeof import('<root>/playground/composables/index').multiplier
         const myBazFunction: typeof import('<root>/playground/composables/nested/bar/baz').myBazFunction
         const myfunc1: typeof import('<root>/playground/composables/nested/bar/named').myfunc1
@@ -95,6 +96,7 @@ it('dts', async () => {
         const toRefs: typeof import('vue').toRefs
         const useDoubled: typeof import('<root>/playground/composables/index').useDoubled
         const useEffect: typeof import('react').useEffect
+        const useGenericStore: typeof import('<root>/playground/composables/generic-exports').useGenericStore
         const useRef: typeof import('react').useRef
         const useSleep: typeof import('<root>/playground/composables/async-value').useSleep
         const useState: typeof import('react').useState

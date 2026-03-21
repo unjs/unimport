@@ -70,6 +70,11 @@ describe('scan-dirs', () => {
             "name": "localBAlias",
           },
           {
+            "as": "mergeObjects",
+            "from": "generic-exports.ts",
+            "name": "mergeObjects",
+          },
+          {
             "as": "multiplier",
             "from": "index.ts",
             "name": "multiplier",
@@ -90,6 +95,11 @@ describe('scan-dirs', () => {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",
+          },
+          {
+            "as": "useGenericStore",
+            "from": "generic-exports.ts",
+            "name": "useGenericStore",
           },
           {
             "as": "useSleep",
@@ -295,6 +305,25 @@ describe('scan-dirs', () => {
     const names = exports.map(i => i.name)
     expect(names).toContain('useSleep')
     expect(names).not.toContain('async')
+  })
+
+  it('should not leak generic type parameter identifiers as exports (#502)', async () => {
+    // mlly's regex parser incorrectly captures identifiers from generic type
+    // parameters (e.g. `Record<string, Ref>`) as export names because it
+    // misinterprets commas inside angle brackets as declarator separators.
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    // Actual export names should be present
+    expect(names).toContain('useGenericStore')
+    expect(names).toContain('mergeObjects')
+
+    // Type identifiers from generics must not leak
+    expect(names).not.toContain('Ref')
+    expect(names).not.toContain('B')
+    expect(names).not.toContain('Record')
+    expect(names).not.toContain('object')
   })
 })
 
