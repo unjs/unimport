@@ -13,7 +13,7 @@ catalogs:
     bumpp: ^11.0.1
     chokidar: ^5.0.0
     eslint: ^10.0.3
-    typescript: ^5.9.3
+    typescript: ^6.0.2
     unbuild: ^3.6.1
     vue-tsc: ^3.2.5
   playground:
