@@ -9,6 +9,22 @@ describe('regex for extract local variable', () => {
     { input: 'const { ref} = Vue', output: ['ref'] },
     { input: 'const { maybe_test, $test} = Vue', output: ['maybe_test', '$test'] },
     { input: 'const [state] = useState(1)', output: ['state'] },
+    // for-of loop destructuring (issue #521)
+    { input: 'for (const [a, b] of items) {}', output: ['a', 'b'] },
+    { input: 'for (let [a, b] of items) {}', output: ['a', 'b'] },
+    { input: 'for (const {a, b} of items) {}', output: ['a', 'b'] },
+    // for-in loop
+    { input: 'for (const key in obj) {}', output: ['key'] },
+    { input: 'for (let key in obj) {}', output: ['key'] },
+    // for-of destructuring must not swallow subsequent declarations (issue #521)
+    {
+      input: `
+for (const [index] of [1,2,3].entries()) {
+  const a = AUTO_IMPORTED;
+  const b = [];
+}`,
+      output: ['index', 'a', 'b'],
+    },
 
     // We may not able to handle these cases
     //     { input: 'const b = computed(0)  ,   test=1;', output: ['b', 'test'] },

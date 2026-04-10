@@ -8,9 +8,9 @@ export const RE_EXCLUDE = [
   /\bfunction\s*([\w$]+)\s*\(/g,
   // defined as class
   /\bclass\s*([\w$]+)\s*\{/g,
-  // defined as local variable
+  // defined as local variable (including for-of/for-in loop declarations)
   // eslint-disable-next-line regexp/no-super-linear-backtracking
-  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs,
+  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?(?:[=;\n]|\bof\b|\bin\b)/gs,
 ]
 
 export const RE_IMPORT_AS = /^.*\sas\s+/
