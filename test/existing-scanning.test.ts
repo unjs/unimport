@@ -12,10 +12,12 @@ describe('regex for extract local variable', () => {
     // for-of loop destructuring (issue #521)
     { input: 'for (const [a, b] of items) {}', output: ['a', 'b'] },
     { input: 'for (let [a, b] of items) {}', output: ['a', 'b'] },
+    { input: 'for (var [a, b] of items) {}', output: ['a', 'b'] },
     { input: 'for (const {a, b} of items) {}', output: ['a', 'b'] },
     // for-in loop
     { input: 'for (const key in obj) {}', output: ['key'] },
     { input: 'for (let key in obj) {}', output: ['key'] },
+    { input: 'for (var key in obj) {}', output: ['key'] },
     // for-of destructuring must not swallow subsequent declarations (issue #521)
     {
       input: `
