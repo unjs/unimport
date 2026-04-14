@@ -207,8 +207,22 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
         }
         return true
       })
-      if (filtered.length)
-        entries.push(`export { ${filtered.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
+      // Dedupe entries that would emit the same exported identifier.
+      // Classes, enums and other declarations that live in both the value
+      // and type spaces can appear twice when `includeType` is enabled:
+      // once as a value import and once as a type-only import. A single
+      // `export { Foo }` already re-exports both, so we collapse them and
+      // prefer the value import when one is available.
+      const byAlias = new Map<string, Import>()
+      for (const i of filtered) {
+        const key = String(i.as ?? i.name)
+        const existing = byAlias.get(key)
+        if (!existing || (existing.type && !i.type))
+          byAlias.set(key, i)
+      }
+      const deduped = Array.from(byAlias.values())
+      if (deduped.length)
+        entries.push(`export { ${deduped.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
 
       return entries
     })
