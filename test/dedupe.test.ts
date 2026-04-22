@@ -89,6 +89,34 @@ describe('dedupeImports', () => {
         },
       ]
     `)
+
+    expect(warnMsg).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should treat priority 0 as lower than default', () => {
+    expect(dedupeImports(
+      [
+        {
+          name: 'foo',
+          from: 'module1',
+        },
+        {
+          name: 'foo',
+          from: 'module2',
+          priority: 0,
+        },
+      ],
+      warnFn,
+    )).toMatchInlineSnapshot(`
+      [
+        {
+          "from": "module1",
+          "name": "foo",
+        },
+      ]
+    `)
+
+    expect(warnMsg).toMatchInlineSnapshot(`""`)
   })
 
   it('should not dedupe disabled imports', () => {
