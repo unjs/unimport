@@ -6,6 +6,10 @@ it('public-api', async () => {
   expect(keys)
     .toMatchInlineSnapshot(`
       [
+        "RE_EXCLUDE",
+        "RE_IMPORT_AS",
+        "RE_MATCH",
+        "RE_SEPARATOR",
         "addImportToCode",
         "builtinPresets",
         "createUnimport",

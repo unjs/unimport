@@ -9,14 +9,19 @@ export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
   return preset
 }
 
-const identifierRE = /^[A-Z_$][\w$]*$/i
-const safePropertyName = /^[a-z$_][\w$]*$/i
+const RE_IDENTIFIER = /^[A-Z_$][\w$]*$/i
+const RE_SAFE_PROPERTY_NAME = /^[a-z$_][\w$]*$/i
+const RE_FILE_EXT = /\.[a-z]+$/i
+const RE_RELATIVE_PATH = /^[./]/
+const RE_DTS_EXT = /\.d\.([cm]?)ts$/i
+const RE_SHEBANG = /^#!.+/
+const RE_IMPORT_BRACE = /^\s*import\s*\{/
 
 function stringifyWith(withValues: Record<string, string>) {
   let withDefs = ''
   for (let entries = Object.entries(withValues), l = entries.length, i = 0; i < l; i++) {
     const [prop, value] = entries[i]
-    withDefs += safePropertyName.test(prop) ? prop : JSON.stringify(prop)
+    withDefs += RE_SAFE_PROPERTY_NAME.test(prop) ? prop : JSON.stringify(prop)
     withDefs += `: ${JSON.stringify(String(value))}`
     if ((i + 1) !== l)
       withDefs += ', '
@@ -112,40 +117,77 @@ export function stringifyImports(imports: Import[], isCJS = false) {
     .join('\n')
 }
 
+function encodeImportName(name: string) {
+  return `\uFFFF${name}\uFFFE`
+}
+
 export function dedupeImports(imports: Import[], warn: (msg: string) => void) {
-  const map = new Map<string, number>()
-  const indexToRemove = new Set<number>()
+  const deduped = new Map<string | number, Import>()
 
-  imports.filter(i => !i.disabled).forEach((i, idx) => {
-    if (i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
-      return
-
-    const name = i.as ?? i.name
-    if (!map.has(name)) {
-      map.set(name, idx)
-      return
+  for (let idx = imports.length - 1; idx >= 0; idx--) {
+    const currImp = imports[idx]
+    if (currImp.disabled || currImp.declarationType === 'enum' || currImp.declarationType === 'const enum' || currImp.declarationType === 'class') {
+      deduped.set(idx, currImp)
+      continue
     }
 
-    const other = imports[map.get(name)!]
-
-    if (other.from === i.from) {
-      indexToRemove.add(idx)
-      return
+    const name = String(currImp.as ?? currImp.name)
+    const prevImp = deduped.get(name)
+    if (!prevImp) {
+      deduped.set(name, currImp)
+      continue
     }
-    const diff = (other.priority || 1) - (i.priority || 1)
-    if (diff === 0)
-      warn(`Duplicated imports "${name}", the one from "${other.from}" has been ignored and "${i.from}" is used`)
 
-    if (diff <= 0) {
-      indexToRemove.add(map.get(name)!)
-      map.set(name, idx)
-    }
-    else {
-      indexToRemove.add(idx)
-    }
-  })
+    const isSameSpecifier = (currImp.type || prevImp.type)
+      ? (currImp.typeFrom || currImp.from) === (prevImp.typeFrom || prevImp.from)
+      : currImp.from === prevImp.from
 
-  return imports.filter((_, idx) => !indexToRemove.has(idx))
+    if (isSameSpecifier) {
+      if (Boolean(currImp.type) === Boolean(prevImp.type)) {
+        // currImp and prevImp are the same import
+        if ((currImp.priority ?? 1) > (prevImp.priority ?? 1)) {
+          deduped.delete(name)
+          deduped.set(name, currImp)
+        }
+      }
+      else {
+        // currImp and prevImp are complementary imports; one for the value and one for the type
+        const altName = encodeImportName(name)
+        const prevImpComplement = deduped.get(altName)
+        if (!prevImpComplement) {
+          deduped.set(altName, currImp)
+        }
+        else if ((currImp.priority ?? 1) > (prevImpComplement.priority ?? 1)) {
+          deduped.delete(altName)
+          deduped.set(altName, currImp)
+        }
+      }
+      continue
+    }
+
+    // currImp and prevImp are duplicate imports
+    const altName = encodeImportName(name)
+    const prevImpComplement = deduped.get(altName)
+    const prevPriority = prevImpComplement
+      ? Math.max(prevImp.priority ?? 1, prevImpComplement.priority ?? 1)
+      : prevImp.priority ?? 1
+    const priorityDiff = (currImp.priority ?? 1) - prevPriority
+    if (priorityDiff > 0) {
+      deduped.delete(name)
+      deduped.delete(altName)
+      deduped.set(name, currImp)
+    }
+    else if (priorityDiff === 0) {
+      warn(`Duplicated imports "${name}", the one from "${currImp.from}" has been ignored and "${prevImp.from}" is used`)
+    }
+  }
+
+  let i = deduped.size
+  const dedupedImports = new Array(i) // eslint-disable-line unicorn/no-new-array
+  for (const imp of deduped.values()) {
+    dedupedImports[--i] = imp
+  }
+  return dedupedImports
 }
 
 export function toExports(imports: Import[], fileDir?: string, includeType = false, options: ToExportsOptions = {}) {
@@ -153,11 +195,11 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
   return Object.entries(map)
     .flatMap(([name, imports]) => {
       if (isFilePath(name))
-        name = name.replace(/\.[a-z]+$/i, '')
+        name = name.replace(RE_FILE_EXT, '')
 
       if (fileDir && isAbsolute(name)) {
         name = relative(fileDir, name)
-        if (!name.match(/^[./]/))
+        if (!RE_RELATIVE_PATH.test(name))
           name = `./${name}`
       }
       const entries: string[] = []
@@ -168,8 +210,22 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
         }
         return true
       })
-      if (filtered.length)
-        entries.push(`export { ${filtered.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
+      // Dedupe entries that would emit the same exported identifier.
+      // Classes, enums and other declarations that live in both the value
+      // and type spaces can appear twice when `includeType` is enabled:
+      // once as a value import and once as a type-only import. A single
+      // `export { Foo }` already re-exports both, so we collapse them and
+      // prefer the value import when one is available.
+      const byAlias = new Map<string, Import>()
+      for (const i of filtered) {
+        const key = String(i.as ?? i.name)
+        const existing = byAlias.get(key)
+        if (!existing || (existing.type && !i.type))
+          byAlias.set(key, i)
+      }
+      const deduped = Array.from(byAlias.values())
+      if (deduped.length)
+        entries.push(`export { ${deduped.map(i => stringifyImportAlias(i, false)).join(', ')} } from '${name}';`)
 
       return entries
     })
@@ -177,7 +233,7 @@ export function toExports(imports: Import[], fileDir?: string, includeType = fal
 }
 
 export function stripFileExtension(path: string) {
-  return path.replace(/\.[a-z]+$/i, '')
+  return path.replace(RE_FILE_EXT, '')
 }
 
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
@@ -191,7 +247,7 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
         typeDef += `import('${from}')`
 
       if (i.name !== '*' && i.name !== '=')
-        typeDef += identifierRE.test(i.name) ? `.${i.name}` : `['${i.name}']`
+        typeDef += RE_IDENTIFIER.test(i.name) ? `.${i.name}` : `['${i.name}']`
 
       return `const ${i.as}: typeof ${typeDef}`
     })
@@ -241,7 +297,7 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
   const importsMap = makeTypeModulesMap(imports, options?.resolvePath)
   const code = Array.from(importsMap).flatMap(([from, module]) => {
     // ensure we have the correct file extension if we are handling raw declarations
-    from = from.replace(/\.d\.([cm]?)ts$/i, '.$1js')
+    from = from.replace(RE_DTS_EXT, '.$1js')
 
     const { starTypeImport, typeImports } = module
     // TypeScript incorrectly reports an error when re-exporting types in a d.ts file.
@@ -337,8 +393,7 @@ export function addImportToCode(
   }
 
   function hasShebang() {
-    const shebangRegex = /^#!.+/
-    return shebangRegex.test(s.original)
+    return RE_SHEBANG.test(s.original)
   }
 
   if (mergeExisting && !isCJS) {
@@ -358,7 +413,7 @@ export function addImportToCode(
 
     for (const [target, items] of map.entries()) {
       const strings = items.map(i => `${stringifyImportAlias(i)}, `)
-      const importLength = target.code.match(/^\s*import\s*\{/)?.[0]?.length
+      const importLength = target.code.match(RE_IMPORT_BRACE)?.[0]?.length
       if (importLength)
         s.appendLeft(target.start + importLength, ` ${strings.join('').trim()}`)
     }

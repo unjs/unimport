@@ -5,9 +5,10 @@ import { resolve } from 'pathe'
 import { camelCase, kebabCase } from 'scule'
 import { stringifyImports } from '../utils'
 
-const contextRE = /resolveDirective as _resolveDirective/
-const contextText = `${contextRE.source}, `
-const directiveRE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*/g
+const RE_BACKSLASH = /\\/g
+const RE_CONTEXT = /resolveDirective as _resolveDirective/
+const contextText = `${RE_CONTEXT.source}, `
+const RE_DIRECTIVE = /(?:var|const) (\w+) = _resolveDirective\("([\w.-]+)"\);?\s*/g
 
 export const VUE_DIRECTIVES_NAME = 'unimport:vue-directives'
 
@@ -32,11 +33,11 @@ export function vueDirectivesAddon(
   const self = {
     name: VUE_DIRECTIVES_NAME,
     async transform(s, id) {
-      if (!s.original.match(contextRE))
+      if (!RE_CONTEXT.test(s.original))
         return s
 
       const matches = Array
-        .from(s.original.matchAll(directiveRE))
+        .from(s.original.matchAll(RE_DIRECTIVE))
         .sort((a, b) => b.index - a.index)
 
       if (!matches.length)
@@ -64,7 +65,7 @@ export function vueDirectivesAddon(
 
       // Remove resolveDirective import only if there are no more directives.
       // User may be using missing directives or globally registered directives.
-      if (!s.toString().match(directiveRE))
+      if (!RE_DIRECTIVE.test(s.toString()))
         s.replace(contextText, '')
 
       for (const addon of this.addons) {
@@ -136,7 +137,7 @@ function resolvePath(cwd: string, path: string) {
 }
 
 function normalizePath(cwd: string, path: string) {
-  return resolvePath(cwd, path).replace(/\\/g, '/')
+  return resolvePath(cwd, path).replace(RE_BACKSLASH, '/')
 }
 
 type DirectiveData = [begin: number, end: number, importName: string]

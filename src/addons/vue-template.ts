@@ -1,7 +1,7 @@
 import type { Addon, Import } from '../types'
 import { stringifyImports } from '../utils'
 
-const contextRE = /\b_ctx\.([$\w]+)\b/g
+const RE_CONTEXT = /\b_ctx\.([$\w]+)\b/g
 const UNREF_KEY = '__unimport_unref_'
 
 export const VUE_TEMPLATE_NAME = 'unimport:vue-template'
@@ -13,7 +13,7 @@ export function vueTemplateAddon(): Addon {
       if (!s.original.includes('_ctx.') || s.original.includes(UNREF_KEY))
         return s
 
-      const matches = Array.from(s.original.matchAll(contextRE))
+      const matches = Array.from(s.original.matchAll(RE_CONTEXT))
       const imports = await this.getImports()
       let targets: Import[] = []
 
@@ -28,7 +28,7 @@ export function vueTemplateAddon(): Addon {
 
         const tempName = `__unimport_${name}`
         s.overwrite(start, end, `(${JSON.stringify(name)} in _ctx ? _ctx.${name} : ${UNREF_KEY}(${tempName}))`)
-        if (!targets.find(i => i.as === tempName)) {
+        if (!targets.some(i => i.as === tempName)) {
           targets.push({
             ...item,
             as: tempName,

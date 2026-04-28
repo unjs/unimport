@@ -226,9 +226,11 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(singleNamedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { AwesomeDirective as _directive_awesome_directive } from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
+          const _directive_awesome_directive = _resolveDirective("awesome-directive")
+
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
@@ -278,10 +280,10 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import _directive_mixed_directive from '<root>/directives/mixed-directive.ts';
-        import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import _directive_mixed_directive from '<root>/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
+          const _directive_named_mixed_directive = _resolveDirective("named-mixed-directive")
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [

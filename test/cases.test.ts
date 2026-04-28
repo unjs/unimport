@@ -88,7 +88,7 @@ Object.entries(options).forEach(([name, options]) => {
         continue
       if (filters.length && !filters.some(f => file.includes(f)))
         continue
-      if (file.match(/\.output\./))
+      if (/\.output\./.test(file))
         continue
 
       it(basename(file), async () => {

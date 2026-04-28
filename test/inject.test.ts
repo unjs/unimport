@@ -42,40 +42,6 @@ describe('inject import', () => {
 
     expect(ctx.getMetadata()).toMatchInlineSnapshot(`
       {
-        "injectionUsage": {
-          "import1": {
-            "count": 3,
-            "import": {
-              "as": "import1",
-              "from": "specifier1",
-              "name": "import1",
-            },
-            "moduleIds": [
-              "foo",
-              "gar",
-            ],
-          },
-          "import2": {
-            "count": 1,
-            "import": {
-              "as": "import2",
-              "from": "specifier2",
-              "name": "import2",
-            },
-            "moduleIds": [
-              "bar",
-            ],
-          },
-          "toString": {
-            "count": 1,
-            "import": {
-              "as": "toString",
-              "from": "specifier6",
-              "name": "toString",
-            },
-            "moduleIds": [],
-          },
-        },
         "injectionsUsageMap": Map {
           "import1" => {
             "count": 3,

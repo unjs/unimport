@@ -67,6 +67,91 @@ describe('dedupeImports', () => {
     `)
   })
 
+  it('should respect negative priority', () => {
+    expect(dedupeImports(
+      [
+        {
+          name: 'foo',
+          from: 'module1',
+        },
+        {
+          name: 'foo',
+          from: 'module2',
+          priority: -1,
+        },
+      ],
+      warnFn,
+    )).toMatchInlineSnapshot(`
+      [
+        {
+          "from": "module1",
+          "name": "foo",
+        },
+      ]
+    `)
+
+    expect(warnMsg).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should treat priority 0 as lower than default', () => {
+    expect(dedupeImports(
+      [
+        {
+          name: 'foo',
+          from: 'module1',
+        },
+        {
+          name: 'foo',
+          from: 'module2',
+          priority: 0,
+        },
+      ],
+      warnFn,
+    )).toMatchInlineSnapshot(`
+      [
+        {
+          "from": "module1",
+          "name": "foo",
+        },
+      ]
+    `)
+
+    expect(warnMsg).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should not dedupe disabled imports', () => {
+    const imports = [
+      {
+        name: 'foo',
+        from: 'moduleA',
+        disabled: true,
+      },
+      {
+        name: 'foo',
+        from: 'moduleB',
+      },
+      {
+        name: 'foo',
+        from: 'moduleC',
+      },
+    ]
+
+    expect(dedupeImports(imports, warnFn)).toMatchInlineSnapshot(`
+      [
+        {
+          "disabled": true,
+          "from": "moduleA",
+          "name": "foo",
+        },
+        {
+          "from": "moduleC",
+          "name": "foo",
+        },
+      ]
+    `)
+    expect(warnMsg).toMatchInlineSnapshot(`"Duplicated imports "foo", the one from "moduleB" has been ignored and "moduleC" is used"`)
+  })
+
   it('should not warn about duplicates when one is disabled', () => {
     expect(dedupeImports(
       [

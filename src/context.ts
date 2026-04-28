@@ -123,13 +123,17 @@ function createInternalContext(opts: Partial<UnimportOptions>) {
   if (opts.collectMeta) {
     metadata = {
       injectionsUsageMap: new Map(),
-      get injectionUsage() {
+    } as UnimportMeta
+    Object.defineProperty(metadata, 'injectionUsage', {
+      enumerable: false,
+      configurable: true,
+      get() {
         // eslint-disable-next-line unicorn/error-message
         const stack = new Error().stack
         console.warn('[unimport] `injectionUsage` is deprecated, use `injectionsUsageMap` instead', stack)
         return Object.fromEntries(this.injectionsUsageMap)
       },
-    }
+    })
   }
 
   let resolvePromise: Promise<void>

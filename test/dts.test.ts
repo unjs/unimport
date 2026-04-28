@@ -96,6 +96,7 @@ it('dts', async () => {
         const useDoubled: typeof import('<root>/playground/composables/index').useDoubled
         const useEffect: typeof import('react').useEffect
         const useRef: typeof import('react').useRef
+        const useSleep: typeof import('<root>/playground/composables/async-value').useSleep
         const useState: typeof import('react').useState
         const vanillaA: typeof import('<root>/playground/composables/vanilla').vanillaA
         const vanillaAMJS: typeof import('<root>/playground/composables/vanilla').vanillaAMJS
@@ -142,6 +143,34 @@ it('should compat with `export =`', async () => {
     "export {}
     declare global {
       const browser: typeof import('webextension-polyfill')
+    }"
+  `)
+})
+
+it('should generate value and type declarations for complementary imports', async () => {
+  const { generateTypeDeclarations, init } = createUnimport({
+    imports: [{
+      name: 'Test',
+      from: 'module.js',
+    }, {
+      name: 'Test',
+      from: 'module.js',
+      type: true,
+    }],
+  })
+
+  await init()
+
+  await expect(generateTypeDeclarations()).resolves.toMatchInlineSnapshot(`
+    "export {}
+    declare global {
+      const Test: typeof import('module').Test
+    }
+    // for type re-export
+    declare global {
+      // @ts-ignore
+      export type { Test } from 'module'
+      import('module')
     }"
   `)
 })

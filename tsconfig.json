@@ -6,9 +6,8 @@
       "dom",
       "esnext"
     ],
-    "rootDir": ".",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "types": [
       "node",

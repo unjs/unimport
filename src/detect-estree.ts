@@ -92,7 +92,7 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
     const scope = scopesStack.pop()
     if (scope?.node !== node)
       throw new Error('Scope mismatch')
-    scopeCurrent = scopesStack[scopesStack.length - 1]
+    scopeCurrent = scopesStack.at(-1)!
   }
 
   pushScope(undefined!)

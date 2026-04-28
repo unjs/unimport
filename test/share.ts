@@ -1,6 +1,8 @@
 import type { Addon, Import } from '../src'
 import { kebabCase } from 'scule'
 
+const RE_EL_PREFIX = /^El[A-Z]/
+
 export function functionWrapAddon(): Addon {
   return {
     injectImportsResolved(imports) {
@@ -38,7 +40,7 @@ export function resolverAddon(): Addon {
     async matchImports(names, matched) {
       const dynamic: Import[] = []
       for (const name of names) {
-        if (!name.match(/^El[A-Z]/))
+        if (!RE_EL_PREFIX.test(name))
           continue
         dynamic.push({
           name,

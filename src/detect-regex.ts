@@ -2,7 +2,7 @@ import type MagicString from 'magic-string'
 import type { DetectImportResult, Import, InjectImportsOptions, UnimportContext } from './types'
 
 import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
-import { excludeRE, importAsRE, matchRE, separatorRE, stripCommentsAndStrings } from './regexp'
+import { RE_EXCLUDE, RE_IMPORT_AS, RE_MATCH, RE_SEPARATOR, stripCommentsAndStrings } from './regexp'
 import { getMagicString } from './utils'
 
 export async function detectImportsRegex(
@@ -33,7 +33,7 @@ export async function detectImportsRegex(
   // Auto import, search for unreferenced usages
   if (options?.autoImport !== false) {
     // Find all possible injection
-    Array.from(strippedCode.matchAll(matchRE))
+    Array.from(strippedCode.matchAll(RE_MATCH))
       .forEach((i) => {
         // Remove dot access, but keep destructuring
         if (i[1] === '.')
@@ -53,11 +53,11 @@ export async function detectImportsRegex(
       })
 
     // Remove those already defined
-    for (const regex of excludeRE) {
+    for (const regex of RE_EXCLUDE) {
       for (const match of strippedCode.matchAll(regex)) {
-        const segments = [...match[1]?.split(separatorRE) || [], ...match[2]?.split(separatorRE) || []]
+        const segments = [...match[1]?.split(RE_SEPARATOR) || [], ...match[2]?.split(RE_SEPARATOR) || []]
         for (const segment of segments) {
-          const identifier = segment.replace(importAsRE, '').trim()
+          const identifier = segment.replace(RE_IMPORT_AS, '').trim()
           occurrenceMap.delete(identifier)
         }
       }

@@ -11,6 +11,65 @@ import pm from 'picomatch'
 import { camelCase } from 'scule'
 import { glob } from 'tinyglobby'
 
+// JavaScript reserved words and keywords that mlly's regex parser may
+// incorrectly capture as export names from declaration expressions.
+// See: https://github.com/unjs/unimport/issues/303
+const JS_RESERVED_WORDS = new Set([
+  // Keywords
+  'abstract',
+  'arguments',
+  'async',
+  'await',
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'debugger',
+  'default',
+  'delete',
+  'do',
+  'else',
+  'enum',
+  'eval',
+  'export',
+  'extends',
+  'false',
+  'finally',
+  'for',
+  'function',
+  'if',
+  'implements',
+  'import',
+  'in',
+  'instanceof',
+  'interface',
+  'let',
+  'new',
+  'null',
+  'of',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'static',
+  'super',
+  'switch',
+  'this',
+  'throw',
+  'true',
+  'try',
+  'typeof',
+  'undefined',
+  'var',
+  'void',
+  'while',
+  'with',
+  'yield',
+])
+
 const FileExtensionLookup = [
   'mts',
   'cts',
@@ -24,8 +83,13 @@ const FileExtensionLookup = [
 
 const FileLookupPatterns = `*.{${FileExtensionLookup.join(',')}}`
 
+const RE_EXCLAMATION_PREFIX = /^!/
+const RE_FILE_EXT = /\.\w+$/
+const RE_NAME_SEPARATOR = /[-_.]/
+const RE_DTS_EXT = /\.d\.[mc]?ts$/
+
 function resolveGlobsExclude(glob: string, cwd: string) {
-  return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(/^!/, ''))}`
+  return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(RE_EXCLAMATION_PREFIX, ''))}`
 }
 
 function joinGlobFilePattern(glob: string, filePattern: string) {
@@ -43,7 +107,7 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
     const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
 
     // Ends with a extension, consider as a file
-    if (glob.match(/\.\w+$/))
+    if (RE_FILE_EXT.test(glob))
       return { glob, types }
 
     // Otherwise, append the default file patterns `*.{mts,cts,ts,tsx,mjs,cjs,js,jsx}`
@@ -104,7 +168,7 @@ export function dedupeDtsExports(exports: Import[]) {
     if (i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
       return true
 
-    return !exports.find(e => e.as === i.as && e.name === i.name && !e.type)
+    return !exports.some(e => e.as === i.as && e.name === i.name && !e.type)
   })
 }
 
@@ -127,7 +191,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
 
     // Only camel-case name if it contains separators by which scule would split,
     // see STR_SPLITTERS: https://github.com/unjs/scule/blob/main/src/index.ts
-    const as = /[-_.]/.test(name) ? camelCase(name) : name
+    const as = RE_NAME_SEPARATOR.test(name) ? camelCase(name) : name
     imports.push({ name: 'default', as, from: filepath })
   }
 
@@ -139,6 +203,8 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
       }
       else if (exp.type === 'declaration') {
         for (const name of exp.names) {
+          if (JS_RESERVED_WORDS.has(name))
+            continue
           imports.push({ name, as: name, from: filepath, ...additional })
           if (exp.declarationType === 'enum' || exp.declarationType === 'const enum' || exp.declarationType === 'class') {
             imports.push({ name, as: name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
@@ -197,7 +263,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
     }
   }
 
-  const isDts = filepath.match(/\.d\.[mc]?ts$/)
+  const isDts = filepath.match(RE_DTS_EXT)
 
   if (isDts) {
     if (includeTypes) {

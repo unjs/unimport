@@ -111,6 +111,29 @@ describe('toExports', () => {
       .toMatchInlineSnapshot('"export { ref, Ref } from \'vue\';"')
   })
 
+  it('dedupes duplicate identifiers for declarations (e.g. classes)', () => {
+    // Classes (and enums/const enums/interfaces) live in both the value
+    // and type spaces, so `dedupeImports` keeps both a value and a
+    // type-only entry. `export { Foo, Foo }` is invalid — a single
+    // `export { Foo }` already re-exports both.
+    const imports: Import[] = [
+      { from: 'src/Foo', name: 'Foo', as: 'Foo' },
+      { from: 'src/Foo', name: 'Foo', as: 'Foo', type: true, declarationType: 'class' },
+    ]
+    expect(toExports(imports, undefined, true))
+      .toMatchInlineSnapshot('"export { Foo } from \'src/Foo\';"')
+  })
+
+  it('prefers value import over type-only when deduping', () => {
+    // Order-independent: the value import wins regardless of position.
+    const imports: Import[] = [
+      { from: 'src/Foo', name: 'Foo', as: 'Foo', type: true, declarationType: 'class' },
+      { from: 'src/Foo', name: 'Foo', as: 'Foo' },
+    ]
+    expect(toExports(imports, undefined, true))
+      .toMatchInlineSnapshot('"export { Foo } from \'src/Foo\';"')
+  })
+
   it('declaration file support', () => {
     const imports: Import[] = [
       { from: 'pkg/src', typeFrom: 'pkg/dts', name: 'foo' },
