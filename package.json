@@ -2,7 +2,7 @@
   "name": "unimport",
   "type": "module",
   "version": "6.1.1",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.33.2",
   "description": "Unified utils for auto importing APIs in modules",
   "license": "MIT",
   "repository": "unjs/unimport",
