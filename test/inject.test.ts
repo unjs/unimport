@@ -13,6 +13,39 @@ describe('inject import', () => {
       `)
   })
 
+  it('detects identifiers followed by comparison and operator characters', async () => {
+    const { injectImports } = createUnimport({
+      imports: [
+        { name: 'platform', from: 'runtime' },
+        { name: 'isNative', from: 'runtime' },
+        { name: 'count', from: 'runtime' },
+        { name: 'total', from: 'runtime' },
+        { name: 'flags', from: 'runtime' },
+      ],
+    })
+    expect((await injectImports(`
+if (platform === 'ios' && isNative !== false) {
+  const modulo = count % 2
+  const quotient = total / 2
+  const xor = flags ^ 1
+}
+if (platform == 'android' || isNative != true) {
+  const looseModulo = count % 3
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { platform, isNative, count, total, flags } from 'runtime';
+        if (platform === 'ios' && isNative !== false) {
+          const modulo = count % 2
+          const quotient = total / 2
+          const xor = flags ^ 1
+        }
+        if (platform == 'android' || isNative != true) {
+          const looseModulo = count % 3
+        }"
+      `)
+  })
+
   it('should not match export', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
