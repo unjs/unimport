@@ -132,7 +132,8 @@ export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanD
 
   const fileFilter = options?.fileFilter || (() => true)
 
-  const indexOfDirs = (file: string) => dirGlobs.findIndex(glob => pm.isMatch(file, glob))
+  const dirMatchers = dirGlobs.map(glob => pm(glob))
+  const indexOfDirs = (file: string) => dirMatchers.findIndex(match => match(file))
   const fileSortByDirs = files.reduce((acc, file) => {
     const index = indexOfDirs(file)
     if (acc[index])
@@ -150,7 +151,8 @@ export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanD
   const files = await scanFilesFromDir(normalizedDirs, options)
 
   const includeTypesDirs = normalizedDirs.filter(dir => !dir.glob.startsWith('!') && dir.types)
-  const isIncludeTypes = (file: string) => includeTypesDirs.some(dir => pm.isMatch(file, dir.glob))
+  const includeTypesMatchers = includeTypesDirs.map(dir => pm(dir.glob))
+  const isIncludeTypes = (file: string) => includeTypesMatchers.some(match => match(file))
 
   const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
   const deduped = dedupeDtsExports(imports)
