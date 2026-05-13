@@ -1,5 +1,5 @@
-import type MagicString from 'magic-string'
 import type { Program } from 'estree'
+import type MagicString from 'magic-string'
 import type { InjectImportsOptions, UnimportContext } from './types'
 import { importModule, isPackageExists } from 'local-pkg'
 import { createEstreeDetector } from './detect-estree'
