@@ -35,10 +35,14 @@
     "test": "vitest --coverage"
   },
   "peerDependencies": {
-    "oxc-parser": "*"
+    "oxc-parser": "*",
+    "rolldown": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "oxc-parser": {
+      "optional": true
+    },
+    "rolldown": {
       "optional": true
     }
   },
@@ -70,6 +74,7 @@
     "jquery": "catalog:test",
     "lit": "catalog:test",
     "oxc-parser": "catalog:prod",
+    "rolldown": "catalog:prod",
     "typescript": "catalog:dev",
     "unbuild": "catalog:dev",
     "vitest": "catalog:test",

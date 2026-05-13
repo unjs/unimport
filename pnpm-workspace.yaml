@@ -29,6 +29,7 @@ catalogs:
     magic-string: ^0.30.21
     mlly: ^1.8.2
     oxc-parser: ^0.116.0
+    rolldown: ^1.0.0
     pathe: ^2.0.3
     picomatch: ^4.0.4
     pkg-types: ^2.3.1

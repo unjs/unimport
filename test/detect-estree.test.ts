@@ -1,6 +1,7 @@
 import type { Program } from 'estree'
 import type { InjectImportsOptions } from '../src'
 import { parse as parseWithAcorn } from 'acorn'
+import { parseSync as parseWithRolldownOxc } from 'rolldown/utils'
 import { parseSync as parseWithOxc } from 'oxc-parser'
 import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
@@ -14,6 +15,10 @@ testWith('acorn', code => parseWithAcorn(code, {
 }) as Program)
 
 testWith('oxc', code => parseWithOxc('', code, {
+  sourceType: 'module',
+}).program as Program)
+
+testWith('oxc', code => parseWithRolldownOxc('', code, {
   sourceType: 'module',
 }).program as Program)
 
