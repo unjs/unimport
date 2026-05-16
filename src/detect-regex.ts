@@ -27,7 +27,7 @@ export async function detectImportsRegex(
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
 
-  const occurrenceMap = new Map<string, number>()
+  const occurrenceMap = new Map<string, number[]>()
 
   const map = await ctx.getImportMap()
   // Auto import, search for unreferenced usages
@@ -48,17 +48,21 @@ export async function detectImportsRegex(
 
         const name = i[2]
         const occurrence = i.index! + i[1].length
-        if (occurrenceMap.get(name) || Number.POSITIVE_INFINITY > occurrence)
-          occurrenceMap.set(name, occurrence)
+        const occurrences = occurrenceMap.get(name)
+        if (occurrences)
+          occurrences.push(occurrence)
+        else
+          occurrenceMap.set(name, [occurrence])
       })
 
     // Remove those already defined
     for (const regex of RE_EXCLUDE) {
       for (const match of strippedCode.matchAll(regex)) {
         const segments = [...match[1]?.split(RE_SEPARATOR) || [], ...match[2]?.split(RE_SEPARATOR) || []]
+        const range = getForLoopDeclarationRange(strippedCode, match)
         for (const segment of segments) {
           const identifier = segment.replace(RE_IMPORT_AS, '').trim()
-          occurrenceMap.delete(identifier)
+          removeOccurrence(occurrenceMap, identifier, range)
         }
       }
     }
@@ -90,7 +94,7 @@ export async function detectImportsRegex(
     matchedImports.push(...virtualImports.imports)
   }
 
-  const firstOccurrence = Math.min(...Array.from(occurrenceMap.entries()).map(i => i[1]))
+  const firstOccurrence = Math.min(...Array.from(occurrenceMap.values()).flat())
 
   return {
     s,
@@ -99,6 +103,79 @@ export async function detectImportsRegex(
     matchedImports,
     firstOccurrence,
   }
+}
+
+function removeOccurrence(
+  occurrenceMap: Map<string, number[]>,
+  identifier: string,
+  range?: [number, number],
+) {
+  if (!identifier)
+    return
+
+  if (!range) {
+    occurrenceMap.delete(identifier)
+    return
+  }
+
+  const occurrences = occurrenceMap.get(identifier)
+  if (!occurrences)
+    return
+
+  const [start, end] = range
+  const remaining = occurrences.filter(occurrence => occurrence < start || occurrence > end)
+  if (remaining.length)
+    occurrenceMap.set(identifier, remaining)
+  else
+    occurrenceMap.delete(identifier)
+}
+
+function getForLoopDeclarationRange(code: string, match: RegExpMatchArray): [number, number] | undefined {
+  if (!/\b(?:of|in)\s*$/.test(match[0]))
+    return
+
+  if (/\bvar\s+/.test(match[0]))
+    return
+
+  const declarationStart = match.index!
+  const beforeDeclaration = code.slice(0, declarationStart)
+  const forHeader = /\bfor\s*(?:await\s*)?\([^()]*$/.exec(beforeDeclaration)
+  if (!forHeader)
+    return
+
+  const headerStart = forHeader.index
+  const headerOpen = beforeDeclaration.indexOf('(', headerStart)
+  if (headerOpen === -1)
+    return
+
+  const headerEnd = findMatchingCharacter(code, headerOpen, '(', ')')
+  if (headerEnd === -1)
+    return
+
+  let bodyStart = headerEnd + 1
+  while (/\s/.test(code[bodyStart] || ''))
+    bodyStart++
+
+  if (code[bodyStart] === '{') {
+    const bodyEnd = findMatchingCharacter(code, bodyStart, '{', '}')
+    if (bodyEnd !== -1)
+      return [declarationStart, bodyEnd]
+  }
+}
+
+function findMatchingCharacter(code: string, start: number, open: string, close: string) {
+  let depth = 0
+  for (let i = start; i < code.length; i++) {
+    if (code[i] === open) {
+      depth++
+    }
+    else if (code[i] === close) {
+      depth--
+      if (depth === 0)
+        return i
+    }
+  }
+  return -1
 }
 
 export function parseVirtualImportsRegex(
