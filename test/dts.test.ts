@@ -70,6 +70,7 @@ it('dts', async () => {
         const $: typeof import('jquery').$
         const BAR: typeof import('<root>/playground/composables/comma-separated').BAR
         const CustomEnum: typeof import('<root>/playground/composables/index').CustomEnum
+        const DefaultClass: typeof import('<root>/playground/composables/DefaultClass').default
         const FOO: typeof import('<root>/playground/composables/comma-separated').FOO
         const PascalCased: typeof import('<root>/playground/composables/PascalCased').PascalCased
         const THREE: typeof import('three')
@@ -111,6 +112,9 @@ it('dts', async () => {
         // @ts-ignore
         export type { JQuery } from 'jquery'
         import('jquery')
+        // @ts-ignore
+        export type { default as DefaultClass } from '<root>/playground/composables/DefaultClass'
+        import('<root>/playground/composables/DefaultClass')
         // @ts-ignore
         export type { PascalCased } from '<root>/playground/composables/PascalCased'
         import('<root>/playground/composables/PascalCased')
