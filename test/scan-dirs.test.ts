@@ -296,6 +296,22 @@ describe('scan-dirs', () => {
     expect(names).toContain('useSleep')
     expect(names).not.toContain('async')
   })
+
+  it('should scan named default class declarations as default imports only', async () => {
+    const filepath = join(__dirname, 'fixtures/default-class/MyClass.js')
+    const exports = await scanExports(filepath, false)
+
+    expect(exports).toContainEqual({
+      name: 'default',
+      as: 'MyClass',
+      from: filepath,
+    })
+    expect(exports).not.toContainEqual({
+      name: 'MyClass',
+      as: 'MyClass',
+      from: filepath,
+    })
+  })
 })
 
 it('normalizeScanDirs', () => {
