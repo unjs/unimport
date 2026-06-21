@@ -36,4 +36,13 @@ console.log(otherModule)
         console.log(otherModule)"
       `)
   })
+
+  it('matches addon imports without registered import candidates', async () => {
+    expect((await ctx.injectImports('const component = ElInput')).code)
+      .toMatchInlineSnapshot(`
+        "import { ElInput } from 'element-plus/es';
+        import 'element-plus/es/components/input/style/index';
+        const component = ElInput"
+      `)
+  })
 })

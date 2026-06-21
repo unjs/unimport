@@ -381,10 +381,10 @@ export function addImportToCode(
   const s = getMagicString(code)
 
   let _staticImports: StaticImport[] | undefined
-  const strippedCode = stripCommentsAndStrings(s.original)
 
   function findStaticImportsLazy() {
     if (!_staticImports) {
+      const strippedCode = stripCommentsAndStrings(s.original)
       _staticImports = findStaticImports(s.original)
         .filter(i => Boolean(strippedCode.slice(i.start, i.end).trim()))
         .map(i => parseStaticImport(i))

@@ -196,4 +196,45 @@ import { baz } from 'baz'
         const result = true ? false ? A : B : C"
       `)
   })
+
+  it('runs addon transforms without import candidates', async () => {
+    const { injectImports } = createUnimport({
+      addons: [{
+        transform(s) {
+          s.append('\ntransformed()')
+          return s
+        },
+      }],
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+    })
+
+    expect((await injectImports('plainCode()')).code)
+      .toBe('plainCode()\ntransformed()')
+  })
+
+  it('runs injection hooks without import candidates', async () => {
+    const { injectImports } = createUnimport({
+      addons: [{
+        injectImportsStringified(injection) {
+          return injection || 'import "side-effect"'
+        },
+      }],
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+    })
+
+    expect((await injectImports('plainCode()')).code)
+      .toBe('import "side-effect"\nplainCode()')
+  })
+
+  it('logs debug comments without import candidates', async () => {
+    const logs: string[] = []
+    const { injectImports } = createUnimport({
+      debugLog: message => logs.push(message),
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+    })
+
+    await injectImports('// @unimport-debug\nplainCode()', 'example.ts')
+
+    expect(logs).toEqual(['[unimport] 0 imports detected in "example.ts"'])
+  })
 })
