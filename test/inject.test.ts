@@ -270,4 +270,18 @@ import { baz } from 'baz'
 
     expect(logs).toEqual(['[unimport] 0 imports detected in "example.ts"'])
   })
+
+  it('does not inject imports for classes with extends clauses', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'SystemError', from: 'test-id' }],
+    })
+    const code = `export class SystemError extends Error {
+  constructor(message) {
+    super(message)
+    Object.setPrototypeOf(this, SystemError.prototype)
+  }
+}`
+
+    expect((await injectImports(code)).code).toBe(code)
+  })
 })
