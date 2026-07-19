@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { findExports, findTypeExports, resolve as mllyResolve } from 'mlly'
-import { basename, dirname, join, normalize, parse as parsePath, resolve } from 'pathe'
+import { basename, dirname, isAbsolute, join, normalize, parse as parsePath, resolve } from 'pathe'
 import pm from 'picomatch'
 import { camelCase } from 'scule'
 import { glob } from 'tinyglobby'
@@ -87,13 +87,44 @@ const RE_EXCLAMATION_PREFIX = /^!/
 const RE_FILE_EXT = /\.\w+$/
 const RE_NAME_SEPARATOR = /[-_.]/
 const RE_DTS_EXT = /\.d\.[mc]?ts$/
+const RE_GLOB_SPECIAL_CHARS = /[*?(){}[\]]/g
 
 function resolveGlobsExclude(glob: string, cwd: string) {
   return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(RE_EXCLAMATION_PREFIX, ''))}`
 }
 
+function escapeGlobBase(pattern: string): string {
+  const negated = pattern.startsWith('!')
+  const path = negated ? pattern.slice(1) : pattern
+
+  const segments = path.split('/')
+  let baseLength = 0
+  let current = ''
+  for (let i = 0; i < segments.length; i++) {
+    current = i === 0 ? (segments[i] || '/') : join(current, segments[i])
+    if (!existsSync(current))
+      break
+    baseLength = i + 1
+  }
+
+  const escaped = segments
+    .map((segment, i) => i < baseLength ? segment.replace(RE_GLOB_SPECIAL_CHARS, match => `[${match}]`) : segment)
+    .join('/')
+
+  return negated ? `!${escaped}` : escaped
+}
+
 function joinGlobFilePattern(glob: string, filePattern: string) {
   return join(basename(glob) === '*' ? dirname(glob) : glob, filePattern)
+}
+
+function globCwd(globs: string[], fallback: string): string {
+  for (const glob of globs) {
+    const path = glob.startsWith('!') ? glob.slice(1) : glob
+    if (isAbsolute(path))
+      return parsePath(path).root
+  }
+  return fallback
 }
 
 export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirExportsOptions): Required<ScanDir>[] {
@@ -103,7 +134,7 @@ export function normalizeScanDirs(dirs: (string | ScanDir)[], options?: ScanDirE
 
   return dirs.map((dir) => {
     const isString = typeof dir === 'string'
-    const glob = resolveGlobsExclude(isString ? dir : dir.glob, cwd)
+    const glob = escapeGlobBase(resolveGlobsExclude(isString ? dir : dir.glob, cwd))
     const types = isString ? topLevelTypes : (dir.types ?? topLevelTypes)
 
     // Ends with a extension, consider as a file
@@ -122,7 +153,7 @@ export async function scanFilesFromDir(dir: ScanDir | ScanDir[], options?: ScanD
     dirGlobs,
     {
       absolute: true,
-      cwd: options?.cwd || process.cwd(),
+      cwd: globCwd(dirGlobs, options?.cwd || process.cwd()),
       onlyFiles: true,
       followSymbolicLinks: true,
       expandDirectories: false,

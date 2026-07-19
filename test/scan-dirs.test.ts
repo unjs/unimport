@@ -1,5 +1,7 @@
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join, relative } from 'pathe'
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
 import { scanExports } from '../src/node/scan-dirs'
 
@@ -284,6 +286,39 @@ describe('scan-dirs', () => {
     const dirWithSingleAsterisk = join(__dirname, '../playground/composables/nested/*/index.ts')
     const singleAsteriskExports = await scanDirExports([dirWithSingleAsterisk])
     expect(singleAsteriskExports.some(i => i.name === 'CustomType2')).toEqual(true)
+  })
+
+  describe('directories with glob-special characters in path', () => {
+    let root: string
+
+    beforeAll(async () => {
+      root = await mkdtemp(join(tmpdir(), 'unimport-scan-'))
+    })
+
+    afterAll(async () => {
+      await rm(root, { recursive: true, force: true })
+    })
+
+    for (const dirName of ['my (project)', 'a [x] b', 'c {y} z']) {
+      it(`scans a directory named ${JSON.stringify(dirName)}`, async () => {
+        const dir = join(root, dirName, 'composables')
+        await mkdir(dir, { recursive: true })
+        await writeFile(join(dir, 'fooBar.ts'), 'export default function () {}\n')
+
+        const exports = await scanDirExports([dir])
+        expect(exports.map(i => i.as)).toContain('fooBar')
+      })
+    }
+
+    it('scans when the working directory contains glob-special characters', async () => {
+      const projectRoot = join(root, 'project (dev)')
+      const dir = join(projectRoot, 'composables')
+      await mkdir(dir, { recursive: true })
+      await writeFile(join(dir, 'fooBar.ts'), 'export default function () {}\n')
+
+      const exports = await scanDirExports([dir], { cwd: projectRoot })
+      expect(exports.map(i => i.as)).toContain('fooBar')
+    })
   })
 
   it('should not register JS reserved words as exports from declaration expressions', async () => {
