@@ -1,6 +1,7 @@
 import type { Program } from 'estree'
 import type MagicString from 'magic-string'
 import type { InjectImportsOptions, UnimportContext } from './types'
+import { pathToFileURL } from 'node:url'
 import { importModule, isPackageExists, resolveModule } from 'local-pkg'
 import { createEstreeDetector } from './detect-estree'
 
@@ -12,11 +13,13 @@ async function loadDetector() {
   const paths = [import.meta.url]
   let parseSync: ParseSync
   if (isPackageExists('rolldown', { paths })) {
-    const url = resolveModule('rolldown/utils', { paths }) ?? 'rolldown/utils'
+    const resolved = resolveModule('rolldown/utils', { paths })
+    const url = resolved ? pathToFileURL(resolved).href : 'rolldown/utils'
     parseSync = (await importModule<{ parseSync: ParseSync }>(url)).parseSync
   }
   else if (isPackageExists('oxc-parser', { paths })) {
-    const url = resolveModule('oxc-parser', { paths }) ?? 'oxc-parser'
+    const resolved = resolveModule('oxc-parser', { paths })
+    const url = resolved ? pathToFileURL(resolved).href : 'oxc-parser'
     parseSync = (await importModule<{ parseSync: ParseSync }>(url)).parseSync
   }
   else {
