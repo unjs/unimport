@@ -40,7 +40,7 @@ catalogs:
     unplugin-utils: ^0.3.1
   test:
     h3: ^1.15.11
-    jquery: ^3.7.1
+    jquery: ^4.0.0
     lit: ^3.3.3
     vitest: ^4.1.6
 onlyBuiltDependencies:
