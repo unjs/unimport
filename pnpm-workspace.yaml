@@ -26,7 +26,7 @@ catalogs:
     escape-string-regexp: ^5.0.0
     estree-walker: ^3.0.3
     local-pkg: ^1.1.2
-    magic-string: ^0.30.21
+    magic-string: ^1.1.0
     mlly: ^1.8.2
     oxc-parser: ^0.130.0
     pathe: ^2.0.3
