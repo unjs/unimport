@@ -108,6 +108,10 @@ function testWith(name: InjectImportsOptions['parser'], parse: (code: string) =>
               ],
             },
             {
+              "declarations": [],
+              "references": [],
+            },
+            {
               "declarations": [
                 "bar2",
                 "local1",
@@ -222,6 +226,37 @@ function testWith(name: InjectImportsOptions['parser'], parse: (code: string) =>
       expect(unmatched).toMatchInlineSnapshot(`Set {}`)
     })
 
+    it('params and catch bindings do not leak to the enclosing scope', async () => {
+      const ast = parse(`
+        const fn1 = ({ p1 }) => p1()
+        function fn2(p2) { p2() }
+        try {} catch ({ e1 }) { e1() }
+        p1(); p2(); e1()
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect([...unmatched].sort()).toMatchInlineSnapshot(`
+        [
+          "e1",
+          "p1",
+          "p2",
+        ]
+      `)
+    })
+
+    it('re-exports are not references', async () => {
+      const ast = parse(`
+        export { ref1 } from './one'
+        export { ref2 as ref3 } from './two'
+        export * as ref4 from './three'
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect(unmatched).toMatchInlineSnapshot(`Set {}`)
+    })
+
     it('matchedImports', async () => {
       const ctx = createUnimport({
         parser: name,
@@ -257,7 +292,7 @@ console.log(otherModule)
         `)
     })
 
-    it('for function body scope, take function params as declarations of parent scope', async () => {
+    it('function params are declared in their own scope', async () => {
       const ast = parse(`
         function test(param1, param2) {
           console.log(param1)
@@ -281,9 +316,14 @@ console.log(otherModule)
           [
             {
               "declarations": [
+                "test",
+              ],
+              "references": [],
+            },
+            {
+              "declarations": [
                 "param1",
                 "param2",
-                "test",
               ],
               "references": [],
             },

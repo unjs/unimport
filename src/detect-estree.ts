@@ -1,4 +1,4 @@
-import type { BlockStatement, Node, Pattern, Program } from 'estree'
+import type { BlockStatement, CatchClause, Function, Node, Pattern, Program } from 'estree'
 import type MagicString from 'magic-string'
 import type { Import, InjectImportsOptions, UnimportContext } from './types'
 import { walk } from 'estree-walker'
@@ -66,7 +66,7 @@ export function createEstreeDetector(parse: (code: string) => Program) {
 }
 
 export interface Scope {
-  node?: BlockStatement
+  node?: BlockStatement | Function | CatchClause
   parent?: Scope
   declarations: Set<string>
   references: Set<string>
@@ -77,7 +77,7 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
   let scopeCurrent: Scope = undefined!
   const scopesStack: Scope[] = []
 
-  function pushScope(node: BlockStatement) {
+  function pushScope(node: Scope['node']) {
     scopeCurrent = {
       node,
       parent: scopeCurrent,
@@ -88,7 +88,7 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
     scopesStack.push(scopeCurrent)
   }
 
-  function popScope(node: BlockStatement) {
+  function popScope(node: Scope['node']) {
     const scope = scopesStack.pop()
     if (scope?.node !== node)
       throw new Error('Scope mismatch')
@@ -130,7 +130,6 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
         case 'ImportNamespaceSpecifier':
           scopeCurrent.declarations.add(node.local.name)
           return
-        case 'FunctionDeclaration':
         case 'ClassDeclaration':
           if (node.id)
             scopeCurrent.declarations.add(node.id.name)
@@ -138,30 +137,30 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
         case 'VariableDeclarator':
           declarePattern(node.id)
           return
-        // concise-body arrows have no BlockStatement to hang a scope off, so
-        // their parameters are declared in the enclosing scope
+
+        // ====== Scope ======
+        // parameters and catch bindings live in a scope of their own, so that
+        // they are visible to the body (block or expression) but not to the
+        // code surrounding the function
+        case 'FunctionDeclaration':
+          if (node.id)
+            scopeCurrent.declarations.add(node.id.name)
+          pushScope(node)
+          for (const param of node.params)
+            declarePattern(param)
+          return
+        case 'FunctionExpression':
         case 'ArrowFunctionExpression':
-          if (node.body.type !== 'BlockStatement') {
-            for (const param of node.params)
-              declarePattern(param)
-          }
+          pushScope(node)
+          for (const param of node.params)
+            declarePattern(param)
           return
         case 'CatchClause':
+          pushScope(node)
           if (node.param)
             declarePattern(node.param)
           return
-
-        // ====== Scope ======
         case 'BlockStatement':
-          switch (parent?.type) {
-            // for a function body scope, take the function parameters as declarations
-            case 'FunctionDeclaration': // e.g. function foo(p1, p2) { ... }
-            case 'ArrowFunctionExpression': // e.g. (p1, p2) => { ... }
-            case 'FunctionExpression': // e.g. const foo = function(p1, p2) { ... }
-              for (const param of parent.params)
-                declarePattern(param)
-              break
-          }
           pushScope(node)
           return
 
@@ -217,10 +216,6 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
               if (parent.declaration === node)
                 scopeCurrent.references.add(node.name)
               return
-            case 'ExportSpecifier':
-              if (parent.local === node)
-                scopeCurrent.references.add(node.name)
-              return
             case 'IfStatement':
             case 'WhileStatement':
             case 'DoWhileStatement':
@@ -244,6 +239,10 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
       additionalWalk?.leave?.call(this, node, parent, prop, index)
       switch (node.type) {
         case 'BlockStatement':
+        case 'FunctionDeclaration':
+        case 'FunctionExpression':
+        case 'ArrowFunctionExpression':
+        case 'CatchClause':
           popScope(node)
       }
     },
