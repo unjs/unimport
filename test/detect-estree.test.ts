@@ -146,6 +146,82 @@ function testWith(name: InjectImportsOptions['parser'], parse: (code: string) =>
         `)
     })
 
+    // https://github.com/nuxt/nuxt/issues/35858
+    it('references in statements and patterns', async () => {
+      const ast = parse(`
+        switch (input) {
+          case ref1:
+            break
+        }
+
+        function fn1() {
+          return ref2
+        }
+        function fn2() {
+          throw ref3
+        }
+        function fn3(p1 = ref4) {
+          return p1
+        }
+
+        for (const i of ref5) {}
+        for (const i in ref6) {}
+
+        obj[ref7]
+        const obj2 = { [ref8]: 1 }
+        class C1 {
+          [ref9] = ref10;
+          [ref11]() {}
+        }
+
+        export default ref12
+
+        const [d1 = ref13] = []
+        const { d2 = ref14 } = {}
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect([...unmatched].sort())
+        .toMatchInlineSnapshot(`
+          [
+            "input",
+            "obj",
+            "ref1",
+            "ref10",
+            "ref11",
+            "ref12",
+            "ref13",
+            "ref14",
+            "ref2",
+            "ref3",
+            "ref4",
+            "ref5",
+            "ref6",
+            "ref7",
+            "ref8",
+            "ref9",
+          ]
+        `)
+    })
+
+    it('declarations from patterns and params', async () => {
+      const ast = parse(`
+        const [a1 = 1] = []
+        const { a2 = 1, ...a3 } = {}
+        try {} catch (e1) { e1() }
+        function fn1({ p1 }, [p2], p3 = 1, ...p4) {
+          p1(); p2(); p3(); p4()
+        }
+        const fn2 = ({ p5 }) => p5()
+        a1(); a2(); a3()
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect(unmatched).toMatchInlineSnapshot(`Set {}`)
+    })
+
     it('matchedImports', async () => {
       const ctx = createUnimport({
         parser: name,
