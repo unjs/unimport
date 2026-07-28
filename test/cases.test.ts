@@ -20,11 +20,15 @@ const options: Record<string, Partial<UnimportOptions>> = {
   acorn: {
     parser: 'acorn',
   },
+  oxc: {
+    parser: 'oxc',
+  },
 }
 
 const excludes: Record<string, (file: string) => boolean> = {
   default: (file: string) => !!file.match(/acorn-/),
   acorn: (file: string) => !file.match(/\.js$/),
+  oxc: (file: string) => !file.match(/\.js$/),
 }
 
 Object.entries(options).forEach(([name, options]) => {

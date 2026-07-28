@@ -1,10 +1,8 @@
-import type { BlockStatement, Node, Program } from 'estree'
 import type MagicString from 'magic-string'
+import type { Node, Program } from 'oxc-parser'
 import type { Import, InjectImportsOptions, UnimportContext } from './types'
-import { walk } from 'estree-walker'
+import { isReferenceIdentifier, ScopeTracker, walk } from 'oxc-walker'
 import { getMagicString } from './utils'
-
-export type ArgumentsType<T> = T extends (...args: infer U) => any ? U : never
 
 export function createEstreeDetector(parse: (code: string) => Program) {
   return async (
@@ -25,15 +23,12 @@ export function createEstreeDetector(parse: (code: string) => Program) {
 
       const virtualImports = createVirtualImports(map, ctx.options.virtualImports)
 
-      const scopes = traveseScopes(
+      const identifiers = findUnmatchedIdentifiers(
         ast,
-        (enableTransformVirtualImports)
-          ? virtualImports.walk
-          : {},
+        enableTransformVirtualImports ? virtualImports.enter : undefined,
       )
 
       if (enableAutoImport) {
-        const identifiers = scopes.unmatched
         matchedImports.push(
           ...Array.from(identifiers)
             .map((name) => {
@@ -65,180 +60,37 @@ export function createEstreeDetector(parse: (code: string) => Program) {
   }
 }
 
-export interface Scope {
-  node?: BlockStatement
-  parent?: Scope
-  declarations: Set<string>
-  references: Set<string>
-}
+export function findUnmatchedIdentifiers(program: Program, additionalEnter?: (node: Node) => void) {
+  const scopeTracker = new ScopeTracker({ preserveExitedScopes: true })
 
-export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof walk>[1]) {
-  const scopes: Scope[] = []
-  let scopeCurrent: Scope = undefined!
-  const scopesStack: Scope[] = []
+  // first pass to collect all declarations and hoist them
+  walk(program, { scopeTracker })
+  scopeTracker.freeze()
 
-  function pushScope(node: BlockStatement) {
-    scopeCurrent = {
-      node,
-      parent: scopeCurrent,
-      declarations: new Set(),
-      references: new Set(),
-    }
-    scopes.push(scopeCurrent)
-    scopesStack.push(scopeCurrent)
-  }
+  const unmatched = new Set<string>()
 
-  function popScope(node: BlockStatement) {
-    const scope = scopesStack.pop()
-    if (scope?.node !== node)
-      throw new Error('Scope mismatch')
-    scopeCurrent = scopesStack.at(-1)!
-  }
+  walk(program, {
+    scopeTracker,
+    enter(node, parent) {
+      additionalEnter?.(node as unknown as Node)
 
-  pushScope(undefined!)
-
-  walk(ast, {
-    enter(node, parent, prop, index) {
-      additionalWalk?.enter?.call(this, node, parent, prop, index)
-      switch (node.type) {
-        // ====== Declaration ======
-        case 'ImportSpecifier':
-        case 'ImportDefaultSpecifier':
-        case 'ImportNamespaceSpecifier':
-          scopeCurrent.declarations.add(node.local.name)
-          return
-        case 'FunctionDeclaration':
-        case 'ClassDeclaration':
-          if (node.id)
-            scopeCurrent.declarations.add(node.id.name)
-          return
-        case 'VariableDeclarator':
-          if (node.id.type === 'Identifier') {
-            scopeCurrent.declarations.add(node.id.name)
-          }
-          else {
-            walk(node.id, {
-              enter(node) {
-                if (node.type === 'ObjectPattern') {
-                  node.properties.forEach((i) => {
-                    if (i.type === 'Property' && i.value.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.value.name)
-                    else if (i.type === 'RestElement' && i.argument.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.argument.name)
-                  })
-                }
-                else if (node.type === 'ArrayPattern') {
-                  node.elements.forEach((i) => {
-                    if (i?.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.name)
-                    if (i?.type === 'RestElement' && i.argument.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.argument.name)
-                  })
-                }
-              },
-            })
-          }
-          return
-
-        // ====== Scope ======
-        case 'BlockStatement':
-          switch (parent?.type) {
-            // for a function body scope, take the function parameters as declarations
-            case 'FunctionDeclaration': // e.g. function foo(p1, p2) { ... }
-            case 'ArrowFunctionExpression': // e.g. (p1, p2) => { ... }
-            case 'FunctionExpression': // e.g. const foo = function(p1, p2) { ... }
-            {
-              const parameterIdentifiers = parent.params
-                .filter(p => p.type === 'Identifier')
-              for (const id of parameterIdentifiers) {
-                scopeCurrent.declarations.add(id.name)
-              }
-              break
-            }
-          }
-          pushScope(node)
-          return
-
-        // ====== Reference ======
-        case 'Identifier':
-          switch (parent?.type) {
-            case 'CallExpression':
-              if (parent.callee === node || parent.arguments.includes(node))
-                scopeCurrent.references.add(node.name)
-              return
-            case 'MemberExpression':
-              if (parent.object === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'VariableDeclarator':
-              if (parent.init === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'SpreadElement':
-              if (parent.argument === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'ClassDeclaration':
-              if (parent.superClass === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'Property':
-              if (parent.value === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'TemplateLiteral':
-              if (parent.expressions.includes(node))
-                scopeCurrent.references.add(node.name)
-              return
-            case 'AssignmentExpression':
-              if (parent.right === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'IfStatement':
-            case 'WhileStatement':
-            case 'DoWhileStatement':
-              if (parent.test === node)
-                scopeCurrent.references.add(node.name)
-              return
-            case 'SwitchStatement':
-              if (parent.discriminant === node)
-                scopeCurrent.references.add(node.name)
-              return
-          }
-          if (parent?.type.includes('Expression'))
-            scopeCurrent.references.add(node.name)
+      // re-export specifiers refer to the other module's exports
+      if (node.type === 'ExportNamedDeclaration' && node.source) {
+        this.skip()
+        return
       }
-    },
-    leave(node, parent, prop, index) {
-      additionalWalk?.leave?.call(this, node, parent, prop, index)
-      switch (node.type) {
-        case 'BlockStatement':
-          popScope(node)
+
+      if (
+        (node.type === 'Identifier' || node.type === 'JSXIdentifier')
+        && isReferenceIdentifier(node, parent)
+        && !scopeTracker.isDeclared(node.name)
+      ) {
+        unmatched.add(node.name)
       }
     },
   })
 
-  const unmatched = new Set<string>()
-  for (const scope of scopes) {
-    for (const name of scope.references) {
-      let defined = false
-      let parent: Scope | undefined = scope
-      while (parent) {
-        if (parent.declarations.has(name)) {
-          defined = true
-          break
-        }
-        parent = parent?.parent
-      }
-      if (!defined)
-        unmatched.add(name)
-    }
-  }
-
-  return {
-    unmatched,
-    scopes,
-  }
+  return unmatched
 }
 
 function createVirtualImports(
@@ -247,7 +99,7 @@ function createVirtualImports(
 ): {
   imports: Import[]
   ranges: [number, number][]
-  walk: ArgumentsType<typeof walk>[1]
+  enter: (node: Node) => void
 } {
   const imports: Import[] = []
   const ranges: [number, number][] = []
@@ -255,27 +107,24 @@ function createVirtualImports(
   return {
     imports,
     ranges,
-    walk: {
-      enter(node) {
-        if (node.type === 'ImportDeclaration') {
-          if (virtualImports.includes(node.source.value as string)) {
-            // @ts-expect-error missing types
-            ranges.push([node.start, node.end])
-            node.specifiers.forEach((i) => {
-              if (i.type === 'ImportSpecifier' && i.imported.type === 'Identifier') {
-                const original = importMap.get(i.imported.name)
-                if (!original)
-                  throw new Error(`[unimport] failed to find "${i.imported.name}" imported from "${node.source.value}"`)
-                imports.push({
-                  from: original.from,
-                  name: original.name,
-                  as: i.local.name,
-                })
-              }
-            })
-          }
-        }
-      },
-    } satisfies ArgumentsType<typeof walk>[1],
+    enter(node) {
+      if (node.type !== 'ImportDeclaration' || !virtualImports.includes(node.source.value))
+        return
+
+      ranges.push([node.start, node.end])
+      for (const specifier of node.specifiers) {
+        if (specifier.type !== 'ImportSpecifier' || specifier.imported.type !== 'Identifier')
+          continue
+
+        const original = importMap.get(specifier.imported.name)
+        if (!original)
+          throw new Error(`[unimport] failed to find "${specifier.imported.name}" imported from "${node.source.value}"`)
+        imports.push({
+          from: original.from,
+          name: original.name,
+          as: specifier.local.name,
+        })
+      }
+    },
   }
 }

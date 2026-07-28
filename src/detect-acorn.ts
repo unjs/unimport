@@ -1,4 +1,4 @@
-import type { Program } from 'estree'
+import type { Program } from 'oxc-parser'
 import { parse } from 'acorn'
 import { createEstreeDetector } from './detect-estree'
 
