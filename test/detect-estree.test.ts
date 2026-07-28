@@ -1,11 +1,11 @@
-import type { Program } from 'estree'
+import type { Program } from 'oxc-parser'
 import type { InjectImportsOptions } from '../src'
 import { parse as parseWithAcorn } from 'acorn'
 import { parseSync as parseWithOxc } from 'oxc-parser'
 import { parseSync as parseWithRolldownOxc } from 'rolldown/utils'
 import { describe, expect, it } from 'vitest'
 import { createUnimport } from '../src'
-import { traveseScopes } from '../src/detect-estree'
+import { findUnmatchedIdentifiers } from '../src/detect-estree'
 import { resolverAddon } from './share'
 
 testWith('acorn', code => parseWithAcorn(code, {
@@ -66,84 +66,14 @@ function testWith(name: InjectImportsOptions['parser'], parse: (code: string) =>
         }
       `)
 
-      const { scopes, unmatched } = traveseScopes(ast as any)
+      const unmatched = findUnmatchedIdentifiers(ast)
 
-      expect(unmatched)
-        .toMatchInlineSnapshot(`
-          Set {
-            "console",
-            "local2",
-            "foo100",
-          }
-        `)
-
-      expect(scopes.map(i => ({
-        declarations: [...i.declarations].sort(),
-        references: [...i.references].sort(),
-      })))
-        .toMatchInlineSnapshot(`
-          [
-            {
-              "declarations": [
-                "foo1",
-                "foo10",
-                "foo11",
-                "foo12",
-                "foo13",
-                "foo14",
-                "foo15",
-                "foo2",
-                "foo3",
-                "foo4",
-                "foo5",
-                "foo6",
-                "foo7",
-                "foo8",
-                "foo9",
-              ],
-              "references": [
-                "foo10",
-                "foo8",
-                "foo9",
-              ],
-            },
-            {
-              "declarations": [
-                "bar2",
-                "local1",
-                "local4",
-              ],
-              "references": [
-                "console",
-                "foo1",
-                "foo10",
-                "foo100",
-                "foo2",
-                "foo3",
-                "foo4",
-                "foo5",
-                "foo6",
-                "foo7",
-                "foo8",
-                "foo9",
-                "local1",
-                "local2",
-              ],
-            },
-            {
-              "declarations": [
-                "local2",
-              ],
-              "references": [],
-            },
-            {
-              "declarations": [
-                "foo100",
-              ],
-              "references": [],
-            },
-          ]
-        `)
+      expect([...unmatched].sort()).toEqual([
+        'bar',
+        'console',
+        'foo100',
+        'local2',
+      ])
     })
 
     it('matchedImports', async () => {
@@ -181,45 +111,17 @@ console.log(otherModule)
         `)
     })
 
-    it('for function body scope, take function params as declarations of parent scope', async () => {
+    it('function params are scoped to the function body, not the parent scope', async () => {
       const ast = parse(`
         function test(param1, param2) {
           console.log(param1)
         }
+        param2()
       `)
 
-      const { scopes, unmatched } = traveseScopes(ast as any)
+      const unmatched = findUnmatchedIdentifiers(ast)
 
-      expect(unmatched)
-        .toMatchInlineSnapshot(`
-          Set {
-            "console",
-          }
-        `)
-
-      expect(scopes.map(i => ({
-        declarations: [...i.declarations].sort(),
-        references: [...i.references].sort(),
-      })))
-        .toMatchInlineSnapshot(`
-          [
-            {
-              "declarations": [
-                "param1",
-                "param2",
-                "test",
-              ],
-              "references": [],
-            },
-            {
-              "declarations": [],
-              "references": [
-                "console",
-                "param1",
-              ],
-            },
-          ]
-        `)
+      expect([...unmatched].sort()).toEqual(['console', 'param2'])
     })
   })
 
