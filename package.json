@@ -2,7 +2,7 @@
   "name": "unimport",
   "type": "module",
   "version": "6.3.1",
-  "packageManager": "pnpm@10.33.4",
+  "packageManager": "pnpm@11.18.0",
   "description": "Unified utils for auto importing APIs in modules",
   "license": "MIT",
   "repository": "unjs/unimport",
@@ -67,6 +67,7 @@
     "@types/estree": "catalog:dev",
     "@types/node": "catalog:dev",
     "@types/picomatch": "catalog:dev",
+    "@vitejs/devtools": "catalog:playground",
     "@vitest/coverage-v8": "catalog:dev",
     "bumpp": "catalog:dev",
     "eslint": "catalog:dev",
@@ -78,6 +79,7 @@
     "typescript": "catalog:dev",
     "unbuild": "catalog:dev",
     "vitest": "catalog:test",
+    "vue": "catalog:playground",
     "vue-tsc": "catalog:dev"
   },
   "resolutions": {
