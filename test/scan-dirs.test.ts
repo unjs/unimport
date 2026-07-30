@@ -26,6 +26,26 @@ describe('scan-dirs', () => {
             "name": "bump",
           },
           {
+            "as": "compA",
+            "from": "generic-exports.ts",
+            "name": "compA",
+          },
+          {
+            "as": "compB",
+            "from": "generic-exports.ts",
+            "name": "compB",
+          },
+          {
+            "as": "compC",
+            "from": "generic-exports.ts",
+            "name": "compC",
+          },
+          {
+            "as": "compD",
+            "from": "generic-exports.ts",
+            "name": "compD",
+          },
+          {
             "as": "CustomEnum",
             "from": "index.ts",
             "name": "CustomEnum",
@@ -70,6 +90,11 @@ describe('scan-dirs', () => {
             "name": "localBAlias",
           },
           {
+            "as": "mergeObjects",
+            "from": "generic-exports.ts",
+            "name": "mergeObjects",
+          },
+          {
             "as": "multiplier",
             "from": "index.ts",
             "name": "multiplier",
@@ -87,9 +112,29 @@ describe('scan-dirs', () => {
             "type": true,
           },
           {
+            "as": "uninitBar",
+            "from": "generic-exports.ts",
+            "name": "uninitBar",
+          },
+          {
+            "as": "uninitFoo",
+            "from": "generic-exports.ts",
+            "name": "uninitFoo",
+          },
+          {
             "as": "useDoubled",
             "from": "index.ts",
             "name": "useDoubled",
+          },
+          {
+            "as": "useGenericStore",
+            "from": "generic-exports.ts",
+            "name": "useGenericStore",
+          },
+          {
+            "as": "useResizable",
+            "from": "generic-exports.ts",
+            "name": "useResizable",
           },
           {
             "as": "useSleep",
@@ -295,6 +340,64 @@ describe('scan-dirs', () => {
     const names = exports.map(i => i.name)
     expect(names).toContain('useSleep')
     expect(names).not.toContain('async')
+  })
+
+  it('should not leak generic type parameter identifiers as exports (#502)', async () => {
+    // mlly's regex parser incorrectly captures identifiers from generic type
+    // parameters (e.g. `Record<string, Ref>`) as export names because it
+    // misinterprets commas inside angle brackets as declarator separators.
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    // Actual export names should be present
+    expect(names).toContain('useGenericStore')
+    expect(names).toContain('mergeObjects')
+
+    // Type identifiers from generics must not leak
+    expect(names).not.toContain('Ref')
+    expect(names).not.toContain('B')
+    expect(names).not.toContain('Record')
+    expect(names).not.toContain('object')
+  })
+
+  it('should export uninitialised names in multi-declarator statements', async () => {
+    // `export let foo, bar = 1` — both `foo` and `bar` should be exported.
+    // See: CodeRabbit review on PR #513
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    expect(names).toContain('uninitFoo')
+    expect(names).toContain('uninitBar')
+  })
+
+  it('should not confuse comparison operators with angle brackets', async () => {
+    // `export const a = 1 < 2 ? ... , b = 42` — the `<` in the RHS must
+    // not corrupt bracket depth and hide the comma separating `a` from `b`.
+    // See: CodeRabbit review on PR #513
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    // Digit before `<` (1 < 2)
+    expect(names).toContain('compA')
+    expect(names).toContain('compB')
+    // Identifier before `<` (_someNum < 100) — must not be confused with generic
+    expect(names).toContain('compC')
+    expect(names).toContain('compD')
+  })
+
+  it('should export useResizable but not its arrow function parameter (#502)', async () => {
+    // Pin the original regression from issue #502: arrow function with
+    // generic type params should export the binding name, not the params.
+    const filepath = join(__dirname, '../playground/composables/generic-exports.ts')
+    const exports = await scanExports(filepath, false)
+    const names = exports.map(i => i.name)
+
+    expect(names).toContain('useResizable')
+    expect(names).not.toContain('options')
+    expect(names).not.toContain('columns')
   })
 })
 
