@@ -87,6 +87,7 @@ const RE_EXCLAMATION_PREFIX = /^!/
 const RE_FILE_EXT = /\.\w+$/
 const RE_NAME_SEPARATOR = /[-_.]/
 const RE_DTS_EXT = /\.d\.[mc]?ts$/
+const RE_DEFAULT_CLASS_EXPORT = /^export\s+default\s+class(?![\w$])/
 
 function resolveGlobsExclude(glob: string, cwd: string) {
   return `${glob.startsWith('!') ? '!' : ''}${resolve(cwd, glob.replace(RE_EXCLAMATION_PREFIX, ''))}`
@@ -195,6 +196,11 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
     // see STR_SPLITTERS: https://github.com/unjs/scule/blob/main/src/index.ts
     const as = RE_NAME_SEPARATOR.test(name) ? camelCase(name) : name
     imports.push({ name: 'default', as, from: filepath })
+
+    // Emit a paired type entry for a default-exported class.
+    if (RE_DEFAULT_CLASS_EXPORT.test(code.slice(defaultExport.start))) {
+      imports.push({ name: 'default', as, from: filepath, type: true, declarationType: 'class' })
+    }
   }
 
   async function toImport(exports: ESMExport[], additional?: Partial<Import>) {

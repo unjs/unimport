@@ -50,6 +50,18 @@ describe('scan-dirs', () => {
             "type": true,
           },
           {
+            "as": "DefaultClass",
+            "from": "DefaultClass.ts",
+            "name": "default",
+          },
+          {
+            "as": "DefaultClass",
+            "declarationType": "class",
+            "from": "DefaultClass.ts",
+            "name": "default",
+            "type": true,
+          },
+          {
             "as": "foo",
             "from": "foo.ts",
             "name": "default",
