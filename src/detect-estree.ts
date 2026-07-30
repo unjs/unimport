@@ -1,4 +1,4 @@
-import type { BlockStatement, Node, Program } from 'estree'
+import type { BlockStatement, CatchClause, Function, Node, Pattern, Program } from 'estree'
 import type MagicString from 'magic-string'
 import type { Import, InjectImportsOptions, UnimportContext } from './types'
 import { walk } from 'estree-walker'
@@ -66,7 +66,7 @@ export function createEstreeDetector(parse: (code: string) => Program) {
 }
 
 export interface Scope {
-  node?: BlockStatement
+  node?: BlockStatement | Function | CatchClause
   parent?: Scope
   declarations: Set<string>
   references: Set<string>
@@ -77,7 +77,7 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
   let scopeCurrent: Scope = undefined!
   const scopesStack: Scope[] = []
 
-  function pushScope(node: BlockStatement) {
+  function pushScope(node: Scope['node']) {
     scopeCurrent = {
       node,
       parent: scopeCurrent,
@@ -88,11 +88,34 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
     scopesStack.push(scopeCurrent)
   }
 
-  function popScope(node: BlockStatement) {
+  function popScope(node: Scope['node']) {
     const scope = scopesStack.pop()
     if (scope?.node !== node)
       throw new Error('Scope mismatch')
     scopeCurrent = scopesStack.at(-1)!
+  }
+
+  function declarePattern(node: Pattern) {
+    switch (node.type) {
+      case 'Identifier':
+        scopeCurrent.declarations.add(node.name)
+        return
+      case 'ObjectPattern':
+        for (const property of node.properties)
+          declarePattern(property.type === 'Property' ? property.value : property.argument)
+        return
+      case 'ArrayPattern':
+        for (const element of node.elements) {
+          if (element)
+            declarePattern(element)
+        }
+        return
+      case 'AssignmentPattern':
+        declarePattern(node.left)
+        return
+      case 'RestElement':
+        declarePattern(node.argument)
+    }
   }
 
   pushScope(undefined!)
@@ -107,55 +130,37 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
         case 'ImportNamespaceSpecifier':
           scopeCurrent.declarations.add(node.local.name)
           return
-        case 'FunctionDeclaration':
         case 'ClassDeclaration':
           if (node.id)
             scopeCurrent.declarations.add(node.id.name)
           return
         case 'VariableDeclarator':
-          if (node.id.type === 'Identifier') {
-            scopeCurrent.declarations.add(node.id.name)
-          }
-          else {
-            walk(node.id, {
-              enter(node) {
-                if (node.type === 'ObjectPattern') {
-                  node.properties.forEach((i) => {
-                    if (i.type === 'Property' && i.value.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.value.name)
-                    else if (i.type === 'RestElement' && i.argument.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.argument.name)
-                  })
-                }
-                else if (node.type === 'ArrayPattern') {
-                  node.elements.forEach((i) => {
-                    if (i?.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.name)
-                    if (i?.type === 'RestElement' && i.argument.type === 'Identifier')
-                      scopeCurrent.declarations.add(i.argument.name)
-                  })
-                }
-              },
-            })
-          }
+          declarePattern(node.id)
           return
 
         // ====== Scope ======
+        // parameters and catch bindings live in a scope of their own, so that
+        // they are visible to the body (block or expression) but not to the
+        // code surrounding the function
+        case 'FunctionDeclaration':
+          if (node.id)
+            scopeCurrent.declarations.add(node.id.name)
+          pushScope(node)
+          for (const param of node.params)
+            declarePattern(param)
+          return
+        case 'FunctionExpression':
+        case 'ArrowFunctionExpression':
+          pushScope(node)
+          for (const param of node.params)
+            declarePattern(param)
+          return
+        case 'CatchClause':
+          pushScope(node)
+          if (node.param)
+            declarePattern(node.param)
+          return
         case 'BlockStatement':
-          switch (parent?.type) {
-            // for a function body scope, take the function parameters as declarations
-            case 'FunctionDeclaration': // e.g. function foo(p1, p2) { ... }
-            case 'ArrowFunctionExpression': // e.g. (p1, p2) => { ... }
-            case 'FunctionExpression': // e.g. const foo = function(p1, p2) { ... }
-            {
-              const parameterIdentifiers = parent.params
-                .filter(p => p.type === 'Identifier')
-              for (const id of parameterIdentifiers) {
-                scopeCurrent.declarations.add(id.name)
-              }
-              break
-            }
-          }
           pushScope(node)
           return
 
@@ -167,7 +172,7 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
                 scopeCurrent.references.add(node.name)
               return
             case 'MemberExpression':
-              if (parent.object === node)
+              if (parent.object === node || (parent.computed && parent.property === node))
                 scopeCurrent.references.add(node.name)
               return
             case 'VariableDeclarator':
@@ -183,7 +188,12 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
                 scopeCurrent.references.add(node.name)
               return
             case 'Property':
-              if (parent.value === node)
+            case 'PropertyDefinition':
+              if (parent.value === node || (parent.computed && parent.key === node))
+                scopeCurrent.references.add(node.name)
+              return
+            case 'MethodDefinition':
+              if (parent.computed && parent.key === node)
                 scopeCurrent.references.add(node.name)
               return
             case 'TemplateLiteral':
@@ -191,7 +201,19 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
                 scopeCurrent.references.add(node.name)
               return
             case 'AssignmentExpression':
+            case 'AssignmentPattern': // e.g. function foo(p = bar) { ... }
+            case 'ForOfStatement':
+            case 'ForInStatement':
               if (parent.right === node)
+                scopeCurrent.references.add(node.name)
+              return
+            case 'ReturnStatement':
+            case 'ThrowStatement':
+              if (parent.argument === node)
+                scopeCurrent.references.add(node.name)
+              return
+            case 'ExportDefaultDeclaration':
+              if (parent.declaration === node)
                 scopeCurrent.references.add(node.name)
               return
             case 'IfStatement':
@@ -204,6 +226,10 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
               if (parent.discriminant === node)
                 scopeCurrent.references.add(node.name)
               return
+            case 'SwitchCase':
+              if (parent.test === node)
+                scopeCurrent.references.add(node.name)
+              return
           }
           if (parent?.type.includes('Expression'))
             scopeCurrent.references.add(node.name)
@@ -213,6 +239,10 @@ export function traveseScopes(ast: Node, additionalWalk?: ArgumentsType<typeof w
       additionalWalk?.leave?.call(this, node, parent, prop, index)
       switch (node.type) {
         case 'BlockStatement':
+        case 'FunctionDeclaration':
+        case 'FunctionExpression':
+        case 'ArrowFunctionExpression':
+        case 'CatchClause':
           popScope(node)
       }
     },

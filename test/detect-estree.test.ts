@@ -108,6 +108,10 @@ function testWith(name: InjectImportsOptions['parser'], parse: (code: string) =>
               ],
             },
             {
+              "declarations": [],
+              "references": [],
+            },
+            {
               "declarations": [
                 "bar2",
                 "local1",
@@ -146,6 +150,113 @@ function testWith(name: InjectImportsOptions['parser'], parse: (code: string) =>
         `)
     })
 
+    // https://github.com/nuxt/nuxt/issues/35858
+    it('references in statements and patterns', async () => {
+      const ast = parse(`
+        switch (input) {
+          case ref1:
+            break
+        }
+
+        function fn1() {
+          return ref2
+        }
+        function fn2() {
+          throw ref3
+        }
+        function fn3(p1 = ref4) {
+          return p1
+        }
+
+        for (const i of ref5) {}
+        for (const i in ref6) {}
+
+        obj[ref7]
+        const obj2 = { [ref8]: 1 }
+        class C1 {
+          [ref9] = ref10;
+          [ref11]() {}
+        }
+
+        export default ref12
+
+        const [d1 = ref13] = []
+        const { d2 = ref14 } = {}
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect([...unmatched].sort())
+        .toMatchInlineSnapshot(`
+          [
+            "input",
+            "obj",
+            "ref1",
+            "ref10",
+            "ref11",
+            "ref12",
+            "ref13",
+            "ref14",
+            "ref2",
+            "ref3",
+            "ref4",
+            "ref5",
+            "ref6",
+            "ref7",
+            "ref8",
+            "ref9",
+          ]
+        `)
+    })
+
+    it('declarations from patterns and params', async () => {
+      const ast = parse(`
+        const [a1 = 1] = []
+        const { a2 = 1, ...a3 } = {}
+        try {} catch (e1) { e1() }
+        function fn1({ p1 }, [p2], p3 = 1, ...p4) {
+          p1(); p2(); p3(); p4()
+        }
+        const fn2 = ({ p5 }) => p5()
+        a1(); a2(); a3()
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect(unmatched).toMatchInlineSnapshot(`Set {}`)
+    })
+
+    it('params and catch bindings do not leak to the enclosing scope', async () => {
+      const ast = parse(`
+        const fn1 = ({ p1 }) => p1()
+        function fn2(p2) { p2() }
+        try {} catch ({ e1 }) { e1() }
+        p1(); p2(); e1()
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect([...unmatched].sort()).toMatchInlineSnapshot(`
+        [
+          "e1",
+          "p1",
+          "p2",
+        ]
+      `)
+    })
+
+    it('re-exports are not references', async () => {
+      const ast = parse(`
+        export { ref1 } from './one'
+        export { ref2 as ref3 } from './two'
+        export * as ref4 from './three'
+      `)
+
+      const { unmatched } = traveseScopes(ast as any)
+
+      expect(unmatched).toMatchInlineSnapshot(`Set {}`)
+    })
+
     it('matchedImports', async () => {
       const ctx = createUnimport({
         parser: name,
@@ -181,7 +292,7 @@ console.log(otherModule)
         `)
     })
 
-    it('for function body scope, take function params as declarations of parent scope', async () => {
+    it('function params are declared in their own scope', async () => {
       const ast = parse(`
         function test(param1, param2) {
           console.log(param1)
@@ -205,9 +316,14 @@ console.log(otherModule)
           [
             {
               "declarations": [
+                "test",
+              ],
+              "references": [],
+            },
+            {
+              "declarations": [
                 "param1",
                 "param2",
-                "test",
               ],
               "references": [],
             },
