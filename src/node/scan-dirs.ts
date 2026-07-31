@@ -199,6 +199,9 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
 
   async function toImport(exports: ESMExport[], additional?: Partial<Import>) {
     for (const exp of exports) {
+      if (exp.type === 'declaration' && exp.code?.startsWith('export default '))
+        continue
+
       if (exp.type === 'named') {
         for (const name of exp.names)
           imports.push({ name, as: name, from: filepath, ...additional })
