@@ -18,6 +18,8 @@ import { scanDirExports, scanExports } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
 import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 
+const RE_IDENTIFIER = /[\w$]+/g
+
 export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   const ctx = createInternalContext(opts)
 
@@ -236,6 +238,19 @@ async function injectImports(
   for (const addon of ctx.addons)
     await addon.transform?.call(ctx, s, id)
 
+  if (await canSkipImportDetection(s.original, ctx, options)) {
+    if (ctx.options.commentsDebug?.some(c => s.original.includes(c))) {
+      // eslint-disable-next-line no-console
+      const log = ctx.options.debugLog || console.log
+      log(`[unimport] 0 imports detected in "${id}"`)
+    }
+    return {
+      s,
+      get code() { return s.toString() },
+      imports: [],
+    }
+  }
+
   const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options)
   const imports = await resolveImports(ctx, matchedImports, id)
 
@@ -268,6 +283,45 @@ async function injectImports(
     ),
     imports,
   }
+}
+
+async function canSkipImportDetection(
+  code: string,
+  ctx: UnimportContext,
+  options?: InjectImportsOptions,
+) {
+  if (options?.parser && options.parser !== 'regex')
+    return false
+
+  if (ctx.addons.some(addon =>
+    addon.matchImports
+    || addon.injectImportsResolved
+    || addon.injectImportsStringified,
+  )) {
+    return false
+  }
+
+  if (
+    options?.transformVirtualImports !== false
+    && ctx.options.virtualImports?.some(name => code.includes(name))
+  ) {
+    return false
+  }
+
+  if (options?.autoImport === false)
+    return true
+
+  const map = await ctx.getImportMap()
+  RE_IDENTIFIER.lastIndex = 0
+
+  let match = RE_IDENTIFIER.exec(code)
+  while (match) {
+    if (map.has(match[0]))
+      return false
+    match = RE_IDENTIFIER.exec(code)
+  }
+
+  return true
 }
 
 async function resolveImports(ctx: UnimportContext, imports: Import[], id: string | undefined) {
