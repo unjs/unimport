@@ -311,7 +311,7 @@ By default, `unimport` uses RegExp to detect unimport entries. In some cases, Re
 
 For a more accurate result, you can switch to an AST-based parser:
 
-- `acorn` — powered by [acorn](https://github.com/acornjs/acorn). Assumes the input is valid vanilla JavaScript, so it should usually be used after transformations and transpilation.
+- `acorn` — powered by [acorn](https://github.com/acornjs/acorn). Assumes the input is valid vanilla JavaScript, so it should usually be used after transformations and transpilation. Requires installing `acorn` as an optional peer dependency.
 - `oxc` — powered by [oxc-parser](https://github.com/oxc-project/oxc). Much faster than `acorn` and accepts TypeScript and JSX. Requires installing either `rolldown` or `oxc-parser` as an optional peer dependency. (If both are installed, `rolldown` is preferred.)
 
 ```ts
@@ -326,6 +326,12 @@ To use the `oxc` parser, install `rolldown` or `oxc-parser` alongside `unimport`
 npm install rolldown
 # or
 npm install oxc-parser
+```
+
+To use the `acorn` parser, install `acorn` alongside `unimport`:
+
+```sh
+npm install acorn
 ```
 
 ### Vue Template Auto Import

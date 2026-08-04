@@ -35,10 +35,14 @@
     "test": "vitest --coverage"
   },
   "peerDependencies": {
+    "acorn": "^8.0.0",
     "oxc-parser": "*",
     "rolldown": "^1.0.0"
   },
   "peerDependenciesMeta": {
+    "acorn": {
+      "optional": true
+    },
     "oxc-parser": {
       "optional": true
     },
@@ -47,7 +51,6 @@
     }
   },
   "dependencies": {
-    "acorn": "catalog:prod",
     "escape-string-regexp": "catalog:prod",
     "estree-walker": "catalog:prod",
     "local-pkg": "catalog:prod",
@@ -69,6 +72,7 @@
     "@types/picomatch": "catalog:dev",
     "@vitejs/devtools": "catalog:playground",
     "@vitest/coverage-v8": "catalog:dev",
+    "acorn": "catalog:prod",
     "bumpp": "catalog:dev",
     "eslint": "catalog:dev",
     "h3": "catalog:test",
