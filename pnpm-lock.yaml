@@ -119,9 +119,6 @@ importers:
 
   .:
     dependencies:
-      acorn:
-        specifier: catalog:prod
-        version: 8.18.0
       escape-string-regexp:
         specifier: catalog:prod
         version: 5.0.0
@@ -180,6 +177,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: catalog:dev
         version: 4.1.10(vitest@4.1.10)
+      acorn:
+        specifier: catalog:prod
+        version: 8.18.0
       bumpp:
         specifier: catalog:dev
         version: 12.1.1
