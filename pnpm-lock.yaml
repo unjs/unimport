@@ -207,6 +207,9 @@ importers:
       unbuild:
         specifier: catalog:dev
         version: 3.6.1(typescript@6.0.3)(vue-tsc@3.3.8(typescript@6.0.3))(vue@3.5.40(typescript@6.0.3))
+      vite:
+        specifier: catalog:playground
+        version: 8.1.5(@types/node@26.1.2)(@vitejs/devtools@0.4.10)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.9.0)
       vitest:
         specifier: catalog:test
         version: 4.1.10(@types/node@26.1.2)(@vitest/coverage-v8@4.1.10)(vite@8.1.5)

@@ -78,6 +78,7 @@
     "rolldown": "catalog:prod",
     "typescript": "catalog:dev",
     "unbuild": "catalog:dev",
+    "vite": "catalog:playground",
     "vitest": "catalog:test",
     "vue": "catalog:playground",
     "vue-tsc": "catalog:dev"
