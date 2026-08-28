@@ -1,6 +1,6 @@
 import { join, relative } from 'pathe'
 import { describe, expect, it } from 'vitest'
-import { normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
+import { dedupeDtsExports, normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
 import { scanExports } from '../src/node/scan-dirs'
 
 describe('scan-dirs', () => {
@@ -295,6 +295,21 @@ describe('scan-dirs', () => {
     const names = exports.map(i => i.name)
     expect(names).toContain('useSleep')
     expect(names).not.toContain('async')
+  })
+
+  it('should preserve type exports when value and type share the same name in non-dts files', () => {
+    const exports = dedupeDtsExports([
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts' },
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts', type: true },
+      { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.js' },
+      { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.d.ts', type: true },
+    ])
+
+    expect(exports).toEqual([
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts' },
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts', type: true },
+      { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.js' },
+    ])
   })
 })
 
