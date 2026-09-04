@@ -6,11 +6,12 @@ import { getMagicString } from './utils'
 
 export type ArgumentsType<T> = T extends (...args: infer U) => any ? U : never
 
-export function createEstreeDetector(parse: (code: string) => Program) {
+export function createEstreeDetector(parse: (code: string, id?: string) => Program) {
   return async (
     code: string | MagicString,
     ctx: UnimportContext,
     options?: InjectImportsOptions,
+    id?: string,
   ) => {
     const s = getMagicString(code)
     const map = await ctx.getImportMap()
@@ -21,7 +22,7 @@ export function createEstreeDetector(parse: (code: string) => Program) {
     const enableTransformVirtualImports = options?.transformVirtualImports !== false && ctx.options.virtualImports?.length
 
     if (enableAutoImport || enableTransformVirtualImports) {
-      const ast = parse(s.original)
+      const ast = parse(s.original, id)
 
       const virtualImports = createVirtualImports(map, ctx.options.virtualImports)
 
