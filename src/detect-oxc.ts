@@ -27,15 +27,16 @@ async function loadDetector() {
       '[unimport] the `oxc` parser requires either `rolldown` or `oxc-parser` to be installed.',
     )
   }
-  return createEstreeDetector(code => parseSync('', code, { sourceType: 'module' }).program as Program)
+  return createEstreeDetector((code, id) => parseSync(id ? id.replace(/\?.*$/, '') : '', code, { sourceType: 'module' }).program as Program)
 }
 
 export async function detectImportsOxc(
   code: string | MagicString,
   ctx: UnimportContext,
   options?: InjectImportsOptions,
+  id?: string,
 ) {
   detectorPromise ??= loadDetector()
   const detector = await detectorPromise
-  return detector(code, ctx, options)
+  return detector(code, ctx, options, id)
 }

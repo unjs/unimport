@@ -236,7 +236,7 @@ async function injectImports(
   for (const addon of ctx.addons)
     await addon.transform?.call(ctx, s, id)
 
-  const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options)
+  const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options, id)
   const imports = await resolveImports(ctx, matchedImports, id)
 
   if (ctx.options.commentsDebug?.some(c => s.original.includes(c))) {
