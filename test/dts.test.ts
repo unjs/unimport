@@ -75,6 +75,10 @@ it('dts', async () => {
         const THREE: typeof import('three')
         const bar: typeof import('<root>/playground/composables/nested/bar/index').bar
         const bump: typeof import('<root>/playground/composables/index').bump
+        const compA: typeof import('<root>/playground/composables/generic-exports').compA
+        const compB: typeof import('<root>/playground/composables/generic-exports').compB
+        const compC: typeof import('<root>/playground/composables/generic-exports').compC
+        const compD: typeof import('<root>/playground/composables/generic-exports').compD
         const computed: typeof import('vue').computed
         const customDefault: typeof import('default').default
         const doTheThing: typeof import('my-macro-library', { with: { type: "macro" } }).doTheThing
@@ -82,6 +86,7 @@ it('dts', async () => {
         const foobar: typeof import('foobar').foobar
         const localA: typeof import('<root>/playground/composables/index').localA
         const localBAlias: typeof import('<root>/playground/composables/index').localBAlias
+        const mergeObjects: typeof import('<root>/playground/composables/generic-exports').mergeObjects
         const multiplier: typeof import('<root>/playground/composables/index').multiplier
         const myBazFunction: typeof import('<root>/playground/composables/nested/bar/baz').myBazFunction
         const myfunc1: typeof import('<root>/playground/composables/nested/bar/named').myfunc1
@@ -93,9 +98,13 @@ it('dts', async () => {
         const ref: typeof import('vue').ref
         const subFoo: typeof import('<root>/playground/composables/nested/bar/sub/index').subFoo
         const toRefs: typeof import('vue').toRefs
+        const uninitBar: typeof import('<root>/playground/composables/generic-exports').uninitBar
+        const uninitFoo: typeof import('<root>/playground/composables/generic-exports').uninitFoo
         const useDoubled: typeof import('<root>/playground/composables/index').useDoubled
         const useEffect: typeof import('react').useEffect
+        const useGenericStore: typeof import('<root>/playground/composables/generic-exports').useGenericStore
         const useRef: typeof import('react').useRef
+        const useResizable: typeof import('<root>/playground/composables/generic-exports').useResizable
         const useSleep: typeof import('<root>/playground/composables/async-value').useSleep
         const useState: typeof import('react').useState
         const vanillaA: typeof import('<root>/playground/composables/vanilla').vanillaA

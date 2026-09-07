@@ -11,64 +11,173 @@ import pm from 'picomatch'
 import { camelCase } from 'scule'
 import { glob } from 'tinyglobby'
 
-// JavaScript reserved words and keywords that mlly's regex parser may
-// incorrectly capture as export names from declaration expressions.
-// See: https://github.com/unjs/unimport/issues/303
-const JS_RESERVED_WORDS = new Set([
-  // Keywords
-  'abstract',
-  'arguments',
-  'async',
-  'await',
-  'break',
-  'case',
-  'catch',
-  'class',
-  'const',
-  'continue',
-  'debugger',
-  'default',
-  'delete',
-  'do',
-  'else',
-  'enum',
-  'eval',
-  'export',
-  'extends',
-  'false',
-  'finally',
-  'for',
-  'function',
-  'if',
-  'implements',
-  'import',
-  'in',
-  'instanceof',
-  'interface',
-  'let',
-  'new',
-  'null',
-  'of',
-  'package',
-  'private',
-  'protected',
-  'public',
-  'return',
-  'static',
-  'super',
-  'switch',
-  'this',
-  'throw',
-  'true',
-  'try',
-  'typeof',
-  'undefined',
-  'var',
-  'void',
-  'while',
-  'with',
-  'yield',
-])
+const RE_IDENTIFIER = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/
+const RE_EXPORT_DECL = /^export\s+(?:default\s+)?(?:const|let|var)\s+/
+const RE_TYPE_ANNOTATION = /:.*$/
+const RE_GENERIC_PREV = /[a-zA-Z_$)>]/
+const RE_WHITESPACE = /\s/
+
+/**
+ * Extracts actual declarator names from an `ESMExport.code` string for
+ * `const`/`let`/`var` declarations. mlly's regex-based parser can leak
+ * identifiers from the RHS of assignments (e.g. generic type parameters,
+ * function parameters) into `exp.names`. This function re-parses the code
+ * with bracket-depth tracking to only return names that appear on the LHS
+ * of declarators.
+ *
+ * Returns `undefined` for `function`/`class`/`enum` declarations where
+ * `exp.names` is always correct, or if the code can't be parsed.
+ *
+ * @see https://github.com/unjs/unimport/issues/502
+ */
+function extractDeclaratorNames(code: string): string[] | undefined {
+  const match = code.match(RE_EXPORT_DECL)
+  if (!match) {
+    return undefined
+  }
+
+  const rest = code.slice(match[0].length)
+  const names: string[] = []
+  let angleDepth = 0
+  let parenDepth = 0
+  let braceDepth = 0
+  let bracketDepth = 0
+  let current = ''
+  let inValue = false
+  let inString: string | false = false
+  // If any declarator uses a pattern we can't reliably parse (destructuring,
+  // rest elements, etc.), bail out entirely and let the caller fall back to
+  // exp.names. Returning a partial list would silently drop exports.
+  let hasUnsupportedDeclarator = false
+
+  for (let i = 0; i < rest.length; i++) {
+    const ch = rest[i]
+
+    // Skip string literals — brackets and commas inside strings are not
+    // structural. Handles single-quoted, double-quoted, and template
+    // literals. A closing quote is only valid when preceded by an even
+    // number of backslashes (so `"\\"` closes but `"\\\"` does not).
+    if (inString) {
+      if (ch === inString) {
+        let backslashes = 0
+        for (let k = i - 1; k >= 0 && rest[k] === '\\'; k--) {
+          backslashes++
+        }
+        if (backslashes % 2 === 0) {
+          inString = false
+        }
+      }
+      continue
+    }
+    if (ch === '\'' || ch === '"' || ch === '`') {
+      inString = ch
+      continue
+    }
+
+    // Track bracket depth for all bracket types. Angle brackets are
+    // ambiguous (generics vs comparison operators). We distinguish them
+    // using adjacency: generics are always attached to the preceding
+    // token without whitespace (`Record<`, `foo<T>`), while comparisons
+    // have whitespace (`foo < bar`, `1 < 2`).
+    //
+    // The one exception is arrow-function generics after `=`: `= <T>(...)`.
+    // Here the `<` is separated from `=` by whitespace but is still a
+    // generic opener. We handle this by checking whether the last
+    // non-whitespace char is `=`.
+    if (ch === '<') {
+      const prev = i > 0 ? rest[i - 1] : ''
+      if (RE_GENERIC_PREV.test(prev)) {
+        // Directly attached to identifier/closing bracket → generic
+        angleDepth++
+      }
+      else if (RE_WHITESPACE.test(prev)) {
+        // Whitespace before `<` — only count as generic if preceded by `=`
+        // (arrow fn generics: `= <T>`)
+        let k = i - 1
+        while (k >= 0 && RE_WHITESPACE.test(rest[k])) {
+          k--
+        }
+        if (k >= 0 && rest[k] === '=') {
+          angleDepth++
+        }
+      }
+    }
+    else if (ch === '>' && angleDepth > 0) {
+      angleDepth--
+    }
+    else if (ch === '(') {
+      parenDepth++
+    }
+    else if (ch === ')') {
+      parenDepth = Math.max(0, parenDepth - 1)
+    }
+    else if (ch === '{') {
+      braceDepth++
+    }
+    else if (ch === '}') {
+      braceDepth = Math.max(0, braceDepth - 1)
+    }
+    else if (ch === '[') {
+      bracketDepth++
+    }
+    else if (ch === ']') {
+      bracketDepth = Math.max(0, bracketDepth - 1)
+    }
+
+    const isTopLevel = angleDepth === 0 && parenDepth === 0 && braceDepth === 0 && bracketDepth === 0
+
+    if (ch === '=' && isTopLevel && !inValue) {
+      // Strip type annotation (e.g. `foo: string` → `foo`) before testing
+      const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
+      if (name && RE_IDENTIFIER.test(name)) {
+        names.push(name)
+      }
+      else if (current.trim()) {
+        hasUnsupportedDeclarator = true
+      }
+      inValue = true
+      current = ''
+    }
+    else if (ch === ',' && isTopLevel) {
+      // Capture uninitialised declarator names (e.g. `export let foo, bar`)
+      // that appear before the comma without a preceding `=`.
+      if (!inValue) {
+        const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
+        if (name && RE_IDENTIFIER.test(name)) {
+          names.push(name)
+        }
+        else if (current.trim()) {
+          hasUnsupportedDeclarator = true
+        }
+      }
+      inValue = false
+      current = ''
+    }
+    else if (!inValue) {
+      current += ch
+    }
+  }
+
+  // Handle trailing name without '=' (mlly truncates code before the value)
+  if (!inValue) {
+    const name = current.trim().replace(RE_TYPE_ANNOTATION, '').trim()
+    if (name && RE_IDENTIFIER.test(name)) {
+      names.push(name)
+    }
+    else if (current.trim()) {
+      hasUnsupportedDeclarator = true
+    }
+  }
+
+  // If we encountered any unsupported declarator pattern (destructuring, rest,
+  // etc.), return undefined to fall back to exp.names rather than returning a
+  // partial list that silently drops exports.
+  if (hasUnsupportedDeclarator) {
+    return undefined
+  }
+
+  return names.length > 0 ? names : undefined
+}
 
 const FileExtensionLookup = [
   'mts',
@@ -204,9 +313,12 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           imports.push({ name, as: name, from: filepath, ...additional })
       }
       else if (exp.type === 'declaration') {
-        for (const name of exp.names) {
-          if (JS_RESERVED_WORDS.has(name))
-            continue
+        // For const/let/var declarations, mlly's regex parser may include
+        // identifiers from the RHS (generic type params, function params) in
+        // exp.names. Re-extract names with bracket-depth tracking to filter
+        // those out. For function/class/enum declarations, exp.names is reliable.
+        const names = extractDeclaratorNames(exp.code) ?? exp.names
+        for (const name of names) {
           imports.push({ name, as: name, from: filepath, ...additional })
           if (exp.declarationType === 'enum' || exp.declarationType === 'const enum' || exp.declarationType === 'class') {
             imports.push({ name, as: name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
