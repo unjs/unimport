@@ -61,7 +61,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => 
 
       return {
         code: s.toString(),
-        map: s.generateMap(),
+        map: s.generateMap({ hires: 'boundary', source: id }),
       }
     },
     async buildStart() {

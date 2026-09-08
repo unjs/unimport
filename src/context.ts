@@ -251,7 +251,7 @@ async function injectImports(
     }
   }
 
-  const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options)
+  const { isCJSContext, matchedImports, firstOccurrence } = await detectImports(s, ctx, options, id)
   const imports = await resolveImports(ctx, matchedImports, id)
 
   if (ctx.options.commentsDebug?.some(c => s.original.includes(c))) {

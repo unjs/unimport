@@ -1,8 +1,8 @@
 {
   "name": "unimport",
   "type": "module",
-  "version": "6.3.0",
-  "packageManager": "pnpm@10.33.4",
+  "version": "6.4.0",
+  "packageManager": "pnpm@12.3.4",
   "description": "Unified utils for auto importing APIs in modules",
   "license": "MIT",
   "repository": "unjs/unimport",
@@ -32,7 +32,7 @@
     "play:build": "pnpm -C playground run build",
     "typecheck": "vue-tsc --noEmit",
     "release": "pnpm run test --run && bumpp",
-    "test": "vitest --coverage"
+    "test": "vitest"
   },
   "peerDependencies": {
     "oxc-parser": "*",
@@ -67,6 +67,7 @@
     "@types/estree": "catalog:dev",
     "@types/node": "catalog:dev",
     "@types/picomatch": "catalog:dev",
+    "@vitejs/devtools": "catalog:playground",
     "@vitest/coverage-v8": "catalog:dev",
     "bumpp": "catalog:dev",
     "eslint": "catalog:dev",
@@ -77,7 +78,9 @@
     "rolldown": "catalog:prod",
     "typescript": "catalog:dev",
     "unbuild": "catalog:dev",
+    "vite": "catalog:playground",
     "vitest": "catalog:test",
+    "vue": "catalog:playground",
     "vue-tsc": "catalog:dev"
   },
   "resolutions": {

@@ -5,7 +5,7 @@ describe('global', () => {
   it('basic', async () => {
     const unimport = createUnimport({
       imports: [
-        { name: 'default', from: 'jquery', as: '$' },
+        { name: 'default', from: 'escape-string-regexp', as: '$' },
         { name: 'foo', from: 'foo', as: 'disabled', disabled: true },
       ],
       presets: [
