@@ -27,7 +27,7 @@ function toArray<T>(x: T | T[] | undefined | null): T[] {
   return x == null ? [] : Array.isArray(x) ? x : [x]
 }
 
-export default createUnplugin<Partial<UnimportPluginOptions>>((options = {}) => {
+export default createUnplugin<Partial<UnimportPluginOptions>, false>((options = {}) => {
   const ctx = createUnimport(options)
   const filter = createFilter(
     toArray(options.include as string[] || []).length
