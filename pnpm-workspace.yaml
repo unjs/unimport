@@ -27,6 +27,11 @@ minimumReleaseAgeExclude:
   - pkg-types@2.3.3
 
 trustPolicy: no-downgrade
+
+update:
+  ignoreDeps:
+    - typescript@7
+
 shellEmulator: true
 
 packages:
