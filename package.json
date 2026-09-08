@@ -36,7 +36,7 @@
   },
   "peerDependencies": {
     "oxc-parser": "*",
-    "rolldown": "^1.0.0"
+    "rolldown": "^1.2.7"
   },
   "peerDependenciesMeta": {
     "oxc-parser": {
