@@ -54,6 +54,141 @@ if (platform == 'android' || isNative != true) {
       .toMatchInlineSnapshot(`"export { fooBar } from "test-id""`)
   })
 
+  it('injects a top-level reference when a nested for-of variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+const state = ref(new Set())
+function doWork(items) {
+  for (const ref of items) {
+    console.log(ref.name)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const state = ref(new Set())
+        function doWork(items) {
+          for (const ref of items) {
+            console.log(ref.name)
+          }
+        }"
+      `)
+  })
+
+  it('injects a top-level reference when a nested for-in variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+const state = ref(new Set())
+function doWork(items) {
+  for (const ref in items) {
+    console.log(ref)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const state = ref(new Set())
+        function doWork(items) {
+          for (const ref in items) {
+            console.log(ref)
+          }
+        }"
+      `)
+  })
+
+  it('injects a top-level reference when a nested for-await-of variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+const state = ref(new Set())
+async function doWork(items) {
+  for await (const ref of items) {
+    console.log(ref.name)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const state = ref(new Set())
+        async function doWork(items) {
+          for await (const ref of items) {
+            console.log(ref.name)
+          }
+        }"
+      `)
+  })
+
+  it('does not inject a loop-local for-of variable without an outer reference', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (const ref of items) {
+    console.log(ref.name)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "function doWork(items) {
+          for (const ref of items) {
+            console.log(ref.name)
+          }
+        }"
+      `)
+  })
+
+  it('does not inject a braceless loop-local for-of variable without an outer reference', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (const ref of items)
+    console.log(ref.name)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "function doWork(items) {
+          for (const ref of items)
+            console.log(ref.name)
+        }"
+      `)
+  })
+
+  it('does not inject a function-scoped var loop variable used after the loop', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (var ref of items) {
+    console.log(ref.name)
+  }
+  console.log(ref)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "function doWork(items) {
+          for (var ref of items) {
+            console.log(ref.name)
+          }
+          console.log(ref)
+        }"
+      `)
+  })
+
   it('metadata', async () => {
     const ctx = createUnimport({
       imports: [
