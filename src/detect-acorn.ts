@@ -26,6 +26,8 @@ export async function detectImportsAcorn(
   code: string | MagicString,
   ctx: UnimportContext,
   options?: InjectImportsOptions,
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  id?: string,
 ) {
   detectorPromise ??= loadDetector()
   const detector = await detectorPromise
