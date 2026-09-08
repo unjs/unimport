@@ -27,44 +27,63 @@ export async function detectImportsRegex(
   const isCJSContext = syntax.hasCJS && !syntax.hasESM
   let matchedImports: Import[] = []
 
-  const occurrenceMap = new Map<string, number[]>()
+  const occurrenceMap = new Map<string, number>()
 
   const map = await ctx.getImportMap()
   // Auto import, search for unreferenced usages
   if (options?.autoImport !== false) {
-    // Find all possible injection
-    Array.from(strippedCode.matchAll(RE_MATCH))
-      .forEach((i) => {
-        // Remove dot access, but keep destructuring
-        if (i[1] === '.')
-          return null
-
-        // Remove property, but keep `case x:` and `? x :`
-        const end = strippedCode[i.index! + i[0].length]
-        // also keeps deep ternary like `true ? false ? a : b : c`
-        const before = strippedCode[i.index! - 1]
-        if (end === ':' && !['?', 'case'].includes(i[1].trim()) && before !== ':')
-          return null
-
-        const name = i[2]
-        const occurrence = i.index! + i[1].length
-        const occurrences = occurrenceMap.get(name)
-        if (occurrences)
-          occurrences.push(occurrence)
-        else
-          occurrenceMap.set(name, [occurrence])
-      })
-
-    // Remove those already defined
+    // Collect identifiers already defined locally. For-of/for-in loop
+    // declarations with a block body only shadow their own body, so those
+    // are tracked as ranges instead of excluding the identifier outright —
+    // this keeps outer references with the same name intact.
+    const excluded = new Set<string>()
+    const shadowRanges = new Map<string, [number, number][]>()
     for (const regex of RE_EXCLUDE) {
       for (const match of strippedCode.matchAll(regex)) {
         const segments = [...match[1]?.split(RE_SEPARATOR) || [], ...match[2]?.split(RE_SEPARATOR) || []]
         const range = getForLoopDeclarationRange(strippedCode, match)
         for (const segment of segments) {
           const identifier = segment.replace(RE_IMPORT_AS, '').trim()
-          removeOccurrence(occurrenceMap, identifier, range)
+          if (!identifier)
+            continue
+          if (!range) {
+            excluded.add(identifier)
+            continue
+          }
+          const ranges = shadowRanges.get(identifier)
+          if (ranges)
+            ranges.push(range)
+          else
+            shadowRanges.set(identifier, [range])
         }
       }
+    }
+
+    // Find all possible injection
+    for (const i of strippedCode.matchAll(RE_MATCH)) {
+      // Remove dot access, but keep destructuring
+      if (i[1] === '.')
+        continue
+
+      // Remove property, but keep `case x:` and `? x :`
+      const end = strippedCode[i.index! + i[0].length]
+      // also keeps deep ternary like `true ? false ? a : b : c`
+      const before = strippedCode[i.index! - 1]
+      if (end === ':' && !['?', 'case'].includes(i[1].trim()) && before !== ':')
+        continue
+
+      const name = i[2]
+      if (excluded.has(name))
+        continue
+
+      const occurrence = i.index! + i[1].length
+      const ranges = shadowRanges.get(name)
+      if (ranges?.some(([start, rangeEnd]) => occurrence >= start && occurrence <= rangeEnd))
+        continue
+
+      const prev = occurrenceMap.get(name)
+      if (prev === undefined || occurrence < prev)
+        occurrenceMap.set(name, occurrence)
     }
 
     const identifiers = new Set(occurrenceMap.keys())
@@ -94,7 +113,7 @@ export async function detectImportsRegex(
     matchedImports.push(...virtualImports.imports)
   }
 
-  const firstOccurrence = Math.min(...Array.from(occurrenceMap.values()).flat())
+  const firstOccurrence = Math.min(...occurrenceMap.values())
 
   return {
     s,
@@ -103,31 +122,6 @@ export async function detectImportsRegex(
     matchedImports,
     firstOccurrence,
   }
-}
-
-function removeOccurrence(
-  occurrenceMap: Map<string, number[]>,
-  identifier: string,
-  range?: [number, number],
-) {
-  if (!identifier)
-    return
-
-  if (!range) {
-    occurrenceMap.delete(identifier)
-    return
-  }
-
-  const occurrences = occurrenceMap.get(identifier)
-  if (!occurrences)
-    return
-
-  const [start, end] = range
-  const remaining = occurrences.filter(occurrence => occurrence < start || occurrence > end)
-  if (remaining.length)
-    occurrenceMap.set(identifier, remaining)
-  else
-    occurrenceMap.delete(identifier)
 }
 
 function getForLoopDeclarationRange(code: string, match: RegExpMatchArray): [number, number] | undefined {
