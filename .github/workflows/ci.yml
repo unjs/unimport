@@ -1,39 +1,19 @@
-name: ci
+name: Unit Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
+
+permissions: {}
 
 jobs:
-  ci:
-    runs-on: ${{ matrix.os }}
+  unit-test:
+    uses: sxzz/workflows/.github/workflows/unit-test.yml@main
 
-    strategy:
-      matrix:
-        node: [lts/*]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-      fail-fast: false
-
-    steps:
-      - name: Set git to use LF
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-      - uses: actions/checkout@v7
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-      - run: pnpm install
-      - run: pnpm lint
-      - run: pnpm build
-      - run: pnpm test
-      - uses: codecov/codecov-action@v7
-      - run: pnpm play:build
-      - run: pnpm typecheck
+  coverage:
+    uses: sxzz/workflows/.github/workflows/coverage.yml@main
+    needs: unit-test
+    permissions:
+      id-token: write
