@@ -161,13 +161,17 @@ export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanD
 
 export function dedupeDtsExports(exports: Import[]) {
   // Dedupe imports for the same export name exists in both `.js` and `.d.ts` file,
-  // We remove the type-only entry
+  // We remove the type-only entry from `.d.ts`
   return exports.filter((i) => {
     if (!i.type)
       return true
 
     // import enum and class as both value and type
     if (i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
+      return true
+
+    // Only dedupe if the type-only export comes from a .d.ts file
+    if (!RE_DTS_EXT.test(i.from))
       return true
 
     return !exports.some(e => e.as === i.as && e.name === i.name && !e.type)
