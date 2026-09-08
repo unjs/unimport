@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    uses: sxzz/workflows/.github/workflows/release.yml@main
+    uses: sxzz/workflows/.github/workflows/release.yml@ea00b206fd53ae8f6d75c72fb1f67b8673ab8959 # main
     with:
       publish: true
     permissions:

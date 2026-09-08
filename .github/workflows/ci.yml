@@ -10,10 +10,10 @@ permissions: {}
 
 jobs:
   unit-test:
-    uses: sxzz/workflows/.github/workflows/unit-test.yml@main
+    uses: sxzz/workflows/.github/workflows/unit-test.yml@ea00b206fd53ae8f6d75c72fb1f67b8673ab8959 # main
 
   coverage:
-    uses: sxzz/workflows/.github/workflows/coverage.yml@main
+    uses: sxzz/workflows/.github/workflows/coverage.yml@ea00b206fd53ae8f6d75c72fb1f67b8673ab8959 # main
     needs: unit-test
     permissions:
       id-token: write
