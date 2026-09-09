@@ -311,6 +311,36 @@ describe('scan-dirs', () => {
       { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.js' },
     ])
   })
+
+  it('should drop a class a declaration file only restates', () => {
+    // `export class Widget` survives the build, so `widget.mjs` declares the class itself
+    const exports = dedupeDtsExports([
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs' },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs', type: true, declarationType: 'class' },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.d.ts', type: true },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.d.ts', type: true, declarationType: 'class' },
+    ])
+
+    expect(exports).toEqual([
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs' },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs', type: true, declarationType: 'class' },
+    ])
+  })
+
+  it('should keep a class only the declaration file declares', () => {
+    // a build emitting `const Legacy = class {}` leaves a named export behind, so the class is
+    // not recognised in `legacy.mjs` and `legacy.d.ts` holds the only type half there is
+    const exports = dedupeDtsExports([
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.mjs' },
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.d.ts', type: true },
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.d.ts', type: true, declarationType: 'class' },
+    ])
+
+    expect(exports).toEqual([
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.mjs' },
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.d.ts', type: true, declarationType: 'class' },
+    ])
+  })
 })
 
 it('normalizeScanDirs', () => {
