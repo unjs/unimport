@@ -166,13 +166,13 @@ export function dedupeDtsExports(exports: Import[]) {
     if (!i.type)
       return true
 
-    // import enum and class as both value and type
-    if (i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
-      return true
-
     // Only dedupe if the type-only export comes from a .d.ts file
     if (!RE_DTS_EXT.test(i.from))
       return true
+
+    // import enum and class as both value and type, unless the non-dts file already declares one
+    if (i.declarationType === 'enum' || i.declarationType === 'const enum' || i.declarationType === 'class')
+      return !exports.some(e => e.as === i.as && e.name === i.name && e.type && e.declarationType === i.declarationType && !RE_DTS_EXT.test(e.from))
 
     return !exports.some(e => e.as === i.as && e.name === i.name && !e.type)
   })
