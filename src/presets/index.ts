@@ -8,6 +8,7 @@ import reactRouterDom from './react-router-dom'
 import rxjs from './rxjs'
 import solid from './solid'
 import solidAppRouter from './solid-app-router'
+import solidRouter from './solid-router'
 import {
   svelte,
   svelteAnimate,
@@ -60,6 +61,7 @@ export const builtinPresets = {
   'uni-app': uniApp,
   'solid-js': solid,
   'solid-app-router': solidAppRouter,
+  'solid-router': solidRouter,
   'rxjs': rxjs,
   'date-fns': dateFns,
 }
