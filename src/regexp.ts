@@ -7,7 +7,7 @@ export const RE_EXCLUDE = [
   // defined as function
   /\bfunction\s*([\w$]+)\s*\(/g,
   // defined as class
-  /\bclass\s*([\w$]+)\s*\{/g,
+  /\bclass\s+([\w$]+)/g,
   // defined as local variable (including for-of/for-in loop declarations)
   // eslint-disable-next-line regexp/no-super-linear-backtracking
   /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?(?:[=;\n]|\bof\b|\bin\b)/gs,
@@ -22,7 +22,7 @@ export const RE_SEPARATOR = /[,[\]{}\n]|\b(?:import|export)\b/g
  *                         ↓             ↓             ↓             ↓         |       |
  */
 // eslint-disable-next-line regexp/no-super-linear-backtracking
-export const RE_MATCH = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w$/)]|\bextends\s+)([\w$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n]|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+\{)/g
+export const RE_MATCH = /(^|\.\.\.|(?:\bcase|\?)\s+|[^\w$/)]|\bextends\s+)([\w$]+)\s*(?=[.()[\]}:;?+\-*&|`<>,\n%/^~]|[!=]=|\b(?:instanceof|in)\b|$|(?<=extends\s+\w+)\s+\{)/g
 
 // eslint-disable-next-line regexp/no-super-linear-backtracking
 const RE_REGEX = /\/\S*?(?<!\\)(?<!\[[^\]]*)\/[gimsuy]*/g

@@ -304,11 +304,19 @@ export function toTypeReExports(imports: Import[], options?: TypeDeclarationOpti
     // We use @ts-ignore to suppress the error since it actually works.
     const strings: string[] = []
     if (typeImports.size) {
-      const typeImportNames = Array.from(typeImports).map(({ name, as }) => {
-        if (as && as !== name)
-          return `${name} as ${as}`
-        return name
-      })
+      // A class/enum/const enum is kept un-collapsed by dedupeImports so its
+      // value and type entries can coexist, which means the same name can
+      // reach here more than once. Collapse by re-exported name to avoid
+      // emitting a duplicate specifier such as `export type { Foo, Foo }`.
+      const seen = new Set<string>()
+      const typeImportNames: string[] = []
+      for (const { name, as } of typeImports) {
+        const exported = as ?? name
+        if (seen.has(exported))
+          continue
+        seen.add(exported)
+        typeImportNames.push(as && as !== name ? `${name} as ${as}` : name)
+      }
       strings.push(
         '// @ts-ignore',
         `export type { ${typeImportNames.join(', ')} } from '${from}'`,
@@ -381,10 +389,10 @@ export function addImportToCode(
   const s = getMagicString(code)
 
   let _staticImports: StaticImport[] | undefined
-  const strippedCode = stripCommentsAndStrings(s.original)
 
   function findStaticImportsLazy() {
     if (!_staticImports) {
+      const strippedCode = stripCommentsAndStrings(s.original)
       _staticImports = findStaticImports(s.original)
         .filter(i => Boolean(strippedCode.slice(i.start, i.end).trim()))
         .map(i => parseStaticImport(i))

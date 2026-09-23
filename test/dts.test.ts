@@ -147,6 +147,41 @@ it('should compat with `export =`', async () => {
   `)
 })
 
+it('should dedupe duplicate type re-exports for class/enum declarations', async () => {
+  // Class/enum/const enum imports are kept un-collapsed by dedupeImports so a
+  // value and a type entry can coexist, so the same type can reach the
+  // re-export step more than once (e.g. when two presets expose it). Without
+  // deduping, the generated re-export is `export type { Foo, Foo } from ...`.
+  const { generateTypeDeclarations, init } = createUnimport({
+    imports: [{
+      name: 'Foo',
+      from: 'module.js',
+      type: true,
+      declarationType: 'class',
+    }, {
+      name: 'Foo',
+      from: 'module.js',
+      type: true,
+      declarationType: 'class',
+    }],
+  })
+
+  await init()
+
+  await expect(generateTypeDeclarations()).resolves.toMatchInlineSnapshot(`
+    "export {}
+    declare global {
+
+    }
+    // for type re-export
+    declare global {
+      // @ts-ignore
+      export type { Foo } from 'module'
+      import('module')
+    }"
+  `)
+})
+
 it('should generate value and type declarations for complementary imports', async () => {
   const { generateTypeDeclarations, init } = createUnimport({
     imports: [{

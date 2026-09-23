@@ -1,14 +1,16 @@
-import vue from '@vitejs/plugin-vue'
+import Vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-import inspect from 'vite-plugin-inspect'
+import Inspect from 'vite-plugin-inspect'
+import {DevTools} from '@vitejs/devtools'
 import unimport from '../src/unplugin'
 import { unimportViteOptions } from './configure-directives'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    Vue(),
+    DevTools(),
     unimport.vite(unimportViteOptions),
-    inspect(),
+    Inspect(),
   ],
 })

@@ -1,6 +1,6 @@
 import { join, relative } from 'pathe'
 import { describe, expect, it } from 'vitest'
-import { normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
+import { dedupeDtsExports, normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
 import { scanExports } from '../src/node/scan-dirs'
 
 describe('scan-dirs', () => {
@@ -306,6 +306,51 @@ describe('scan-dirs', () => {
       as: 'MyClass',
       from: filepath,
     }])
+  })
+
+  it('should preserve type exports when value and type share the same name in non-dts files', () => {
+    const exports = dedupeDtsExports([
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts' },
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts', type: true },
+      { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.js' },
+      { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.d.ts', type: true },
+    ])
+
+    expect(exports).toEqual([
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts' },
+      { name: 'MyValue', as: 'MyValue', from: '/app/foo.ts', type: true },
+      { name: 'vanillaA', as: 'vanillaA', from: '/app/vanilla.js' },
+    ])
+  })
+
+  it('should drop a class a declaration file only restates', () => {
+    // `export class Widget` survives the build, so `widget.mjs` declares the class itself
+    const exports = dedupeDtsExports([
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs' },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs', type: true, declarationType: 'class' },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.d.ts', type: true },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.d.ts', type: true, declarationType: 'class' },
+    ])
+
+    expect(exports).toEqual([
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs' },
+      { name: 'Widget', as: 'Widget', from: '/app/widget.mjs', type: true, declarationType: 'class' },
+    ])
+  })
+
+  it('should keep a class only the declaration file declares', () => {
+    // a build emitting `const Legacy = class {}` leaves a named export behind, so the class is
+    // not recognised in `legacy.mjs` and `legacy.d.ts` holds the only type half there is
+    const exports = dedupeDtsExports([
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.mjs' },
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.d.ts', type: true },
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.d.ts', type: true, declarationType: 'class' },
+    ])
+
+    expect(exports).toEqual([
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.mjs' },
+      { name: 'Legacy', as: 'Legacy', from: '/app/legacy.d.ts', type: true, declarationType: 'class' },
+    ])
   })
 })
 

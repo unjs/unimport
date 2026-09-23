@@ -13,12 +13,180 @@ describe('inject import', () => {
       `)
   })
 
+  it('detects identifiers followed by comparison and operator characters', async () => {
+    const { injectImports } = createUnimport({
+      imports: [
+        { name: 'platform', from: 'runtime' },
+        { name: 'isNative', from: 'runtime' },
+        { name: 'count', from: 'runtime' },
+        { name: 'total', from: 'runtime' },
+        { name: 'flags', from: 'runtime' },
+      ],
+    })
+    expect((await injectImports(`
+if (platform === 'ios' && isNative !== false) {
+  const modulo = count % 2
+  const quotient = total / 2
+  const xor = flags ^ 1
+}
+if (platform == 'android' || isNative != true) {
+  const looseModulo = count % 3
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { platform, isNative, count, total, flags } from 'runtime';
+        if (platform === 'ios' && isNative !== false) {
+          const modulo = count % 2
+          const quotient = total / 2
+          const xor = flags ^ 1
+        }
+        if (platform == 'android' || isNative != true) {
+          const looseModulo = count % 3
+        }"
+      `)
+  })
+
   it('should not match export', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'fooBar', from: 'test-id' }],
     })
     expect((await injectImports('export { fooBar } from "test-id"')).code)
       .toMatchInlineSnapshot(`"export { fooBar } from "test-id""`)
+  })
+
+  it('injects a top-level reference when a nested for-of variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+const state = ref(new Set())
+function doWork(items) {
+  for (const ref of items) {
+    console.log(ref.name)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const state = ref(new Set())
+        function doWork(items) {
+          for (const ref of items) {
+            console.log(ref.name)
+          }
+        }"
+      `)
+  })
+
+  it('injects a top-level reference when a nested for-in variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+const state = ref(new Set())
+function doWork(items) {
+  for (const ref in items) {
+    console.log(ref)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const state = ref(new Set())
+        function doWork(items) {
+          for (const ref in items) {
+            console.log(ref)
+          }
+        }"
+      `)
+  })
+
+  it('injects a top-level reference when a nested for-await-of variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+const state = ref(new Set())
+async function doWork(items) {
+  for await (const ref of items) {
+    console.log(ref.name)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        const state = ref(new Set())
+        async function doWork(items) {
+          for await (const ref of items) {
+            console.log(ref.name)
+          }
+        }"
+      `)
+  })
+
+  it('does not inject a loop-local for-of variable without an outer reference', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (const ref of items) {
+    console.log(ref.name)
+  }
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "function doWork(items) {
+          for (const ref of items) {
+            console.log(ref.name)
+          }
+        }"
+      `)
+  })
+
+  it('does not inject a braceless loop-local for-of variable without an outer reference', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (const ref of items)
+    console.log(ref.name)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "function doWork(items) {
+          for (const ref of items)
+            console.log(ref.name)
+        }"
+      `)
+  })
+
+  it('does not inject a function-scoped var loop variable used after the loop', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (var ref of items) {
+    console.log(ref.name)
+  }
+  console.log(ref)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "function doWork(items) {
+          for (var ref of items) {
+            console.log(ref.name)
+          }
+          console.log(ref)
+        }"
+      `)
   })
 
   it('metadata', async () => {
@@ -195,5 +363,60 @@ import { baz } from 'baz'
         "import { A, B, C } from 'test-id';
         const result = true ? false ? A : B : C"
       `)
+  })
+
+  it('runs addon transforms without import candidates', async () => {
+    const { injectImports } = createUnimport({
+      addons: [{
+        transform(s) {
+          s.append('\ntransformed()')
+          return s
+        },
+      }],
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+    })
+
+    expect((await injectImports('plainCode()')).code)
+      .toBe('plainCode()\ntransformed()')
+  })
+
+  it('runs injection hooks without import candidates', async () => {
+    const { injectImports } = createUnimport({
+      addons: [{
+        injectImportsStringified(injection) {
+          return injection || 'import "side-effect"'
+        },
+      }],
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+    })
+
+    expect((await injectImports('plainCode()')).code)
+      .toBe('import "side-effect"\nplainCode()')
+  })
+
+  it('logs debug comments without import candidates', async () => {
+    const logs: string[] = []
+    const { injectImports } = createUnimport({
+      debugLog: message => logs.push(message),
+      imports: [{ name: 'fooBar', from: 'test-id' }],
+    })
+
+    await injectImports('// @unimport-debug\nplainCode()', 'example.ts')
+
+    expect(logs).toEqual(['[unimport] 0 imports detected in "example.ts"'])
+  })
+
+  it('does not inject imports for classes with extends clauses', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'SystemError', from: 'test-id' }],
+    })
+    const code = `export class SystemError extends Error {
+  constructor(message) {
+    super(message)
+    Object.setPrototypeOf(this, SystemError.prototype)
+  }
+}`
+
+    expect((await injectImports(code)).code).toBe(code)
   })
 })
