@@ -27,6 +27,29 @@ for (const [index] of [1,2,3].entries()) {
 }`,
       output: ['index', 'a', 'b'],
     },
+    // TypeScript annotations on declarations
+    { input: 'const count: number = 1', output: ['count'] },
+    { input: 'const { a, b }: Props = useProps()', output: ['a', 'b'] },
+    { input: 'const [first]: [number] = useTuple()', output: ['first'] },
+    // an annotated destructuring must not stretch to a later bracket followed by `=`
+    {
+      input: `
+const { a }: Props = useProps()
+const list = [
+  ref,
+]
+const o = { x: 1 }`,
+      output: ['a', 'list', 'o'],
+    },
+    {
+      input: `
+const [first]: [number] = useTuple()
+const list = [
+  ref,
+]
+cache[0] = 1`,
+      output: ['first', 'list'],
+    },
 
     // We may not able to handle these cases
     //     { input: 'const b = computed(0)  ,   test=1;', output: ['b', 'test'] },
