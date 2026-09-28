@@ -92,6 +92,25 @@ describe('vue-template', () => {
       .toEqual(input)
   })
 
+  it('skip type-only entries', async () => {
+    const ctx = createUnimport({
+      imports: [
+        { name: 'Tab', from: 'tab', as: 'Tab', type: true },
+        { name: 'Tab', from: 'tab', as: 'Tab' },
+        { name: 'Size', from: 'size', as: 'Size', type: true },
+      ],
+      addons: {
+        vueTemplate: true,
+      },
+    })
+    const input = 'const _sfc_render = (_ctx) => [_ctx.Tab.Details, _ctx.Size]'
+
+    expect((await ctx.injectImports(input, 'a.vue')).code.toString()).toMatchInlineSnapshot(`
+      "import { Tab as __unimport_Tab } from 'tab';
+      import { unref as __unimport_unref_ } from 'vue';const _sfc_render = (_ctx) => [("Tab" in _ctx ? _ctx.Tab : __unimport_unref_(__unimport_Tab)).Details, _ctx.Size]"
+    `)
+  })
+
   it('without addon hooks', async () => {
     const ctx = createUnimport({
       imports: [
