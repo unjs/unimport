@@ -44,13 +44,16 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   }
 
   async function scanImportsFromFile(filepath: string, includeTypes = true) {
-    const additions = await scanExports(filepath, includeTypes)
+    const additions = await scanExports(filepath, includeTypes, undefined, ctx.options)
     await ctx.modifyDynamicImports(imports => imports.filter(i => i.from !== filepath).concat(additions))
     return additions
   }
 
   async function scanImportsFromDir(dirs = ctx.options.dirs || [], options = ctx.options.dirsScanOptions) {
-    const imports = await scanDirExports(dirs, options)
+    const imports = await scanDirExports(dirs, {
+      resolveId: ctx.options.resolveId,
+      ...options,
+    })
     const files = new Set(imports.map(f => f.from))
     await ctx.modifyDynamicImports(i => i.filter(i => !files.has(i.from)).concat(imports))
     return imports
