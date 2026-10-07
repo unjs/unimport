@@ -1,3 +1,5 @@
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join, relative } from 'pathe'
 import { describe, expect, it } from 'vitest'
 import { dedupeDtsExports, normalizeScanDirs, scanDirExports, stringifyImports } from '../src'
@@ -226,6 +228,33 @@ describe('scan-dirs', () => {
       import { myBazFunction } from 'nested/bar/baz.ts';
       import { subFoo } from 'nested/bar/sub/index.ts';"
     `)
+  })
+
+  it('should resolve re-exports through a custom resolveId', async () => {
+    // `export * from '#shared/types/test'` cannot be resolved by the file system or by
+    // module resolution, so the file it points at is never scanned without a resolver.
+    const root = await mkdtemp(join(tmpdir(), 'unimport-resolve-id-'))
+    const typesDir = join(root, 'shared/types')
+    await mkdir(typesDir, { recursive: true })
+    await writeFile(join(typesDir, 'index.ts'), `export * from '#shared/types/test'\n`)
+    await writeFile(join(typesDir, 'test.ts'), `export interface Test { name: string }\nexport const testConst = 1\n`)
+
+    try {
+      const withoutResolver = await scanDirExports([{ glob: join(typesDir, 'index.ts') }])
+      expect(withoutResolver.some(i => i.name === 'testConst')).toBe(false)
+
+      const withResolver = await scanDirExports([{ glob: join(typesDir, 'index.ts') }], {
+        resolveId: id => id.startsWith('#shared/')
+          ? join(root, 'shared', id.slice('#shared/'.length))
+          : undefined,
+      })
+
+      expect(withResolver.some(i => i.name === 'testConst')).toBe(true)
+      expect(withResolver.find(i => i.name === 'Test')).toMatchObject({ type: true })
+    }
+    finally {
+      await rm(root, { recursive: true, force: true })
+    }
   })
 
   it('scanDirs should respect dirs order', async () => {
