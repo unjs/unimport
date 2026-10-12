@@ -11,7 +11,7 @@ export function defineUnimportPreset(preset: InlinePreset): InlinePreset {
 
 const RE_IDENTIFIER = /^[A-Z_$][\w$]*$/i
 const RE_SAFE_PROPERTY_NAME = /^[a-z$_][\w$]*$/i
-const RE_FILE_EXT = /\.[a-z]+$/i
+const RE_FILE_EXT = /\.(?:[cm]?[jt]s|[jt]sx|vue)$/i
 const RE_RELATIVE_PATH = /^[./]/
 const RE_DTS_EXT = /\.d\.([cm]?)ts$/i
 const RE_SHEBANG = /^#!.+/
