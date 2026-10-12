@@ -1,6 +1,6 @@
 import type { Import } from '../src/types'
 import { describe, expect, it } from 'vitest'
-import { stringifyImports, toTypeReExports } from '../src/utils'
+import { stringifyImports, toTypeDeclarationFile, toTypeReExports } from '../src/utils'
 
 describe('toImports', () => {
   it('basic', () => {
@@ -141,6 +141,40 @@ describe('toTypeReExports', () => {
         // @ts-ignore
         export type { fooBar } from './foo/baz.mjs'
         import('./foo/baz.mjs')
+      }"
+    `)
+  })
+
+  it('keeps dotted segments that are not extensions', () => {
+    expect(toTypeReExports([
+      { from: './foo/bar.portable', name: 'Foo', as: 'Foo', type: true },
+      { from: './foo/baz.d.ts', name: 'Baz', as: 'Baz', type: true },
+    ])).toMatchInlineSnapshot(`
+      "// for type re-export
+      declare global {
+        // @ts-ignore
+        export type { Foo } from './foo/bar.portable'
+        import('./foo/bar.portable')
+        // @ts-ignore
+        export type { Baz } from './foo/baz.d'
+        import('./foo/baz.d')
+      }"
+    `)
+  })
+})
+
+describe('toTypeDeclarationFile', () => {
+  it('keeps dotted segments that are not extensions', () => {
+    expect(toTypeDeclarationFile([
+      { from: './foo/bar.portable', name: 'foo', as: 'foo' },
+      { from: './foo/bar.legacy.ts', name: 'bar', as: 'bar' },
+      { from: './foo/baz.d.ts', name: 'baz', as: 'baz' },
+    ])).toMatchInlineSnapshot(`
+      "export {}
+      declare global {
+        const bar: typeof import('./foo/bar.legacy').bar
+        const baz: typeof import('./foo/baz.d').baz
+        const foo: typeof import('./foo/bar.portable').foo
       }"
     `)
   })
