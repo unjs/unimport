@@ -238,8 +238,18 @@ export function stripFileExtension(path: string) {
 
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
   return imports
-    .map((i) => {
+    .flatMap((i) => {
       const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
+
+      // `export * as foo from '...'` introduces a namespace. Declaring it as
+      // `const foo: typeof import('...').foo` only exposes a value, so namespace
+      // usages such as `foo.Bar` fail with `TS2503: Cannot find namespace`.
+      // Re-exporting the name keeps both the value and the namespace available.
+      if (i.namespace) {
+        const exported = i.as ?? i.name
+        return [`export { ${i.name === exported ? i.name : `${i.name} as ${exported}`} } from '${from}'`]
+      }
+
       let typeDef = ''
       if (i.with)
         typeDef += `import('${from}', { with: ${stringifyWith(i.with)} })`
@@ -249,7 +259,7 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
       if (i.name !== '*' && i.name !== '=')
         typeDef += RE_IDENTIFIER.test(i.name) ? `.${i.name}` : `['${i.name}']`
 
-      return `const ${i.as}: typeof ${typeDef}`
+      return [`const ${i.as}: typeof ${typeDef}`]
     })
     .sort()
 }

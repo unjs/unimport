@@ -51,6 +51,15 @@ export interface Import extends ImportCommon {
    * Ignored for CJS imports.
    */
   with?: Record<string, string>
+  /**
+   * Whether this import is a namespace export, e.g. `export * as foo from '...'`.
+   *
+   * Such names must be re-exported in the generated declaration file instead of
+   * being declared as `const foo: typeof import('...').foo`, otherwise they are
+   * only available as values and namespace usages like `foo.Bar` fail to
+   * typecheck with `TS2503: Cannot find namespace 'foo'`.
+   */
+  namespace?: boolean
 }
 
 export type PresetImport = Omit<Import, 'from'> | ImportName | [name: ImportName, as?: ImportName, from?: ModuleId]
