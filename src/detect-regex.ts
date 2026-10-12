@@ -5,6 +5,13 @@ import { detectSyntax, findStaticImports, parseStaticImport } from 'mlly'
 import { RE_EXCLUDE, RE_IMPORT_AS, RE_MATCH, RE_SEPARATOR, stripCommentsAndStrings } from './regexp'
 import { getMagicString } from './utils'
 
+/**
+ * Index of the `import`/`export` rule in `RE_EXCLUDE`. It is the only rule
+ * whose matches are guaranteed to be module-scoped, so its identifiers are
+ * excluded globally instead of being tracked as shadow ranges.
+ */
+const GLOBAL_EXCLUDE_RULE_INDEX = 0
+
 export async function detectImportsRegex(
   code: string | MagicString,
   ctx: UnimportContext,
@@ -32,16 +39,22 @@ export async function detectImportsRegex(
   const map = await ctx.getImportMap()
   // Auto import, search for unreferenced usages
   if (options?.autoImport !== false) {
-    // Collect identifiers already defined locally. For-of/for-in loop
-    // declarations with a block body only shadow their own body, so those
-    // are tracked as ranges instead of excluding the identifier outright —
-    // this keeps outer references with the same name intact.
+    // Collect identifiers already defined locally. Declarations nested in a
+    // block (function body, loop body, plain block, ...) only shadow the
+    // references inside that block, so those are tracked as ranges instead of
+    // excluding the identifier outright — this keeps outer references with
+    // the same name intact.
     const excluded = new Set<string>()
     const shadowRanges = new Map<string, [number, number][]>()
-    for (const regex of RE_EXCLUDE) {
+    for (const [ruleIndex, regex] of RE_EXCLUDE.entries()) {
       for (const match of strippedCode.matchAll(regex)) {
         const segments = [...match[1]?.split(RE_SEPARATOR) || [], ...match[2]?.split(RE_SEPARATOR) || []]
-        const range = getForLoopDeclarationRange(strippedCode, match)
+        // `import`/`export` can only appear at the module top level, so those
+        // are always excluded globally. Every other declaration may live in a
+        // nested block and therefore needs a shadow range.
+        const range = ruleIndex === GLOBAL_EXCLUDE_RULE_INDEX
+          ? undefined
+          : getForLoopDeclarationRange(strippedCode, match) ?? getEnclosingBlockRange(strippedCode, match.index!)
         for (const segment of segments) {
           const identifier = segment.replace(RE_IMPORT_AS, '').trim()
           if (!identifier)
@@ -122,6 +135,31 @@ export async function detectImportsRegex(
     matchedImports,
     firstOccurrence,
   }
+}
+
+/**
+ * Find the innermost block (`{ ... }`) enclosing `position`.
+ *
+ * Returns `undefined` when the declaration sits at the module top level, which
+ * means it really does shadow the whole module. Otherwise the returned range
+ * covers the enclosing block, so only references inside it are skipped.
+ */
+function getEnclosingBlockRange(code: string, position: number): [number, number] | undefined {
+  let depth = 0
+  for (let i = position - 1; i >= 0; i--) {
+    const char = code[i]
+    if (char === '}') {
+      depth++
+    }
+    else if (char === '{') {
+      if (depth === 0) {
+        const end = findMatchingCharacter(code, i, '{', '}')
+        return end === -1 ? undefined : [i, end]
+      }
+      depth--
+    }
+  }
+  return undefined
 }
 
 function getForLoopDeclarationRange(code: string, match: RegExpMatchArray): [number, number] | undefined {
