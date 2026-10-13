@@ -66,6 +66,7 @@ it('dts', async () => {
   )
     .toMatchInlineSnapshot(`
       "export {}
+      import * as __unimport_named from '<root>/playground/composables/nested/bar/index'
       declare global {
         const $: typeof import('jquery').$
         const BAR: typeof import('<root>/playground/composables/comma-separated').BAR
@@ -86,7 +87,6 @@ it('dts', async () => {
         const myBazFunction: typeof import('<root>/playground/composables/nested/bar/baz').myBazFunction
         const myfunc1: typeof import('<root>/playground/composables/nested/bar/named').myfunc1
         const myfunc2: typeof import('<root>/playground/composables/nested/bar/named').myfunc2
-        const named: typeof import('<root>/playground/composables/nested/bar/index').named
         const nested: typeof import('<root>/playground/composables/nested/index').default
         const pkg: typeof import('pkg/dts').pkg
         const reactive: typeof import('vue').reactive
@@ -102,6 +102,7 @@ it('dts', async () => {
         const vanillaAMJS: typeof import('<root>/playground/composables/vanilla').vanillaAMJS
         const vanillaB: typeof import('<root>/playground/composables/vanilla').vanillaB
         const vanillaBMJS: typeof import('<root>/playground/composables/vanilla').vanillaBMJS
+        export import named = __unimport_named
       }
       // for type re-export
       declare global {
@@ -206,6 +207,30 @@ it('should generate value and type declarations for complementary imports', asyn
       // @ts-ignore
       export type { Test } from 'module'
       import('module')
+    }"
+  `)
+})
+
+it('should re-export namespace exports so they can be used in type positions', async () => {
+  // `export * as z from 'zod'` produces a namespace. Declaring it as
+  // `const z: typeof import('zod').z` only exposes a value, which breaks
+  // namespace usages such as `z.ZodType` with `TS2503: Cannot find namespace`.
+  const { generateTypeDeclarations, init } = createUnimport({
+    imports: [{
+      name: 'z',
+      as: 'z',
+      from: 'zod',
+      namespace: true,
+    }],
+  })
+
+  await init()
+
+  await expect(generateTypeDeclarations()).resolves.toMatchInlineSnapshot(`
+    "export {}
+    import * as __unimport_z from 'zod'
+    declare global {
+      export import z = __unimport_z
     }"
   `)
 })
