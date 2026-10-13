@@ -66,6 +66,7 @@ it('dts', async () => {
   )
     .toMatchInlineSnapshot(`
       "export {}
+      import * as __unimport_named from '<root>/playground/composables/nested/bar/index'
       declare global {
         const $: typeof import('jquery').$
         const BAR: typeof import('<root>/playground/composables/comma-separated').BAR
@@ -101,7 +102,7 @@ it('dts', async () => {
         const vanillaAMJS: typeof import('<root>/playground/composables/vanilla').vanillaAMJS
         const vanillaB: typeof import('<root>/playground/composables/vanilla').vanillaB
         const vanillaBMJS: typeof import('<root>/playground/composables/vanilla').vanillaBMJS
-        export { named } from '<root>/playground/composables/nested/bar/index'
+        export import named = __unimport_named
       }
       // for type re-export
       declare global {
@@ -227,8 +228,9 @@ it('should re-export namespace exports so they can be used in type positions', a
 
   await expect(generateTypeDeclarations()).resolves.toMatchInlineSnapshot(`
     "export {}
+    import * as __unimport_z from 'zod'
     declare global {
-      export { z } from 'zod'
+      export import z = __unimport_z
     }"
   `)
 })

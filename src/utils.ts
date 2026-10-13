@@ -236,6 +236,9 @@ export function stripFileExtension(path: string) {
   return path.replace(RE_FILE_EXT, '')
 }
 
+/** Prefix used for the top-level alias backing a namespace import. */
+const NAMESPACE_ALIAS_PREFIX = '__unimport_'
+
 export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarationOptions) {
   return imports
     .flatMap((i) => {
@@ -244,10 +247,14 @@ export function toTypeDeclarationItems(imports: Import[], options?: TypeDeclarat
       // `export * as foo from '...'` introduces a namespace. Declaring it as
       // `const foo: typeof import('...').foo` only exposes a value, so namespace
       // usages such as `foo.Bar` fail with `TS2503: Cannot find namespace`.
-      // Re-exporting the name keeps both the value and the namespace available.
+      //
+      // A plain `export ... from` is not permitted inside `declare global`
+      // (TS2666), and suppressing it with `@ts-ignore` leaves the namespace
+      // unusable, so alias a top-level `import * as` instead (emitted by
+      // `toTypeDeclarationFile`) to keep both the value and the namespace.
       if (i.namespace) {
         const exported = i.as ?? i.name
-        return [`export { ${i.name === exported ? i.name : `${i.name} as ${exported}`} } from '${from}'`]
+        return [`export import ${exported} = ${NAMESPACE_ALIAS_PREFIX}${i.name}`]
       }
 
       let typeDef = ''
@@ -273,6 +280,18 @@ export function toTypeDeclarationFile(imports: Import[], options?: TypeDeclarati
   let declaration = ''
   if (exportHelper)
     declaration += 'export {}\n'
+
+  // Namespace imports are aliased to a top-level `import * as` so that
+  // `declare global` can expose them with `export import` — a plain
+  // `export ... from` is not permitted in a module augmentation (TS2666).
+  const aliases = new Set<string>()
+  for (const i of imports) {
+    if (!i.namespace || aliases.has(i.name))
+      continue
+    aliases.add(i.name)
+    const from = options?.resolvePath?.(i) || stripFileExtension(i.typeFrom || i.from)
+    declaration += `import * as ${NAMESPACE_ALIAS_PREFIX}${i.name} from '${from}'\n`
+  }
 
   declaration += `declare global {\n${items.map(i => `  ${i}`).join('\n')}\n}`
   return declaration
