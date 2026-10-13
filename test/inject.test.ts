@@ -126,6 +126,94 @@ async function doWork(items) {
       `)
   })
 
+  it('injects a top-level reference when a C-style for loop variable shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork() {
+  for (let ref = 0; ref < 1; ref++) {
+    console.log(ref)
+  }
+  console.log(ref)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        function doWork() {
+          for (let ref = 0; ref < 1; ref++) {
+            console.log(ref)
+          }
+          console.log(ref)
+        }"
+      `)
+  })
+
+  it('injects a top-level reference when an unbraced for-of body shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (const ref of items)
+    console.log(ref.name)
+  console.log(ref)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        function doWork(items) {
+          for (const ref of items)
+            console.log(ref.name)
+          console.log(ref)
+        }"
+      `)
+  })
+
+  it('injects a top-level reference when an unbraced for-in body shadows the same name', async () => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+function doWork(items) {
+  for (const ref in items)
+    console.log(ref)
+  console.log(ref)
+}
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "import { ref } from 'vue';
+        function doWork(items) {
+          for (const ref in items)
+            console.log(ref)
+          console.log(ref)
+        }"
+      `)
+  })
+
+  it('does not inject a module-scoped var declared inside a nested block', async () => {
+    // `var` is function-scoped, so the enclosing block does not limit its scope
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'ref', from: 'vue' }],
+    })
+
+    expect((await injectImports(`
+if (true) {
+  var ref = 1
+}
+console.log(ref)
+    `.trim())).code)
+      .toMatchInlineSnapshot(`
+        "if (true) {
+          var ref = 1
+        }
+        console.log(ref)"
+      `)
+  })
+
   it('does not inject a loop-local for-of variable without an outer reference', async () => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'ref', from: 'vue' }],
