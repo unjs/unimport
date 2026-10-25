@@ -128,3 +128,110 @@ describe('vue-template', () => {
     `)
   })
 })
+
+describe('vue-template import lookups', () => {
+  const render = (names: string[]): string => `export function render(_ctx) { return [${names.map(name => `_ctx.${name}`).join(',')}]; }`
+
+  it('keeps the first alias and injects repeated references once', async () => {
+    const ctx = createUnimport({
+      autoImport: false,
+      addons: [vueTemplateAddon(), {
+        extendImports: () => [
+          { name: 'first', as: 'value', from: 'first-lib' },
+          { name: 'second', as: 'value', from: 'second-lib' },
+        ],
+      }],
+    })
+    const { code } = await ctx.injectImports(render(Array.from<string>({ length: 40 }).fill('value')), 'a.vue')
+    expect(code).toContain('import { first as __unimport_value } from \'first-lib\'')
+    expect(code).not.toContain('second-lib')
+    expect(code.match(/first as __unimport_value/g)).toHaveLength(1)
+  })
+
+  it('preserves alias getter reads', async () => {
+    let reads = 0
+    const ctx = createUnimport({
+      autoImport: false,
+      addons: [vueTemplateAddon(), {
+        extendImports: () => [{ name: 'value', from: 'value-lib', get as() {
+          reads++
+          return 'value'
+        } }],
+      }],
+    })
+    await ctx.getImports()
+    reads = 0
+    await ctx.injectImports(render(Array.from<string>({ length: 40 }).fill('value')), 'a.vue')
+    expect(reads).toBe(41)
+  })
+
+  it('does not read an alias after the first match', async () => {
+    let throwOnRead = false
+    const ctx = createUnimport({
+      autoImport: false,
+      addons: [vueTemplateAddon(), {
+        extendImports: () => [
+          { name: 'first', as: 'value', from: 'first-lib' },
+          { name: 'second', from: 'second-lib', get as() {
+            if (throwOnRead)
+              throw new Error('unused alias')
+            return 'other'
+          } },
+        ],
+      }],
+    })
+    await ctx.getImports()
+    throwOnRead = true
+    const { code } = await ctx.injectImports(render(Array.from<string>({ length: 40 }).fill('value')), 'a.vue')
+    expect(code).toContain('from \'first-lib\'')
+  })
+
+  it.each(['from', Symbol('metadata')])('observes aliases changed by a spread getter: %s', async (key) => {
+    const later = { name: 'later', as: 'old', from: 'later-lib' }
+    const first = { name: 'first', as: 'first', from: 'first-lib' }
+    Object.defineProperty(first, key, {
+      enumerable: true,
+      get() {
+        later.as = 'renamed'
+        return 'first-lib'
+      },
+    })
+    const ctx = createUnimport({
+      autoImport: false,
+      addons: [vueTemplateAddon(), { extendImports: () => [first, later] }],
+    })
+    const names = [...Array.from<string>({ length: 6 }).fill('missing'), 'first', ...Array.from<string>({ length: 39 }).fill('renamed')]
+    const { code } = await ctx.injectImports(render(names), 'a.vue')
+    expect(code).toContain('import { later as __unimport_renamed } from \'later-lib\'')
+  })
+
+  it('uses updated dynamic imports on the next transform', async () => {
+    const ctx = createUnimport({ autoImport: false, addons: [vueTemplateAddon()] })
+    const input = render(Array.from<string>({ length: 40 }).fill('value'))
+    await ctx.modifyDynamicImports(() => [{ name: 'first', as: 'value', from: 'first-lib' }])
+    expect((await ctx.injectImports(input, 'a.vue')).code).toContain('from \'first-lib\'')
+    await ctx.modifyDynamicImports(() => [{ name: 'second', as: 'value', from: 'second-lib' }])
+    const { code } = await ctx.injectImports(input, 'a.vue')
+    expect(code).toContain('from \'second-lib\'')
+    expect(code).not.toContain('first-lib')
+  })
+
+  it('runs injection hooks after indexed lookups', async () => {
+    const ctx = createUnimport({
+      autoImport: false,
+      imports: [{ name: 'value', from: 'original-lib' }],
+      addons: [vueTemplateAddon(), {
+        injectImportsResolved(imports) {
+          return imports.map(item => ({ ...item, from: 'changed-lib' }))
+        },
+        injectImportsStringified(code) {
+          return `// injection hook\n${code}`
+        },
+      }],
+    })
+    const { code } = await ctx.injectImports(render(Array.from<string>({ length: 40 }).fill('value')), 'a.vue')
+    expect(code).toContain('changed-lib')
+    expect(code).toContain('// injection hook')
+    expect(code).not.toContain('original-lib')
+  })
+})

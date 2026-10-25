@@ -16,10 +16,26 @@ export function vueTemplateAddon(): Addon {
       const matches = Array.from(s.original.matchAll(RE_CONTEXT))
       const imports = await this.getImports()
       let targets: Import[] = []
+      let indexed: Map<string | undefined, Import> | undefined
+      let canIndex = true
+      let scanned = 0
+      let remaining = matches.length
+      const targetAliases = new Set<string>()
 
       for (const match of matches) {
+        // Keep cheap lookups linear and only index when enough work remains.
+        if (canIndex && remaining >= 16 && scanned > imports.length * 4) {
+          canIndex = false
+          indexed = indexImports(imports)
+        }
+        remaining--
         const name = match[1]
-        const item = imports.find(i => i.as === name)
+        const item = indexed
+          ? indexed.get(name)
+          : imports.find((i) => {
+              scanned++
+              return i.as === name
+            })
         if (!item)
           continue
 
@@ -28,7 +44,11 @@ export function vueTemplateAddon(): Addon {
 
         const tempName = `__unimport_${name}`
         s.overwrite(start, end, `(${JSON.stringify(name)} in _ctx ? _ctx.${name} : ${UNREF_KEY}(${tempName}))`)
-        if (!targets.some(i => i.as === tempName)) {
+        if (!targetAliases.has(tempName)) {
+          targetAliases.add(tempName)
+          // Spreading an import can invoke getters that change other aliases.
+          if (indexed && Reflect.ownKeys(item).some(key => Object.getOwnPropertyDescriptor(item, key)?.get))
+            indexed = undefined
           targets.push({
             ...item,
             as: tempName,
@@ -88,4 +108,21 @@ ${extendItems}
   }
 
   return self
+}
+
+function indexImports(imports: Import[]): Map<string | undefined, Import> | undefined {
+  const indexed = new Map<string | undefined, Import>()
+  for (let index = 0; index < imports.length; index++) {
+    const entry = Object.getOwnPropertyDescriptor(imports, index)
+    if (!entry || !('value' in entry))
+      return
+    const item: Import = entry.value
+    const alias = Object.getOwnPropertyDescriptor(item, 'as')
+    // Keep getter-backed imports on the original lookup path.
+    if (!alias || !('value' in alias))
+      return
+    if (!indexed.has(alias.value))
+      indexed.set(alias.value, item)
+  }
+  return indexed
 }
