@@ -80,6 +80,7 @@
     "lit": "catalog:test",
     "oxc-parser": "catalog:prod",
     "rolldown": "catalog:prod",
+    "rolldown-inject-filter": "file:./vendor/rolldown-inject-filter.tgz",
     "typescript": "catalog:dev",
     "unbuild": "catalog:dev",
     "vite": "catalog:playground",
