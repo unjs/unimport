@@ -14,6 +14,7 @@ import type {
 import { version } from '../package.json'
 import { configureAddons } from './addons/addons'
 import { detectImports } from './detect'
+import { getNativeInject } from './native-inject'
 import { scanDirExports, scanExports } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
 import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
@@ -100,6 +101,7 @@ export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
     getImportMap: () => ctx.getImportMap(),
     detectImports: (code: string | MagicString) => detectImports(code, ctx),
     injectImports: injectImportsWithContext,
+    getNativeInject: () => getNativeInject(ctx),
     generateTypeDeclarations: (options?: TypeDeclarationOptions) => generateTypeDeclarations(options),
     getMetadata: () => ctx.getMetadata(),
     getInternalContext: () => ctx,
