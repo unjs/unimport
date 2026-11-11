@@ -43,7 +43,7 @@ export async function getNativeInject(ctx: UnimportContext): Promise<NativeInjec
   }
 
   if (skipped.length)
-    triggers.push(`(?:^|[^\\w$.])(?:${skipped.map(n => escapeRE(n)).join('|')})(?:[^\\w$]|$)`)
+    triggers.push(`(?:^|[^\\w$.]|\\.\\.\\.)(?:${skipped.map(n => escapeRE(n)).join('|')})(?:[^\\w$]|$)`)
 
   return {
     inject,

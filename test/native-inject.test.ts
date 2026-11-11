@@ -30,6 +30,7 @@ describe('getNativeInject', () => {
       useBar: ['~/foo', 'useFoo'],
     })
     expect(native?.transformFilter?.test('const x = data')).toBe(true)
+    expect(native?.transformFilter?.test('const x = { ...data }')).toBe(true)
     expect(native?.transformFilter?.test('const x = obj.data')).toBe(false)
     expect(native?.transformFilter?.test('const x = database')).toBe(false)
   })
@@ -94,7 +95,7 @@ describe.skipIf(process.platform !== 'linux' || process.arch !== 'x64')('unplugi
     await rm(dir, { recursive: true, force: true })
   })
 
-  async function build(nativeInject: boolean) {
+  async function build(nativeInject: boolean, autoImport = true) {
     const { rolldown } = await import('rolldown-inject-filter')
     const logs: string[] = []
     const bundle = await rolldown({
@@ -102,6 +103,7 @@ describe.skipIf(process.platform !== 'linux' || process.arch !== 'x64')('unplugi
       input: join(dir, 'main.ts'),
       plugins: [Unimport.rolldown({
         nativeInject,
+        autoImport,
         virtualImports: ['#imports'],
         imports: [
           { name: 'helper', from: join(dir, 'utils.ts') },
@@ -121,6 +123,10 @@ describe.skipIf(process.platform !== 'linux' || process.arch !== 'x64')('unplugi
     const native = await build(true)
     expect(native.result).toEqual(['helper', 'hi', 1, 'helper', 'undefined'])
     expect(native.logs).toEqual(['[unimport] 1 imports detected in "<dir>/other.ts": helper'])
+  })
+
+  it('leaves auto-imports out with `autoImport: false`', async () => {
+    await expect(build(true, false)).rejects.toThrow('helper is not defined')
   })
 
   it('gives the same result as the JS transform', async () => {

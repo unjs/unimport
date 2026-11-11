@@ -4,6 +4,7 @@ import type { UnimportOptions } from './types'
 
 import { promises as fs } from 'node:fs'
 import MagicString from 'magic-string'
+import { isAbsolute, join, resolve } from 'pathe'
 import { createUnplugin } from 'unplugin'
 import { createFilter } from 'unplugin-utils'
 import { createUnimport } from './context'
@@ -34,6 +35,14 @@ export const defaultExcludes = [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]
 
 type TransformHook = Extract<NonNullable<UnpluginOptions['transform']>, { handler: unknown }>
 type RolldownOptionsHook = NonNullable<RolldownPlugin['options']>
+
+// Rolldown resolves relative globs against its `cwd`, `createFilter` against the escaped `process.cwd()`
+function toRolldownPatterns(patterns: FilterPattern) {
+  // `join` turns backslashes into `/`, so mark the escapes and add the backslashes after
+  const base = resolve().replace(/[-^$*+?.()|[\]{}]/g, '\0$&')
+  return toArray(patterns as string | RegExp | (string | RegExp)[])
+    .map(p => typeof p === 'string' && !isAbsolute(p) && !p.startsWith('**') ? join(base, p).replaceAll('\0', '\\') : p)
+}
 
 function toArray<T>(x: T | T[] | undefined | null): T[] {
   return x == null ? [] : Array.isArray(x) ? x : [x]
@@ -78,7 +87,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>, false>((options = 
   const setupNativeInject: RolldownOptionsHook = async function (inputOptions) {
     // Rolldown reads hook filters after the `options` hook, so `transform.filter` can still change here.
     transform.filter = undefined
-    if (!nativeInject || isViteServe || !(meta.framework === 'rolldown' || this.meta.rolldownVersion))
+    if (!nativeInject || !autoImport || isViteServe || !(meta.framework === 'rolldown' || this.meta.rolldownVersion))
       return
 
     // TODO: drop the cast once the `rolldown` dev dependency has `transform.injectFilter`
@@ -100,7 +109,7 @@ export default createUnplugin<Partial<UnimportPluginOptions>, false>((options = 
       transform: {
         ...transformOptions,
         inject: { ...native.inject, ...transformOptions?.inject },
-        injectFilter: { include, exclude },
+        injectFilter: { include: toRolldownPatterns(include), exclude: toRolldownPatterns(exclude) },
       } as typeof inputOptions.transform,
     }
   }
