@@ -83,6 +83,21 @@ describe('toExports', () => {
       `)
   })
 
+  it('keeps dotted segments that are not extensions', () => {
+    const root = process.cwd()
+    const imports: Import[] = [
+      { from: './verify.portable', name: 'foo', as: 'foo' },
+      { from: resolve(root, 'verify.legacy'), name: 'bar', as: 'bar' },
+      { from: resolve(root, 'verify.legacy.ts'), name: 'baz', as: 'baz' },
+    ]
+    expect(toExports(imports, root))
+      .toMatchInlineSnapshot(`
+        "export { foo } from './verify.portable';
+        export { bar } from './verify.legacy';
+        export { baz } from './verify.legacy';"
+      `)
+  })
+
   it('relative path', () => {
     const root = process.cwd()
     const imports: Import[] = [
