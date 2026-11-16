@@ -19,7 +19,7 @@ export function vueTemplateAddon(): Addon {
 
       for (const match of matches) {
         const name = match[1]
-        const item = imports.find(i => i.as === name)
+        const item = imports.find(i => i.as === name && !i.type)
         if (!item)
           continue
 
