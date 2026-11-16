@@ -334,6 +334,18 @@ To use the `acorn` parser, install `acorn` alongside `unimport`:
 npm install acorn
 ```
 
+### Native Inject (Rolldown)
+
+On Rolldown, and in `vite build` on Rolldown, `nativeInject` hands the auto-imports to Rolldown's [`transform.inject`](https://rolldown.rs/reference/InputOptions.transform#inject), so Rolldown adds them in Rust. The plugin's `include` and `exclude` become `transform.injectFilter`. The JS transform then only runs on modules that use virtual imports, the Vue template or directive addons, or imports with `with` attributes. `vite` dev keeps the JS transform.
+
+```ts
+Unimport.vite({
+  nativeInject: true
+})
+```
+
+It needs a Rolldown version with `transform.injectFilter`. It is skipped when `resolveId` is set or an addon other than `vueTemplate` and `vueDirectives` is used. `@unimport-disable` comments don't stop Rolldown from adding imports.
+
 ### Vue Template Auto Import
 
 In Vue's template, the usage of API is in a different context than plain modules. Thus some custom transformations are required. To enable it, set `addons.vueTemplate` to `true`:

@@ -302,6 +302,9 @@ importers:
       rolldown:
         specifier: catalog:prod
         version: 1.2.7
+      rolldown-inject-filter:
+        specifier: file:./vendor/rolldown-inject-filter.tgz
+        version: rolldown@file:vendor/rolldown-inject-filter.tgz
       typescript:
         specifier: catalog:dev
         version: 6.0.3
@@ -1013,6 +1016,9 @@ packages:
 
   '@oxc-project/types@0.149.0':
     resolution: {integrity: sha512-Efcc+iF0j3Bf67YjEqIqWXbX5XddXoK/Mw4K1/JuXwRCZ8N16VR7iT23nlCc9XrveFVh/E5Rqs2StT0V8v9LdA==}
+
+  '@oxc-project/types@0.158.0':
+    resolution: {integrity: sha512-xZ66qA4WmLbTLlxH3mqMd8f9UKbaOzOT0ATwFf4DH/14pMgpUrtqtjyYzOQmgfl2a0iRAAMbQ9G1th/67jRzGw==}
 
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
@@ -3057,6 +3063,12 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
+  rolldown@file:vendor/rolldown-inject-filter.tgz:
+    resolution: {integrity: sha512-W6bV7N8XAVkBnsb9pJqw8mCuKqybAwXZl64FUDXWFXAY1jvniV4Fvd05PLI8NzwXrLFGxLOw/e9Kuma7PkahyA==, tarball: file:vendor/rolldown-inject-filter.tgz}
+    version: 1.3.1
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+
   rollup-plugin-dts@6.5.1:
     resolution: {integrity: sha512-jODTXp3H7MK/Ur/ErtsrQ0G1GvaCmc3du+y5pNrdBMf6d7HlL2Nd/N6TkEr+f75CkUj01zEoEd7y2elH0eHi1Q==}
     engines: {node: '>=20'}
@@ -4001,6 +4013,8 @@ snapshots:
   '@oxc-project/types@0.148.0': {}
 
   '@oxc-project/types@0.149.0': {}
+
+  '@oxc-project/types@0.158.0': {}
 
   '@pkgr/core@0.3.6': {}
 
@@ -6231,6 +6245,11 @@ snapshots:
       '@rolldown/binding-openharmony-arm64': 1.2.7
       '@rolldown/binding-win32-arm64-msvc': 1.2.7
       '@rolldown/binding-win32-x64-msvc': 1.2.7
+
+  rolldown@file:vendor/rolldown-inject-filter.tgz:
+    dependencies:
+      '@oxc-project/types': 0.158.0
+      '@rolldown/pluginutils': 1.0.1
 
   rollup-plugin-dts@6.5.1(rollup@4.63.1)(typescript@6.0.3):
     dependencies:

@@ -137,6 +137,14 @@ export interface Unimport {
    */
   injectImports: (code: string | MagicString, id?: string, options?: InjectImportsOptions) => Promise<ImportInjectionResult>
 
+  /**
+   * Get a map for Rolldown's `transform.inject`, so Rolldown adds the auto-imports in Rust.
+   * Modules matching `transformFilter` still need `injectImports`.
+   *
+   * Returns `undefined` when the options need `injectImports` for every module.
+   */
+  getNativeInject: () => Promise<NativeInject | undefined>
+
   scanImportsFromDir: (dir?: (string | ScanDir)[], options?: ScanDirExportsOptions) => Promise<Import[]>
   scanImportsFromFile: (file: string, includeTypes?: boolean) => Promise<Import[]>
 
@@ -144,6 +152,19 @@ export interface Unimport {
    * @deprecated
    */
   toExports: (filepath?: string, includeTypes?: boolean) => Promise<string>
+}
+
+export interface NativeInject {
+  /**
+   * Value for Rolldown's `transform.inject`
+   */
+  inject: Record<string, string | [string, string]>
+  /**
+   * Matches the code of modules that still need `injectImports`:
+   * virtual imports, Vue templates and directives, and imports with `with` attributes.
+   * `undefined` when no module needs it.
+   */
+  transformFilter?: RegExp
 }
 
 export interface InjectionUsageRecord {
