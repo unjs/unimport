@@ -436,7 +436,7 @@ export function addImportToCode(
   newEntries = onStringified?.(newEntries, newImports) ?? newEntries
 
   if (newEntries) {
-    const insertionIndex = injectAtLast
+    const insertionIndex = injectAtLast && firstOccurrence > 0
       ? findStaticImportsLazy().reverse().find(i => i.end <= firstOccurrence)?.end ?? 0
       : 0
 

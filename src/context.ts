@@ -18,7 +18,7 @@ import { scanDirExports, scanExports } from './node/scan-dirs'
 import { resolveBuiltinPresets } from './preset'
 import { addImportToCode, dedupeImports, getMagicString, normalizeImports, stripFileExtension, toExports, toTypeDeclarationFile, toTypeReExports } from './utils'
 
-const RE_IDENTIFIER = /[\w$]+/g
+const RE_IDENTIFIER = /[$_\p{ID_Start}][$\u200C\u200D\p{ID_Continue}]*/gu
 
 export function createUnimport(opts: Partial<UnimportOptions>): Unimport {
   const ctx = createInternalContext(opts)
@@ -290,7 +290,8 @@ async function canSkipImportDetection(
   ctx: UnimportContext,
   options?: InjectImportsOptions,
 ) {
-  if (options?.parser && options.parser !== 'regex')
+  // AST parsers resolve `\uXXXX` escapes in identifiers, which a raw-text scan cannot match.
+  if (options?.parser && options.parser !== 'regex' && code.includes('\\'))
     return false
 
   if (ctx.addons.some(addon =>
