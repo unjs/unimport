@@ -80,6 +80,17 @@ const onlySingleDirective = compileTemplate({
   },
 })
 
+const withMissingDirective = compileTemplate({
+  id: 'template.vue',
+  filename: 'template.vue',
+  source: `
+    <div v-awesome-directive v-missing></div>
+  `,
+  compilerOptions: {
+    hoistStatic: false,
+  },
+})
+
 function replaceRoot(code: string) {
   return code.replaceAll(process.cwd().replace(/\\/g, '/'), '<root>')
 }
@@ -226,11 +237,9 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(singleNamedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import { AwesomeDirective as _directive_awesome_directive } from '<root>/directives/awesome-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
-          const _directive_awesome_directive = _resolveDirective("awesome-directive")
-
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
@@ -280,10 +289,10 @@ describe('vue-directives', () => {
         }"
       `)
       expect(replaceRoot((await ctx.injectImports(singleMixedDirectives.code, 'a.vue')).code.toString())).toMatchInlineSnapshot(`
-        "import _directive_mixed_directive from '<root>/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+        "import _directive_mixed_directive from '<root>/directives/mixed-directive.ts';
+        import { NamedMixedDirective as _directive_named_mixed_directive } from '<root>/directives/mixed-directive.ts';import { withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 
         export function render(_ctx, _cache) {
-          const _directive_named_mixed_directive = _resolveDirective("named-mixed-directive")
           return _withDirectives((_openBlock(), _createElementBlock("div", {
             onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.foo && _ctx.foo(...args)))
           }, null, 512 /* NEED_PATCH */)), [
@@ -783,6 +792,41 @@ describe('vue-directives', () => {
           },
         ]
       `)
+    })
+  })
+
+  describe('repeated transforms', () => {
+    const ctx = createUnimport({
+      presets: resolvePresets([{
+        from: 'directives/awesome-directive.ts',
+        imports: [{
+          name: 'default',
+          meta: {
+            vueDirective: true,
+          },
+        }],
+      }]),
+      addons: {
+        vueDirectives: true,
+      },
+    })
+
+    it('inject', async () => {
+      const first = replaceRoot((await ctx.injectImports(withMissingDirective.code, 'a.vue')).code.toString())
+      expect(first).toMatchInlineSnapshot(`
+        "import _directive_awesome_directive from '<root>/directives/awesome-directive.ts';import { resolveDirective as _resolveDirective, withDirectives as _withDirectives, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+        export function render(_ctx, _cache) {
+          const _directive_missing = _resolveDirective("missing")
+
+          return _withDirectives((_openBlock(), _createElementBlock("div", null, null, 512 /* NEED_PATCH */)), [
+            [_directive_awesome_directive],
+            [_directive_missing]
+          ])
+        }"
+      `)
+      const second = replaceRoot((await ctx.injectImports(withMissingDirective.code, 'a.vue')).code.toString())
+      expect(second).toBe(first)
     })
   })
 })

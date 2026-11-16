@@ -65,7 +65,8 @@ export function vueDirectivesAddon(
 
       // Remove resolveDirective import only if there are no more directives.
       // User may be using missing directives or globally registered directives.
-      if (!RE_DIRECTIVE.test(s.toString()))
+      // `search` keeps `lastIndex` of the global regex untouched, unlike `test`.
+      if (s.toString().search(RE_DIRECTIVE) === -1)
         s.replace(contextText, '')
 
       for (const addon of this.addons) {
