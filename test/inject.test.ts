@@ -450,6 +450,8 @@ import { baz } from 'baz'
     ['a `function` property of a hex literal', 'const x = 0x1.function * useFoo()'],
     ['a `function` property of an integer with a space', 'const x = 1 .function * useFoo()'],
     ['a `function` property of an identifier ending in a digit', 'const x = a1.function * useFoo()'],
+    ['a `function` property of a non-ASCII identifier ending in a digit', 'const x = π1.function * useFoo()'],
+    ['a `function` property of an identifier with a joiner before a digit', 'const x = a\u200D1.function * useFoo()'],
   ])('does not treat %s as declarations', async (_, code) => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'useFoo', from: 'test-id' }],

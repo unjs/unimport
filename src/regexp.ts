@@ -6,8 +6,8 @@ export const RE_EXCLUDE = [
   /\b(import|export)\b([\w$*{},\s]+?)\bfrom\s*["']/g,
   // defined as function (including generators and generic type parameters),
   // not a `function` property such as `api.function`; a dot that ends a decimal
-  // literal such as `1.` is not member access
-  /(?<!(?<!(?:^|[^\w$.])\d[\d_]*)\.\s*)\bfunction(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/g,
+  // literal such as `1.` is not member access (`π1.` is, as `π1` is an identifier)
+  /(?<!(?<!(?:^|[^\p{ID_Continue}$.\u200C\u200D])\d[\d_]*)\.\s*)\bfunction(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/gu,
   // defined as class
   /\bclass\s+([\w$]+)/g,
   // defined as local variable (including for-of/for-in loop declarations).
