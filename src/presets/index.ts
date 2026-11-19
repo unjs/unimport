@@ -7,7 +7,19 @@ import reactRouter from './react-router'
 import reactRouterDom from './react-router-dom'
 import rxjs from './rxjs'
 import solid from './solid'
-import solidAppRouter from './solid-app-router'
+import solidMeta from './solid-meta'
+import {
+  solidRouter,
+  solidRouterFS,
+  solidRouterServer,
+} from './solid-router'
+import {
+  solidWeb,
+  solidWebServerFunctions,
+  solidWebServerFunctionsRichArgs,
+  solidWebServerFunctionsServer,
+  solidWebStorage,
+} from './solid-web'
 import {
   svelte,
   svelteAnimate,
@@ -59,7 +71,15 @@ export const builtinPresets = {
   'vitest': vitest,
   'uni-app': uniApp,
   'solid-js': solid,
-  'solid-app-router': solidAppRouter,
+  '@solidjs/web': solidWeb,
+  '@solidjs/web/server-functions': solidWebServerFunctions,
+  '@solidjs/web/server-functions/server': solidWebServerFunctionsServer,
+  '@solidjs/web/server-functions/rich-args': solidWebServerFunctionsRichArgs,
+  '@solidjs/web/storage': solidWebStorage,
+  '@solidjs/meta': solidMeta,
+  '@solidjs/router': solidRouter,
+  '@solidjs/router/fs': solidRouterFS,
+  '@solidjs/router/server': solidRouterServer,
   'rxjs': rxjs,
   'date-fns': dateFns,
 }
