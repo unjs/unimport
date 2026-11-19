@@ -4,8 +4,11 @@ import { stripLiteral } from 'strip-literal'
 export const RE_EXCLUDE = [
   // imported/exported from other module
   /\b(import|export)\b([\w$*{},\s]+?)\bfrom\s*["']/g,
-  // defined as function
-  /\bfunction\s*([\w$]+)\s*\(/g,
+  // defined as function (including generators and generic type parameters),
+  // not a `function` property such as `api.function` or the end of an identifier
+  // such as `$function`; a dot that ends a decimal literal such as `1.` is not
+  // member access (`π1.` is, as `π1` is an identifier)
+  /(?<!(?<!(?:^|[^\p{ID_Continue}$.\u200C\u200D])\d[\d_]*)\.\s*)(?<![\p{ID_Continue}$\u200C\u200D])function(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/gu,
   // defined as class
   /\bclass\s+([\w$]+)/g,
   // defined as local variable (including for-of/for-in loop declarations).

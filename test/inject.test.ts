@@ -419,4 +419,47 @@ import { baz } from 'baz'
 
     expect((await injectImports(code)).code).toBe(code)
   })
+
+  it.each([
+    ['generator', 'function* useFoo() {}\nuseFoo()'],
+    ['generator with spaces', 'function * useFoo() {}\nuseFoo()'],
+    ['async generator', 'export async function* useFoo() {}\nuseFoo()'],
+    ['generic', 'function useFoo<T>(value: T) {}\nuseFoo(1)'],
+    ['generic with constraint', 'function useFoo<T extends Record<string, unknown>>(value: T) {}\nuseFoo({})'],
+    ['generic generator', 'function* useFoo<T>() {}\nuseFoo()'],
+    ['decimal literals followed by', 'const n = 1.\nfunction useFoo() {}\nuseFoo()'],
+    ['decimal literals with separators followed by', 'const n = 1_000.\nfunction useFoo() {}\nuseFoo()'],
+    ['comments ending with a period followed by', '// see docs.\nfunction useFoo() {}\nuseFoo()'],
+  ])('does not inject imports for %s function declarations', async (_, code) => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'useFoo', from: 'test-id' }],
+    })
+
+    expect((await injectImports(code)).code).toBe(code)
+  })
+
+  it.each([
+    ['identifiers starting with `function`', 'functionuseFoo()\nuseFoo()'],
+    ['anonymous generators', 'export default function* () { useFoo() }'],
+    ['a `function` property followed by a statement', 'const x = api.function\nuseFoo.value'],
+    ['prose in JSX text', 'const el = <p>This function useFoo is nice</p>\nuseFoo()'],
+    ['a `function` property multiplied by a call', 'const x = api.function * useFoo()'],
+    ['a `function` property followed by a comparison', 'const x = api.function\nuseFoo < 3'],
+    ['a `function` property of a decimal literal', 'const x = 1..function * useFoo()'],
+    ['a `function` property of a fractional literal', 'const x = 1.5.function * useFoo()'],
+    ['a `function` property of a hex literal', 'const x = 0x1.function * useFoo()'],
+    ['a `function` property of an integer with a space', 'const x = 1 .function * useFoo()'],
+    ['a `function` property of an identifier ending in a digit', 'const x = a1.function * useFoo()'],
+    ['a `function` property of a non-ASCII identifier ending in a digit', 'const x = π1.function * useFoo()'],
+    ['a `function` property of an identifier with a joiner before a digit', 'const x = a\u200D1.function * useFoo()'],
+    ['identifiers ending in `$function`', 'const x = $function * useFoo()'],
+    ['non-ASCII identifiers ending in `function`', 'const x = \u03C0function * useFoo()'],
+  ])('does not treat %s as declarations', async (_, code) => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'useFoo', from: 'test-id' }],
+    })
+
+    expect((await injectImports(code)).code)
+      .toBe(`import { useFoo } from 'test-id';\n${code}`)
+  })
 })
