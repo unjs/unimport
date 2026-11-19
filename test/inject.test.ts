@@ -440,6 +440,8 @@ import { baz } from 'baz'
     ['anonymous generators', 'export default function* () { useFoo() }'],
     ['a `function` property followed by a statement', 'const x = api.function\nuseFoo.value'],
     ['prose in JSX text', 'const el = <p>This function useFoo is nice</p>\nuseFoo()'],
+    ['a `function` property multiplied by a call', 'const x = api.function * useFoo()'],
+    ['a `function` property followed by a comparison', 'const x = api.function\nuseFoo < 3'],
   ])('does not treat %s as declarations', async (_, code) => {
     const { injectImports } = createUnimport({
       imports: [{ name: 'useFoo', from: 'test-id' }],

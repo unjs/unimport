@@ -4,8 +4,9 @@ import { stripLiteral } from 'strip-literal'
 export const RE_EXCLUDE = [
   // imported/exported from other module
   /\b(import|export)\b([\w$*{},\s]+?)\bfrom\s*["']/g,
-  // defined as function (including generators and generic type parameters)
-  /\bfunction(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/g,
+  // defined as function (including generators and generic type parameters),
+  // not a `function` property such as `api.function`
+  /(?<!\.\s*)\bfunction(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/g,
   // defined as class
   /\bclass\s+([\w$]+)/g,
   // defined as local variable (including for-of/for-in loop declarations).
