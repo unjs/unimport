@@ -5,8 +5,9 @@ export const RE_EXCLUDE = [
   // imported/exported from other module
   /\b(import|export)\b([\w$*{},\s]+?)\bfrom\s*["']/g,
   // defined as function (including generators and generic type parameters),
-  // not a `function` property such as `api.function`
-  /(?<!\.\s*)\bfunction(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/g,
+  // not a `function` property such as `api.function`; a dot that ends a decimal
+  // literal such as `1.` is not member access
+  /(?<!(?<!(?:^|[^\w$.])\d[\d_]*)\.\s*)\bfunction(?:\s*\*\s*|\s+)([\w$]+)\s*[(<]/g,
   // defined as class
   /\bclass\s+([\w$]+)/g,
   // defined as local variable (including for-of/for-in loop declarations).
