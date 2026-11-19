@@ -419,4 +419,33 @@ import { baz } from 'baz'
 
     expect((await injectImports(code)).code).toBe(code)
   })
+
+  it.each([
+    ['generator', 'function* useFoo() {}\nuseFoo()'],
+    ['generator with spaces', 'function * useFoo() {}\nuseFoo()'],
+    ['async generator', 'export async function* useFoo() {}\nuseFoo()'],
+    ['generic', 'function useFoo<T>(value: T) {}\nuseFoo(1)'],
+    ['generic with constraint', 'function useFoo<T extends Record<string, unknown>>(value: T) {}\nuseFoo({})'],
+    ['generic generator', 'function* useFoo<T>() {}\nuseFoo()'],
+  ])('does not inject imports for %s function declarations', async (_, code) => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'useFoo', from: 'test-id' }],
+    })
+
+    expect((await injectImports(code)).code).toBe(code)
+  })
+
+  it.each([
+    ['identifiers starting with `function`', 'functionuseFoo()\nuseFoo()'],
+    ['anonymous generators', 'export default function* () { useFoo() }'],
+    ['a `function` property followed by a statement', 'const x = api.function\nuseFoo.value'],
+    ['prose in JSX text', 'const el = <p>This function useFoo is nice</p>\nuseFoo()'],
+  ])('does not treat %s as declarations', async (_, code) => {
+    const { injectImports } = createUnimport({
+      imports: [{ name: 'useFoo', from: 'test-id' }],
+    })
+
+    expect((await injectImports(code)).code)
+      .toBe(`import { useFoo } from 'test-id';\n${code}`)
+  })
 })
