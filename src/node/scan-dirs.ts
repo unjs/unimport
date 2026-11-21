@@ -208,10 +208,15 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
           imports.push({ name, as: name, from: filepath, ...additional })
       }
       else if (exp.type === 'declaration') {
+        // `export default class X` is reported by `findExports` as a default export
+        // *and* as a declaration, but it has no named export. Adding a value import
+        // for it would shadow the default import during deduplication.
+        const isDefaultExport = exp.code.startsWith('export default')
         for (const name of exp.names) {
           if (JS_RESERVED_WORDS.has(name))
             continue
-          imports.push({ name, as: name, from: filepath, ...additional })
+          if (!isDefaultExport)
+            imports.push({ name, as: name, from: filepath, ...additional })
           if (exp.declarationType === 'enum' || exp.declarationType === 'const enum' || exp.declarationType === 'class') {
             imports.push({ name, as: name, from: filepath, type: true, declarationType: exp.declarationType, ...additional })
           }
