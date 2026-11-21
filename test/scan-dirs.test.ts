@@ -206,6 +206,7 @@ describe('scan-dirs', () => {
           "as": "named",
           "from": "nested/bar/index.ts",
           "name": "named",
+          "namespace": true,
         },
         {
           "as": "subFoo",

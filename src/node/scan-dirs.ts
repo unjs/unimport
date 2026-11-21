@@ -220,7 +220,7 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
       else if (exp.type === 'star' && exp.specifier) {
         if (exp.name) {
           // export * as foo from './foo'
-          imports.push({ name: exp.name, as: exp.name, from: filepath, ...additional })
+          imports.push({ name: exp.name, as: exp.name, from: filepath, namespace: true, ...additional })
         }
         else {
           // export * from './foo', scan deeper
