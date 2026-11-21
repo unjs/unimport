@@ -154,7 +154,7 @@ export async function scanDirExports(dirs: (string | ScanDir)[], options?: ScanD
   const includeTypesMatchers = includeTypesDirs.map(dir => pm(dir.glob))
   const isIncludeTypes = (file: string) => includeTypesMatchers.some(match => match(file))
 
-  const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file))))).flat()
+  const imports = (await Promise.all(files.map(file => scanExports(file, isIncludeTypes(file), undefined, options)))).flat()
   const deduped = dedupeDtsExports(imports)
   return deduped
 }
@@ -178,7 +178,49 @@ export function dedupeDtsExports(exports: Import[]) {
   })
 }
 
-export async function scanExports(filepath: string, includeTypes: boolean, seen = new Set<string>()): Promise<Import[]> {
+function resolveSubfile(filepath: string): string | undefined {
+  for (const ext of FileExtensionLookup) {
+    if (existsSync(`${filepath}.${ext}`))
+      return `${filepath}.${ext}`
+    if (existsSync(`${filepath}/index.${ext}`))
+      return `${filepath}/index.${ext}`
+  }
+  // Keep accepting a path that already points at a file
+  if (existsSync(filepath))
+    return filepath
+}
+
+async function resolveSubfileSpecifier(specifier: string, filepath: string, options?: ScanDirExportsOptions): Promise<string | undefined> {
+  // 1. Relative to the file being scanned
+  const relative = resolveSubfile(resolve(dirname(filepath), specifier))
+  if (relative)
+    return relative
+
+  // 2. User provided resolver, so aliases (e.g. Nuxt's `#shared/...`) can be followed
+  if (options?.resolveId) {
+    try {
+      const resolved = await options.resolveId(specifier, filepath)
+      if (resolved) {
+        const withExtension = resolveSubfile(normalize(resolved))
+        if (withExtension)
+          return withExtension
+      }
+    }
+    catch {}
+  }
+
+  // 3. Module resolution
+  try {
+    const resolved = normalize(fileURLToPath(await mllyResolve(specifier)))
+    if (existsSync(resolved))
+      return resolved
+  }
+  catch {}
+
+  return undefined
+}
+
+export async function scanExports(filepath: string, includeTypes: boolean, seen = new Set<string>(), options?: ScanDirExportsOptions): Promise<Import[]> {
   if (seen.has(filepath)) {
     console.warn(`[unimport] "${filepath}" is already scanned, skipping`)
     return []
@@ -224,42 +266,14 @@ export async function scanExports(filepath: string, includeTypes: boolean, seen 
         }
         else {
           // export * from './foo', scan deeper
-          const subfile = exp.specifier
-          let subfilepath = resolve(dirname(filepath), subfile)
-          let subfilepathResolved = false
+          const subfilepath = await resolveSubfileSpecifier(exp.specifier, filepath, options)
 
-          for (const ext of FileExtensionLookup) {
-            if (existsSync(`${subfilepath}.${ext}`)) {
-              subfilepath = `${subfilepath}.${ext}`
-              break
-            }
-            else if (existsSync(`${subfilepath}/index.${ext}`)) {
-              subfilepath = `${subfilepath}/index.${ext}`
-              break
-            }
-          }
-
-          if (existsSync(subfilepath)) {
-            subfilepathResolved = true
-          }
-          else {
-            // Try to resolve the module
-            try {
-              subfilepath = await mllyResolve(exp.specifier)
-              subfilepath = normalize(fileURLToPath(subfilepath))
-              if (existsSync(subfilepath)) {
-                subfilepathResolved = true
-              }
-            }
-            catch {}
-          }
-
-          if (!subfilepathResolved) {
-            console.warn(`[unimport] failed to resolve "${subfilepath}", skip scanning`)
+          if (!subfilepath) {
+            console.warn(`[unimport] failed to resolve "${exp.specifier}" from "${filepath}", skip scanning`)
             continue
           }
 
-          const nested = await scanExports(subfilepath, includeTypes, seen)
+          const nested = await scanExports(subfilepath, includeTypes, seen, options)
           imports.push(...(additional
             ? nested.map(i => ({ ...i, ...additional }))
             : nested

@@ -305,6 +305,14 @@ export interface ScanDirExportsOptions {
    * @default process.cwd()
    */
   cwd?: string
+
+  /**
+   * Custom resolver for specifiers encountered while scanning files,
+   * e.g. the `#shared/...` aliases Nuxt provides.
+   *
+   * When it returns a path, that file is scanned for further exports.
+   */
+  resolveId?: (id: string, importee?: string) => Thenable<string | void>
 }
 
 export interface ScanDir {
